@@ -1,0 +1,583 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		2FAB0E452F73337C00DF4900 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2FAB0E2F2F73337800DF4900 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2FAB0E362F73337800DF4900;
+			remoteInfo = "TrimrPix for iOS";
+		};
+		2FAB0E4F2F73337C00DF4900 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2FAB0E2F2F73337800DF4900 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2FAB0E362F73337800DF4900;
+			remoteInfo = "TrimrPix for iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2FAB0E372F73337800DF4900 /* TrimrPix for iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TrimrPix for iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FAB0E442F73337C00DF4900 /* TrimrPix for iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TrimrPix for iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FAB0E4E2F73337C00DF4900 /* TrimrPix for iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TrimrPix for iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2FAB0E392F73337800DF4900 /* TrimrPix for iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "TrimrPix for iOS";
+			sourceTree = "<group>";
+		};
+		2FAB0E472F73337C00DF4900 /* TrimrPix for iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "TrimrPix for iOSTests";
+			sourceTree = "<group>";
+		};
+		2FAB0E512F73337C00DF4900 /* TrimrPix for iOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "TrimrPix for iOSUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2FAB0E342F73337800DF4900 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E412F73337C00DF4900 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E4B2F73337C00DF4900 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2FAB0E2E2F73337800DF4900 = {
+			isa = PBXGroup;
+			children = (
+				2FAB0E392F73337800DF4900 /* TrimrPix for iOS */,
+				2FAB0E472F73337C00DF4900 /* TrimrPix for iOSTests */,
+				2FAB0E512F73337C00DF4900 /* TrimrPix for iOSUITests */,
+				2FAB0E382F73337800DF4900 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2FAB0E382F73337800DF4900 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2FAB0E372F73337800DF4900 /* TrimrPix for iOS.app */,
+				2FAB0E442F73337C00DF4900 /* TrimrPix for iOSTests.xctest */,
+				2FAB0E4E2F73337C00DF4900 /* TrimrPix for iOSUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2FAB0E362F73337800DF4900 /* TrimrPix for iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FAB0E582F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOS" */;
+			buildPhases = (
+				2FAB0E332F73337800DF4900 /* Sources */,
+				2FAB0E342F73337800DF4900 /* Frameworks */,
+				2FAB0E352F73337800DF4900 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2FAB0E392F73337800DF4900 /* TrimrPix for iOS */,
+			);
+			name = "TrimrPix for iOS";
+			packageProductDependencies = (
+			);
+			productName = "TrimrPix for iOS";
+			productReference = 2FAB0E372F73337800DF4900 /* TrimrPix for iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2FAB0E432F73337C00DF4900 /* TrimrPix for iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FAB0E5B2F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOSTests" */;
+			buildPhases = (
+				2FAB0E402F73337C00DF4900 /* Sources */,
+				2FAB0E412F73337C00DF4900 /* Frameworks */,
+				2FAB0E422F73337C00DF4900 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2FAB0E462F73337C00DF4900 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2FAB0E472F73337C00DF4900 /* TrimrPix for iOSTests */,
+			);
+			name = "TrimrPix for iOSTests";
+			packageProductDependencies = (
+			);
+			productName = "TrimrPix for iOSTests";
+			productReference = 2FAB0E442F73337C00DF4900 /* TrimrPix for iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		2FAB0E4D2F73337C00DF4900 /* TrimrPix for iOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FAB0E5E2F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOSUITests" */;
+			buildPhases = (
+				2FAB0E4A2F73337C00DF4900 /* Sources */,
+				2FAB0E4B2F73337C00DF4900 /* Frameworks */,
+				2FAB0E4C2F73337C00DF4900 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2FAB0E502F73337C00DF4900 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2FAB0E512F73337C00DF4900 /* TrimrPix for iOSUITests */,
+			);
+			name = "TrimrPix for iOSUITests";
+			packageProductDependencies = (
+			);
+			productName = "TrimrPix for iOSUITests";
+			productReference = 2FAB0E4E2F73337C00DF4900 /* TrimrPix for iOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2FAB0E2F2F73337800DF4900 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					2FAB0E362F73337800DF4900 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					2FAB0E432F73337C00DF4900 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 2FAB0E362F73337800DF4900;
+					};
+					2FAB0E4D2F73337C00DF4900 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 2FAB0E362F73337800DF4900;
+					};
+				};
+			};
+			buildConfigurationList = 2FAB0E322F73337800DF4900 /* Build configuration list for PBXProject "TrimrPix for iOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2FAB0E2E2F73337800DF4900;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2FAB0E382F73337800DF4900 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2FAB0E362F73337800DF4900 /* TrimrPix for iOS */,
+				2FAB0E432F73337C00DF4900 /* TrimrPix for iOSTests */,
+				2FAB0E4D2F73337C00DF4900 /* TrimrPix for iOSUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2FAB0E352F73337800DF4900 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E422F73337C00DF4900 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E4C2F73337C00DF4900 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2FAB0E332F73337800DF4900 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E402F73337C00DF4900 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FAB0E4A2F73337C00DF4900 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2FAB0E462F73337C00DF4900 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2FAB0E362F73337800DF4900 /* TrimrPix for iOS */;
+			targetProxy = 2FAB0E452F73337C00DF4900 /* PBXContainerItemProxy */;
+		};
+		2FAB0E502F73337C00DF4900 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2FAB0E362F73337800DF4900 /* TrimrPix for iOS */;
+			targetProxy = 2FAB0E4F2F73337C00DF4900 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2FAB0E562F73337C00DF4900 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2FAB0E572F73337C00DF4900 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2FAB0E592F73337C00DF4900 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2FAB0E5A2F73337C00DF4900 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2FAB0E5C2F73337C00DF4900 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrimrPix for iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrimrPix for iOS";
+			};
+			name = Debug;
+		};
+		2FAB0E5D2F73337C00DF4900 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrimrPix for iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrimrPix for iOS";
+			};
+			name = Release;
+		};
+		2FAB0E5F2F73337C00DF4900 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "TrimrPix for iOS";
+			};
+			name = Debug;
+		};
+		2FAB0E602F73337C00DF4900 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KDWZ3WNLDK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iamjarl.TrimrPix-for-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "TrimrPix for iOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2FAB0E322F73337800DF4900 /* Build configuration list for PBXProject "TrimrPix for iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FAB0E562F73337C00DF4900 /* Debug */,
+				2FAB0E572F73337C00DF4900 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2FAB0E582F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FAB0E592F73337C00DF4900 /* Debug */,
+				2FAB0E5A2F73337C00DF4900 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2FAB0E5B2F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FAB0E5C2F73337C00DF4900 /* Debug */,
+				2FAB0E5D2F73337C00DF4900 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2FAB0E5E2F73337C00DF4900 /* Build configuration list for PBXNativeTarget "TrimrPix for iOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FAB0E5F2F73337C00DF4900 /* Debug */,
+				2FAB0E602F73337C00DF4900 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2FAB0E2F2F73337800DF4900 /* Project object */;
+}
