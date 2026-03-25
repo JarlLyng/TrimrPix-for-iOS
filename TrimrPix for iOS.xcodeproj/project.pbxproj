@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AA000001AAAA000100000001 /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = AA000002AAAA000200000002 /* IAMJARLDesignTokens */; };
+		BB000001BBBB000100000001 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = BB000002BBBB000200000002 /* Sentry */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2FAB0E452F73337C00DF4900 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA000001AAAA000100000001 /* IAMJARLDesignTokens in Frameworks */,
+				BB000001BBBB000100000001 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +119,8 @@
 			);
 			name = "TrimrPix for iOS";
 			packageProductDependencies = (
+				AA000002AAAA000200000002 /* IAMJARLDesignTokens */,
+				BB000002BBBB000200000002 /* Sentry */,
 			);
 			productName = "TrimrPix for iOS";
 			productReference = 2FAB0E372F73337800DF4900 /* TrimrPix for iOS.app */;
@@ -195,6 +204,10 @@
 			);
 			mainGroup = 2FAB0E2E2F73337800DF4900;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AA000003AAAA000300000003 /* XCRemoteSwiftPackageReference "iamjarl-design" */,
+				BB000003BBBB000300000003 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2FAB0E382F73337800DF4900 /* Products */;
 			projectDirPath = "";
@@ -400,6 +413,9 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TrimrPix;
+				SENTRY_DSN = "$(SENTRY_DSN)";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix bruger adgang til dine billeder for at komprimere dem og spare plads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +448,9 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TrimrPix;
+				SENTRY_DSN = "$(SENTRY_DSN)";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix bruger adgang til dine billeder for at komprimere dem og spare plads.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -578,6 +597,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA000003AAAA000300000003 /* XCRemoteSwiftPackageReference "iamjarl-design" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JarlLyng/iamjarl-design.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.3;
+			};
+		};
+		BB000003BBBB000300000003 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AA000002AAAA000200000002 /* IAMJARLDesignTokens */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA000003AAAA000300000003 /* XCRemoteSwiftPackageReference "iamjarl-design" */;
+			productName = IAMJARLDesignTokens;
+		};
+		BB000002BBBB000200000002 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB000003BBBB000300000003 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2FAB0E2F2F73337800DF4900 /* Project object */;
 }
