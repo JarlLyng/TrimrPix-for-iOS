@@ -47,6 +47,7 @@ final class ImageOptimizationViewModel {
     var isLoadingImages = false
     var isCompressing = false
     var isEstimating = false
+    var wasCancelled = false
 
     var compressionProgress: Double = 0
     var currentImageIndex: Int = 0
@@ -57,6 +58,7 @@ final class ImageOptimizationViewModel {
     // MARK: - Dependencies
 
     private let compressionService = CompressionService()
+    private var compressionTask: Task<Void, Never>?
 
     // MARK: - Computed
 
@@ -144,6 +146,7 @@ final class ImageOptimizationViewModel {
     func compress() async {
         withAnimation { currentStep = .compressing }
         isCompressing = true
+        wasCancelled = false
         compressionProgress = 0
         currentImageIndex = 0
         errorMessage = nil
@@ -153,39 +156,55 @@ final class ImageOptimizationViewModel {
         let currentFormat = format
         let currentMetadata = metadataOptions
 
-        for i in images.indices {
-            currentImageIndex = i
-            images[i].isCompressing = true
+        compressionTask = Task {
+            for i in images.indices {
+                if Task.isCancelled { break }
 
-            do {
-                guard let originalData = images[i].originalData else {
-                    throw TrimrPixError.invalidImageData
+                currentImageIndex = i
+                images[i].isCompressing = true
+
+                do {
+                    guard let originalData = images[i].originalData else {
+                        throw TrimrPixError.invalidImageData
+                    }
+
+                    let compressedData = try await Task.detached(priority: .userInitiated) {
+                        try service.compress(data: originalData, quality: currentQuality, format: currentFormat, metadataOptions: currentMetadata)
+                    }.value
+
+                    if Task.isCancelled { break }
+
+                    images[i].compressedSize = Int64(compressedData.count)
+                    images[i].isCompressed = true
+
+                    // Replace in Photos library
+                    try await replaceInPhotosLibrary(
+                        assetIdentifier: images[i].assetIdentifier,
+                        compressedData: compressedData
+                    )
+                } catch {
+                    if !Task.isCancelled {
+                        images[i].error = error as? TrimrPixError ?? .unknown(underlyingError: error)
+                    }
                 }
 
-                let compressedData = try await Task.detached(priority: .userInitiated) {
-                    try service.compress(data: originalData, quality: currentQuality, format: currentFormat, metadataOptions: currentMetadata)
-                }.value
-
-                images[i].compressedSize = Int64(compressedData.count)
-                images[i].isCompressed = true
-
-                // Replace in Photos library
-                try await replaceInPhotosLibrary(
-                    assetIdentifier: images[i].assetIdentifier,
-                    compressedData: compressedData
-                )
-            } catch {
-                images[i].error = error as? TrimrPixError ?? .unknown(underlyingError: error)
+                // Free memory — original data no longer needed
+                images[i].releaseData()
+                images[i].isCompressing = false
+                compressionProgress = Double(i + 1) / Double(images.count)
             }
 
-            // Free memory — original data no longer needed
-            images[i].releaseData()
-            images[i].isCompressing = false
-            compressionProgress = Double(i + 1) / Double(images.count)
+            isCompressing = false
+            compressionTask = nil
+            withAnimation { currentStep = .result }
         }
 
-        isCompressing = false
-        withAnimation { currentStep = .result }
+        await compressionTask?.value
+    }
+
+    func cancelCompression() {
+        wasCancelled = true
+        compressionTask?.cancel()
     }
 
     // MARK: - Photos Library
@@ -230,6 +249,8 @@ final class ImageOptimizationViewModel {
     // MARK: - Reset
 
     func reset() {
+        compressionTask?.cancel()
+        compressionTask = nil
         currentStep = .selectPhotos
         images = []
         selectedPhotos = []
@@ -239,6 +260,7 @@ final class ImageOptimizationViewModel {
         isLoadingImages = false
         isCompressing = false
         isEstimating = false
+        wasCancelled = false
         compressionProgress = 0
         currentImageIndex = 0
         estimatedTotalSavingsPercentage = 0

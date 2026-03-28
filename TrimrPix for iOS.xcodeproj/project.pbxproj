@@ -29,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CC000002CCCC000200000002 /* Sentry.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sentry.xcconfig; sourceTree = "<group>"; };
 		2FAB0E372F73337800DF4900 /* TrimrPix for iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TrimrPix for iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FAB0E442F73337C00DF4900 /* TrimrPix for iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TrimrPix for iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FAB0E4E2F73337C00DF4900 /* TrimrPix for iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TrimrPix for iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +102,29 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CC000001CCCC000100000001 /* Upload dSYMs to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+			);
+			name = "Upload dSYMs to Sentry";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ]; then\n  export SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN}\"\n  export SENTRY_ORG=iamjarl\n  export SENTRY_PROJECT=trimrpix-ios\n  \n  if [ -z \"$SENTRY_AUTH_TOKEN\" ]; then\n    echo \"warning: SENTRY_AUTH_TOKEN not set — skipping dSYM upload\"\n    exit 0\n  fi\n  \n  if [ -f /opt/homebrew/bin/sentry-cli ]; then\n    /opt/homebrew/bin/sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  elif command -v sentry-cli &> /dev/null; then\n    sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  else\n    echo \"warning: sentry-cli not found — skipping dSYM upload\"\n  fi\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		2FAB0E362F73337800DF4900 /* TrimrPix for iOS */ = {
 			isa = PBXNativeTarget;
@@ -109,6 +133,7 @@
 				2FAB0E332F73337800DF4900 /* Sources */,
 				2FAB0E342F73337800DF4900 /* Frameworks */,
 				2FAB0E352F73337800DF4900 /* Resources */,
+				CC000001CCCC000100000001 /* Upload dSYMs to Sentry */,
 			);
 			buildRules = (
 			);
@@ -384,7 +409,7 @@
 				DEVELOPMENT_TEAM = KDWZ3WNLDK;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -414,8 +439,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TrimrPix;
-				SENTRY_DSN = "$(SENTRY_DSN)";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix bruger adgang til dine billeder for at komprimere dem og spare plads.";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix needs access to your photos to compress them and save storage space.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -440,6 +465,7 @@
 		};
 		2FAB0E5A2F73337C00DF4900 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC000002CCCC000200000002 /* Sentry.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -449,8 +475,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TrimrPix;
-				SENTRY_DSN = "$(SENTRY_DSN)";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix bruger adgang til dine billeder for at komprimere dem og spare plads.";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "TrimrPix needs access to your photos to compress them and save storage space.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

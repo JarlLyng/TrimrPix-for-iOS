@@ -55,7 +55,7 @@ struct ContentView: View {
                 Spacer()
 
                 if viewModel.currentStep != .selectPhotos && viewModel.currentStep != .compressing {
-                    Button("Start forfra") {
+                    Button("Start over") {
                         withAnimation { viewModel.reset() }
                     }
                     .font(.system(size: DesignTokens.Typography.Size.sm))
@@ -101,23 +101,41 @@ private struct SelectPhotosStep: View {
 
             // Title
             VStack(spacing: DesignTokens.Spacing.sm) {
-                Text("Vaelg billeder")
+                Text("Select photos")
                     .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
-                Text("Vaelg de billeder du vil komprimere fra dit fotobibliotek")
+                Text("Choose the photos you want to compress from your library")
                     .font(.system(size: DesignTokens.Typography.Size.base))
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, DesignTokens.Spacing.xxl)
             }
 
-            // Selected count
-            if viewModel.hasImages {
+            // Selected count or loading indicator
+            if viewModel.isLoadingImages {
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Loading photos...")
+                        .font(.system(size: DesignTokens.Typography.Size.base))
+                        .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                }
+                .padding(.vertical, DesignTokens.Spacing.md)
+                .padding(.horizontal, DesignTokens.Spacing.xl)
+                .background(
+                    DesignTokens.Common.Background.card(scheme),
+                    in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                        .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
+                )
+            } else if viewModel.hasImages {
                 HStack(spacing: DesignTokens.Spacing.sm) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
-                    Text("\(viewModel.images.count) billeder valgt")
+                    Text(viewModel.images.count == 1 ? "1 photo selected" : "\(viewModel.images.count) photos selected")
                         .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
                         .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 }
@@ -146,7 +164,7 @@ private struct SelectPhotosStep: View {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: hasSelected ? "arrow.triangle.2.circlepath" : "plus")
                             .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
-                        Text(hasSelected ? "Vaelg andre billeder" : "Vaelg fra Fotos")
+                        Text(hasSelected ? "Choose different photos" : "Choose from Photos")
                             .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
                     }
                     .foregroundStyle(hasSelected
@@ -174,7 +192,7 @@ private struct SelectPhotosStep: View {
                         Task { await viewModel.estimateSavings() }
                     } label: {
                         HStack(spacing: DesignTokens.Spacing.sm) {
-                            Text("Naeste")
+                            Text("Next")
                                 .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
                             Image(systemName: "arrow.right")
                         }
@@ -205,9 +223,9 @@ private struct ConfigureStep: View {
                     summaryCard
 
                     // Quality selection
-                    settingsSection(title: "Kvalitet") {
+                    settingsSection(title: "Quality") {
                         VStack(spacing: DesignTokens.Spacing.md) {
-                            Picker("Kvalitet", selection: $viewModel.quality) {
+                            Picker("Quality", selection: $viewModel.quality) {
                                 ForEach(CompressionQuality.allCases) { level in
                                     Text(level.rawValue).tag(level)
                                 }
@@ -241,7 +259,7 @@ private struct ConfigureStep: View {
                 .padding(.top, DesignTokens.Spacing.md)
             }
 
-            // Compress button
+            // Next button
             VStack(spacing: 0) {
                 Divider()
                     .overlay(DesignTokens.Common.Border.subtle(scheme))
@@ -251,7 +269,7 @@ private struct ConfigureStep: View {
                 } label: {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: "arrow.right")
-                        Text("Naeste")
+                        Text("Next")
                             .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
                     }
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
@@ -267,6 +285,21 @@ private struct ConfigureStep: View {
             Task { await viewModel.estimateSavings() }
         }
         .onChange(of: viewModel.format) {
+            Task { await viewModel.estimateSavings() }
+        }
+        .onChange(of: viewModel.metadataOptions.keepDateTime) {
+            Task { await viewModel.estimateSavings() }
+        }
+        .onChange(of: viewModel.metadataOptions.keepCameraSettings) {
+            Task { await viewModel.estimateSavings() }
+        }
+        .onChange(of: viewModel.metadataOptions.keepGPS) {
+            Task { await viewModel.estimateSavings() }
+        }
+        .onChange(of: viewModel.metadataOptions.keepIPTC) {
+            Task { await viewModel.estimateSavings() }
+        }
+        .onChange(of: viewModel.metadataOptions.keepAppleMaker) {
             Task { await viewModel.estimateSavings() }
         }
     }
@@ -291,7 +324,7 @@ private struct ConfigureStep: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(viewModel.images.count) billeder")
+                Text(viewModel.images.count == 1 ? "1 photo" : "\(viewModel.images.count) photos")
                     .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 Text(viewModel.totalOriginalSize.formattedSize)
@@ -331,26 +364,18 @@ private struct ConfigureStep: View {
                         get: { viewModel.metadataOptions[keyPath: option.keyPath] },
                         set: { viewModel.metadataOptions[keyPath: option.keyPath] = $0 }
                     )
+                    let isKept = binding.wrappedValue
 
                     Toggle(isOn: binding) {
                         VStack(alignment: .leading, spacing: 2) {
-                            HStack(spacing: DesignTokens.Spacing.xs) {
-                                Text(option.label)
-                                    .font(.system(size: DesignTokens.Typography.Size.base))
-                                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
-                                Text(option.isInverted ? "behold" : "fjern")
-                                    .font(.system(size: DesignTokens.Typography.Size.xs, weight: DesignTokens.Typography.Weight.semibold))
-                                    .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(
-                                        (option.isInverted ? DesignTokens.ColorToken.State.success : DesignTokens.ColorToken.State.warning),
-                                        in: Capsule()
-                                    )
-                            }
-                            Text(option.description)
+                            Text(option.label)
+                                .font(.system(size: DesignTokens.Typography.Size.base))
+                                .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                            Text(isKept ? option.description : "Will be removed")
                                 .font(.system(size: DesignTokens.Typography.Size.xs))
-                                .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                                .foregroundStyle(isKept
+                                    ? DesignTokens.Common.Text.tertiary(scheme)
+                                    : DesignTokens.ColorToken.State.warning)
                         }
                     }
                     .tint(DesignTokens.Common.primary(scheme))
@@ -379,7 +404,7 @@ private struct ConfigureStep: View {
             if viewModel.isEstimating {
                 ProgressView()
                     .controlSize(.small)
-                Text("Beregner...")
+                Text("Estimating...")
                     .font(.system(size: DesignTokens.Typography.Size.sm))
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
             } else {
@@ -388,7 +413,7 @@ private struct ConfigureStep: View {
                     .foregroundStyle(DesignTokens.ColorToken.State.success)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Estimeret besparelse")
+                    Text("Estimated savings")
                         .font(.system(size: DesignTokens.Typography.Size.sm))
                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
@@ -417,22 +442,31 @@ private struct ConfirmStep: View {
     @Bindable var viewModel: ImageOptimizationViewModel
     @Environment(\.colorScheme) private var scheme
 
+    private var metadataKeptCount: Int {
+        let opts = viewModel.metadataOptions
+        return [opts.keepDateTime, opts.keepCameraSettings, opts.keepGPS, opts.keepIPTC, opts.keepAppleMaker].filter(\.self).count
+    }
+
+    private var metadataStrippedCount: Int {
+        5 - metadataKeptCount
+    }
+
     var body: some View {
         VStack(spacing: DesignTokens.Spacing.xl) {
             Spacer()
 
-            // Warning icon
-            Image(systemName: "exclamationmark.triangle.fill")
+            // Icon — informational, not alarming
+            Image(systemName: "info.circle.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(DesignTokens.ColorToken.State.warning)
+                .foregroundStyle(DesignTokens.Common.primary(scheme))
 
             // Title and description
             VStack(spacing: DesignTokens.Spacing.md) {
-                Text("Klar til komprimering")
+                Text("Ready to compress")
                     .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
-                Text("De originale billeder vil blive erstattet med komprimerede versioner. Dette kan ikke fortrydes.")
+                Text("The original photos will be replaced with compressed versions. This cannot be undone.")
                     .font(.system(size: DesignTokens.Typography.Size.base))
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     .multilineTextAlignment(.center)
@@ -441,10 +475,11 @@ private struct ConfirmStep: View {
 
             // Summary
             VStack(spacing: DesignTokens.Spacing.md) {
-                summaryRow(label: "Billeder", value: "\(viewModel.images.count)")
-                summaryRow(label: "Kvalitet", value: viewModel.quality.rawValue)
+                summaryRow(label: "Photos", value: "\(viewModel.images.count)")
+                summaryRow(label: "Quality", value: viewModel.quality.rawValue)
                 summaryRow(label: "Format", value: viewModel.format.rawValue)
-                summaryRow(label: "Estimeret besparelse", value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
+                summaryRow(label: "Metadata", value: metadataStrippedCount == 0 ? "Keep all" : "\(metadataStrippedCount) removed")
+                summaryRow(label: "Est. savings", value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
             }
             .padding(DesignTokens.Spacing.xl)
             .background(
@@ -465,7 +500,7 @@ private struct ConfirmStep: View {
                     Task { await viewModel.compress() }
                 }
 
-                Button("Annuller") {
+                Button("Cancel") {
                     withAnimation { viewModel.currentStep = .configure }
                 }
                 .font(.system(size: DesignTokens.Typography.Size.sm))
@@ -520,21 +555,31 @@ private struct CompressingStep: View {
             }
 
             VStack(spacing: DesignTokens.Spacing.sm) {
-                Text("Komprimerer...")
+                Text("Compressing...")
                     .font(.system(size: DesignTokens.Typography.Size.lg, weight: DesignTokens.Typography.Weight.semibold))
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
-                Text("Billede \(viewModel.currentImageIndex + 1) af \(viewModel.images.count)")
+                Text("Photo \(viewModel.currentImageIndex + 1) of \(viewModel.images.count)")
                     .font(.system(size: DesignTokens.Typography.Size.base))
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
             }
 
             Spacer()
+
+            // Cancel button
+            Button {
+                viewModel.cancelCompression()
+            } label: {
+                Text("Cancel")
+                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+            }
+            .padding(.bottom, DesignTokens.Spacing.xxl)
         }
     }
 }
 
-// MARK: - Step 3b: Result
+// MARK: - Step 4b: Result
 
 private struct ResultStep: View {
     @Bindable var viewModel: ImageOptimizationViewModel
@@ -564,40 +609,41 @@ private struct ResultStep: View {
 
     private var hasErrors: Bool { failCount > 0 }
     private var allFailed: Bool { successCount == 0 }
+    private var wasCancelled: Bool { viewModel.wasCancelled }
 
     var body: some View {
         VStack(spacing: DesignTokens.Spacing.xl) {
             Spacer()
 
-            // Icon — success, partial, or failure
-            Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
+            // Icon
+            Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors || wasCancelled ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
                 .font(.system(size: 72))
-                .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
+                .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors || wasCancelled ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
 
             // Title
-            Text(allFailed ? "Komprimering fejlede" : (hasErrors ? "Delvist faerdig" : "Faerdig!"))
+            Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
                 .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
                 .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
             // Stats
             VStack(spacing: DesignTokens.Spacing.lg) {
                 statRow(
-                    label: "Komprimeret",
-                    value: "\(successCount) af \(viewModel.images.count)",
+                    label: "Compressed",
+                    value: "\(successCount) of \(viewModel.images.count)",
                     color: successCount > 0 ? DesignTokens.Common.Text.primary(scheme) : DesignTokens.ColorToken.State.error
                 )
 
                 if hasErrors {
                     statRow(
-                        label: "Fejlede",
+                        label: "Failed",
                         value: "\(failCount)",
                         color: DesignTokens.ColorToken.State.error
                     )
                 }
 
                 if successCount > 0 {
-                    statRow(label: "Plads sparet", value: totalSaved.formattedSize)
-                    statRow(label: "Gns. besparelse", value: "\(averageSavings)%")
+                    statRow(label: "Space saved", value: totalSaved.formattedSize)
+                    statRow(label: "Avg. savings", value: "\(averageSavings)%")
                 }
             }
             .padding(DesignTokens.Spacing.xl)
@@ -620,7 +666,7 @@ private struct ResultStep: View {
                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                                 .font(.system(size: DesignTokens.Typography.Size.sm))
 
-                            Text(item.error?.localizedDescription ?? "Ukendt fejl")
+                            Text(item.error?.localizedDescription ?? "Unknown error")
                                 .font(.system(size: DesignTokens.Typography.Size.sm))
                                 .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                         }
@@ -645,7 +691,7 @@ private struct ResultStep: View {
             Button {
                 withAnimation { viewModel.reset() }
             } label: {
-                Text("Komprimer flere billeder")
+                Text("Compress more photos")
                     .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
                     .frame(maxWidth: .infinity)
