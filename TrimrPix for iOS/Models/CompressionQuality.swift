@@ -36,9 +36,9 @@ nonisolated enum CompressionQuality: String, CaseIterable, Identifiable, Sendabl
     /// User-facing description of the quality level
     var description: String {
         switch self {
-        case .same: return "Ingen synlig kvalitetsforringelse"
-        case .good: return "Let komprimering, svaer at se forskel"
-        case .smaller: return "Mere aggressiv komprimering"
+        case .same: return "No visible quality loss"
+        case .good: return "Light compression, hard to tell the difference"
+        case .smaller: return "More aggressive compression"
         }
     }
 }

@@ -12,10 +12,8 @@ import Sentry
 struct TrimrPix_for_iOSApp: App {
 
     init() {
-        guard let dsn = Bundle.main.object(forInfoDictionaryKey: "SENTRY_DSN") as? String,
-              !dsn.isEmpty else {
-            return
-        }
+        let dsn = Secrets.sentryDSN
+        guard !dsn.isEmpty, dsn != "YOUR_SENTRY_DSN_HERE" else { return }
 
         SentrySDK.start { options in
             options.dsn = dsn

@@ -1,5 +1,7 @@
 # Secrets
 Secrets.xcconfig
+Sentry.xcconfig
+**/Secrets.swift
 
 # Xcode
 *.xcuserstate

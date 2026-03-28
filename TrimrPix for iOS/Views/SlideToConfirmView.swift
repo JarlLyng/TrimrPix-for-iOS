@@ -35,7 +35,7 @@ struct SlideToConfirmView: View {
                     )
 
                 // Label
-                Text("Skub for at komprimere")
+                Text("Slide to compress")
                     .font(.system(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold))
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                     .frame(maxWidth: .infinity)

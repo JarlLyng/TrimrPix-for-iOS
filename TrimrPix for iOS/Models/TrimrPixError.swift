@@ -32,42 +32,42 @@ nonisolated enum TrimrPixError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .imageLoadFailed:
-            return "Kunne ikke indlaese billede"
+            return "Failed to load image"
         case .unsupportedImageFormat(let format):
-            return "Ikke-understoettet billedformat: \(format)"
+            return "Unsupported image format: \(format)"
         case .invalidImageData:
-            return "Ugyldig billeddata"
+            return "Invalid image data"
         case .compressionFailed(let format, _):
-            return "\(format) komprimering fejlede"
+            return "\(format) compression failed"
         case .formatNotSupported(let format):
-            return "Format ikke understoettet: \(format)"
+            return "Format not supported: \(format)"
         case .photosAccessDenied:
-            return "Adgang til Fotos er naegtet"
+            return "Photos access denied"
         case .photosAccessRestricted:
-            return "Adgang til Fotos er begraenset"
+            return "Photos access restricted"
         case .assetNotFound:
-            return "Billede ikke fundet i Fotos"
+            return "Photo not found in library"
         case .assetReplaceFailed:
-            return "Kunne ikke erstatte billede i Fotos"
+            return "Failed to replace photo in library"
         case .userCancelled:
-            return "Operation annulleret"
+            return "Operation cancelled"
         case .unknown:
-            return "Ukendt fejl opstod"
+            return "An unknown error occurred"
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .photosAccessDenied:
-            return "Giv appen adgang til Fotos i Indstillinger"
+            return "Grant photo access in Settings"
         case .photosAccessRestricted:
-            return "Fotos-adgang er begraenset paa denne enhed"
+            return "Photo access is restricted on this device"
         case .compressionFailed:
-            return "Proev et andet format eller kvalitetsniveau"
+            return "Try a different format or quality level"
         case .assetReplaceFailed:
-            return "Soerg for at appen har fuld adgang til Fotos"
+            return "Make sure the app has full photo access"
         default:
-            return "Proev igen. Hvis problemet vedvarer, genstart appen"
+            return "Try again. If the problem persists, restart the app"
         }
     }
 }
