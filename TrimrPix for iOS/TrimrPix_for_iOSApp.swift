@@ -12,8 +12,17 @@ import Sentry
 struct TrimrPix_for_iOSApp: App {
 
     init() {
+        Self.initSentry()
+    }
+
+    private static func initSentry() {
         let dsn = Secrets.sentryDSN
-        guard !dsn.isEmpty, dsn != "YOUR_SENTRY_DSN_HERE" else { return }
+        guard !dsn.isEmpty, dsn != "YOUR_SENTRY_DSN_HERE" else {
+            #if DEBUG
+            print("[Sentry] No DSN configured — skipping initialization")
+            #endif
+            return
+        }
 
         SentrySDK.start { options in
             options.dsn = dsn
@@ -30,7 +39,20 @@ struct TrimrPix_for_iOSApp: App {
             options.enableAutoSessionTracking = true
             options.enableAppHangTracking = true
             options.appHangTimeoutInterval = 2
+            options.attachScreenshot = true
+            options.attachViewHierarchy = true
+            options.enableMetricKit = true
         }
+
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"
+        SentrySDK.configureScope { scope in
+            scope.setTag(value: "\(version) (\(build))", key: "app_version")
+        }
+
+        #if DEBUG
+        print("[Sentry] Initialized for TrimrPix iOS v\(version)")
+        #endif
     }
 
     var body: some Scene {
