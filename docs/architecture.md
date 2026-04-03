@@ -1,63 +1,64 @@
-# TrimrPix for iOS — Teknisk Arkitektur
+# TrimrPix for iOS — Teknisk arkitektur
+
+Produktkrav og brugeroplevelse: [spec.md](spec.md).
 
 ## Overblik
 
-SwiftUI-app med MVVM-arkitektur og step-baseret brugerflow. Kernelogik portet fra macOS-versionen, UI bygget fra bunden til iOS.
+SwiftUI-app med MVVM og step-baseret flow. Komprimeringslogik portet fra macOS; iOS-UI er bygget særskilt.
 
 ## Teknologier
 
-- **Swift 5.0+** / iOS 26.2+
-- **SwiftUI** — UI framework
-- **PhotosUI** — `PhotosPicker` til billedvalg
-- **Photos** — `PHPhotoLibrary` + content editing til in-place erstatning
-- **Core Image / ImageIO** — Billedkomprimering
-- **Sentry** — Crash reporting og performance monitoring
-- **IAMJARLDesignTokens** — Design system (farver, typografi, spacing, radius)
+- **Swift 5** / **iOS 26.2+** (deployment target i Xcode-projektet)
+- **SwiftUI** — UI
+- **PhotosUI** — `PhotosPicker`
+- **Photos** — `PHPhotoLibrary` og content editing til in-place erstatning
+- **Core Image / ImageIO** — komprimering og metadata
+- **Sentry** — fejl- og performanceovervågning (DSN fra `Secrets.swift`, som kopieres fra `Secrets.swift.template` og er gitignoreret)
+- **IAMJARLDesignTokens** — design tokens (farver, typografi, spacing, radius)
 
-## Arkitektur (MVVM)
+## MVVM
 
 ```
-Views (SwiftUI, step-baseret)
-    |  bindings
+Views (SwiftUI)
+    → bindings →
 ViewModel (@Observable, @MainActor)
-    |  calls
+    → kald →
 Services (nonisolated, Sendable)
-    |  uses
-Models (nonisolated, Sendable value types)
+    → bruger →
+Models (Sendable value types)
 ```
 
-## Brugerflow (4 steps)
+## App-tilstande (`AppStep`)
 
-1. **SelectPhotosStep** — Vaelg billeder fra Fotos via PhotosPicker
-2. **ConfigureStep** — Kvalitet, format, metadata-indstillinger, estimeret besparelse
-3. **ConfirmStep** — Slide-to-confirm, opsummering, advarsel om erstatning
-4. **CompressingStep** → **ResultStep** — Cirkulaer progress, derefter resultater med fejlvisning
+`ImageOptimizationViewModel` styrer: `selectPhotos` → `configure` → `confirm` → `compressing` → `result`. Step-indikatoren i header viser fire segmenter; `compressing` og `result` deler det sidste (samme `index`).
 
-## Filstruktur
+SwiftUI-trin (i `ContentView.swift`): **SelectPhotosStep**, **ConfigureStep**, **ConfirmStep**, **CompressingStep**, **ResultStep**. **SlideToConfirmView** bruges på bekræftelsessteget.
+
+## Filstruktur (app-mappen)
 
 ```
 TrimrPix for iOS/
-  TrimrPix_for_iOSApp.swift          — App entry point, Sentry init
-  ContentView.swift                   — Alle steps (SelectPhotos, Configure, Confirm, Compressing, Result)
+  TrimrPix_for_iOSApp.swift       — entry point, Sentry-init
+  ContentView.swift                 — alle steps
+  Secrets.swift.template          — skabelon; Secrets.swift (lokal, gitignoreret)
   Models/
-    CompressionQuality.swift          — Same/Good/Smaller enum
-    OutputFormat.swift                — JPEG/PNG/WebP/HEIC enum
-    ImageItem.swift                   — Billedmodel med thumbnail og memory management
-    MetadataStrippingOptions.swift    — Granulær metadata-kontrol (dato, EXIF, GPS, IPTC, Apple)
-    TrimrPixError.swift               — Fejltyper
+    CompressionQuality.swift
+    OutputFormat.swift
+    ImageItem.swift
+    MetadataStrippingOptions.swift
+    TrimrPixError.swift
   ViewModels/
-    ImageOptimizationViewModel.swift  — Koordinerer flow, komprimering og Photos-integration
+    ImageOptimizationViewModel.swift
   Views/
-    SlideToConfirmView.swift          — Slide-to-confirm gesture-komponent
+    SlideToConfirmView.swift
   Services/
-    CompressionService.swift          — Format-specifik komprimering med selektiv metadata-stripping
-    ColorQuantizer.swift              — Median-cut PNG farve-reduktion
+    CompressionService.swift
+    ColorQuantizer.swift
 ```
 
 ## Nøglebeslutninger
 
-- **In-place foto-erstatning** via `PHContentEditingOutput` — ingen create+delete, ingen dubletter
-- **Detached tasks** for komprimering — holder UI responsivt
-- **Memory management** — `originalData` frigøres efter hvert billede er komprimeret
-- **Granulær metadata** — brugeren kan beholde dato/tid mens GPS fjernes
-- **Sentry DSN** via xcconfig/Info.plist — ikke hardcoded i kode
+- **In-place erstatning** via `PHContentEditingOutput` — ingen separat create/delete for dubletter.
+- **Afkoblede tasks** til komprimering — UI forbliver responsivt.
+- **Hukommelse** — `originalData` frigives efter hvert behandlet billede.
+- **Metadata** — brugerens toggles mappes til selektiv stripping i `CompressionService`.

@@ -1,50 +1,50 @@
 # TrimrPix for iOS — Produktspecifikation
 
+Koncept, brugeroplevelse og funktionelle krav. Teknisk opbygning: [architecture.md](architecture.md).
+
 ## Koncept
 
-TrimrPix for iOS komprimerer billeder direkte fra brugerens Fotos-app. Appen gør én ting og gør det godt: gør billeder mindre uden unødig kompleksitet.
+TrimrPix for iOS komprimerer billeder fra brugerens fotobibliotek. Én opgave: gøre filer mindre uden unødig kompleksitet.
 
-## Brugerflow
+## Brugerflow (oplevelse)
 
-1. **Vælg billeder** — Åbn fotovælger, vælg ét eller flere billeder
-2. **Konfigurer** — Vælg kvalitetsniveau og outputformat
-3. **Se besparelse** — Estimeret pladsbesparelse vises i procent
-4. **Bekræft** — Advarsel: "Dette erstatter originalerne. Vil du fortsætte?"
-5. **Komprimer** — Progress-visning mens billeder behandles
-6. **Færdig** — Resultat: antal billeder komprimeret, total besparelse
+1. Vælg ét eller flere billeder (`PhotosPicker`).
+2. Indstil kvalitet, outputformat og hvilke metadata der bevares eller fjernes; estimeret besparelse vises.
+3. Bekræft på bekræftelsesskærmen (slide-to-confirm); advarsel om at originaler erstattes og handlingen ikke kan fortrydes.
+4. Under komprimering vises fremskridt (billede X af Y).
+5. Resultatskærm med antal, samlet besparelse og evt. fejl pr. billede.
+
+*(Brugergrænsefladen i appen er på engelsk.)*
 
 ## Kvalitetsniveauer
 
-| Niveau | Beskrivelse | Typisk besparelse |
-|--------|-------------|-------------------|
-| Same | Ingen synlig kvalitetsforringelse, metadata fjernes | 5-15% |
-| Good | Let komprimering, svær at se forskel | 30-50% |
-| Smaller | Mere aggressiv komprimering, synlig ved zoom | 60-80% |
+| Niveau  | Beskrivelse | Typisk besparelse |
+|---------|-------------|-------------------|
+| Same    | Ingen synlig kvalitetsforringelse; metadata kan stadig styres med toggles | 5–15% |
+| Good    | Let komprimering, svær at se forskel | 30–50% |
+| Smaller | Mere aggressiv komprimering, synlig ved zoom | 60–80% |
 
-## Formatvalg
+## Outputformat
 
-Brugeren kan vælge outputformat pr. batch (ikke pr. billede):
+Vælges pr. batch (ikke pr. billede): **JPEG** (standard), **PNG**, **WebP**, **HEIC**.
 
-- **JPEG** — Standard, god til fotos (default)
-- **PNG** — Tabsfri, god til skærmbilleder og grafik
-- **WebP** — Moderne format, god balance mellem størrelse og kvalitet
-- **HEIC** — Apple-format, god komprimering
+## Metadata
+
+Under konfiguration kan brugeren vælge hvad der bevares: dato/tid, kameraindstillinger, GPS, IPTC og Apple maker-note. Alt andet relevant kan fjernes ifølge de valgte toggles.
 
 ## Billedvalg
 
-- Multi-select via `PhotosPicker` (SwiftUI PhotosUI)
-- Ingen øvre grænse på antal billeder
-- Thumbnails vises i grid efter valg
+- Multi-select via `PhotosPicker`.
+- Ingen hård kodet øvre grænse i appen; meget store batches begrænses af enhedens hukommelse og Fotos-adgang.
 
-## Komprimering
+## Komprimering og erstatning
 
-- Originalbilledet erstattes som default
-- Bekræftelsesdialog inden komprimering starter
-- Progress-indikator under komprimering (billede X af Y)
-- Besparelse vises i procent inden komprimering bekræftes
+- Standard: originalfiler erstattes in-place efter bekræftelse.
+- Progress under behandling.
+- Besparelse vises som estimeret procent før komprimering startes.
 
 ## Begrænsninger
 
-- Kræver adgang til Fotos-biblioteket
-- Video understøttes ikke — kun stillbilleder
-- Internetforbindelse er ikke nødvendig
+- Kræver adgang til fotobiblioteket.
+- Kun stillbilleder — ikke video.
+- Ingen internetforbindelse nødvendig til kernefunktionen.
