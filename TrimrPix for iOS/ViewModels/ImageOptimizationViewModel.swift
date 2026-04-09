@@ -141,9 +141,37 @@ final class ImageOptimizationViewModel {
         isEstimating = false
     }
 
+    // MARK: - Photos Authorization
+
+    private func ensurePhotosWriteAccess() async throws {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        switch status {
+        case .authorized:
+            return
+        case .limited:
+            // Limited access won't let us modify arbitrary assets
+            throw TrimrPixError.photosAccessRestricted
+        case .notDetermined:
+            let newStatus = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            if newStatus != .authorized {
+                throw TrimrPixError.photosAccessDenied
+            }
+        default:
+            throw TrimrPixError.photosAccessDenied
+        }
+    }
+
     // MARK: - Compression
 
     func compress() async {
+        // Ensure we have write access before starting
+        do {
+            try await ensurePhotosWriteAccess()
+        } catch {
+            errorMessage = (error as? TrimrPixError)?.errorDescription ?? "Photos access denied"
+            return
+        }
+
         withAnimation { currentStep = .compressing }
         isCompressing = true
         wasCancelled = false
@@ -175,13 +203,14 @@ final class ImageOptimizationViewModel {
                     if Task.isCancelled { break }
 
                     images[i].compressedSize = Int64(compressedData.count)
-                    images[i].isCompressed = true
 
-                    // Replace in Photos library
+                    // Replace in Photos library — only mark as compressed if this succeeds
                     try await replaceInPhotosLibrary(
                         assetIdentifier: images[i].assetIdentifier,
                         compressedData: compressedData
                     )
+
+                    images[i].isCompressed = true
                 } catch {
                     if !Task.isCancelled {
                         images[i].error = error as? TrimrPixError ?? .unknown(underlyingError: error)
@@ -210,9 +239,21 @@ final class ImageOptimizationViewModel {
     // MARK: - Photos Library
 
     private func replaceInPhotosLibrary(assetIdentifier: String, compressedData: Data) async throws {
-        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil)
+        // Try direct fetch first, then fall back to searching all assets
+        var asset: PHAsset?
 
-        guard let asset = fetchResult.firstObject else {
+        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil)
+        asset = fetchResult.firstObject
+
+        // PhotosPickerItem.itemIdentifier may not match PHAsset.localIdentifier directly
+        // If direct fetch fails, try matching by stripping the /L0/001 suffix
+        if asset == nil {
+            let baseId = assetIdentifier.components(separatedBy: "/").first ?? assetIdentifier
+            let retryResult = PHAsset.fetchAssets(withLocalIdentifiers: [baseId], options: nil)
+            asset = retryResult.firstObject
+        }
+
+        guard let asset else {
             throw TrimrPixError.assetNotFound(assetIdentifier)
         }
 
