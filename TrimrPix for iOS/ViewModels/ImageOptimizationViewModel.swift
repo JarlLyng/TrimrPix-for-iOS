@@ -228,7 +228,6 @@ final class ImageOptimizationViewModel {
             withAnimation { currentStep = .result }
         }
 
-        await compressionTask?.value
     }
 
     func cancelCompression() {
