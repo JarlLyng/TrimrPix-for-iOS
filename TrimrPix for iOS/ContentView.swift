@@ -358,44 +358,52 @@ private struct ConfigureStep: View {
 
     private var metadataSection: some View {
         settingsSection(title: "Metadata") {
-            VStack(spacing: 0) {
-                ForEach(Array(MetadataStrippingOptions.labels.enumerated()), id: \.offset) { index, option in
-                    let binding = Binding<Bool>(
-                        get: { viewModel.metadataOptions[keyPath: option.keyPath] },
-                        set: { viewModel.metadataOptions[keyPath: option.keyPath] = $0 }
-                    )
-                    let isKept = binding.wrappedValue
+            VStack(spacing: DesignTokens.Spacing.sm) {
+                // Explanation
+                Text("Choose which metadata to keep. Disabled items will be permanently removed.")
+                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Toggle(isOn: binding) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(option.label)
-                                .font(.system(size: DesignTokens.Typography.Size.base))
-                                .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
-                            Text(isKept ? option.description : "Will be removed")
-                                .font(.system(size: DesignTokens.Typography.Size.xs))
-                                .foregroundStyle(isKept
-                                    ? DesignTokens.Common.Text.tertiary(scheme)
-                                    : DesignTokens.ColorToken.State.warning)
+                VStack(spacing: 0) {
+                    ForEach(Array(MetadataStrippingOptions.labels.enumerated()), id: \.offset) { index, option in
+                        let binding = Binding<Bool>(
+                            get: { viewModel.metadataOptions[keyPath: option.keyPath] },
+                            set: { viewModel.metadataOptions[keyPath: option.keyPath] = $0 }
+                        )
+                        let isKept = binding.wrappedValue
+
+                        Toggle(isOn: binding) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(option.label)
+                                    .font(.system(size: DesignTokens.Typography.Size.base))
+                                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                                Text(isKept ? option.description : "Will be removed")
+                                    .font(.system(size: DesignTokens.Typography.Size.xs))
+                                    .foregroundStyle(isKept
+                                        ? DesignTokens.Common.Text.tertiary(scheme)
+                                        : DesignTokens.ColorToken.State.warning)
+                            }
+                        }
+                        .tint(DesignTokens.Common.primary(scheme))
+                        .padding(.vertical, DesignTokens.Spacing.sm)
+
+                        if index < MetadataStrippingOptions.labels.count - 1 {
+                            Divider()
+                                .overlay(DesignTokens.Common.Border.subtle(scheme))
                         }
                     }
-                    .tint(DesignTokens.Common.primary(scheme))
-                    .padding(.vertical, DesignTokens.Spacing.sm)
-
-                    if index < MetadataStrippingOptions.labels.count - 1 {
-                        Divider()
-                            .overlay(DesignTokens.Common.Border.subtle(scheme))
-                    }
                 }
+                .padding(DesignTokens.Spacing.md)
+                .background(
+                    DesignTokens.Common.Background.card(scheme),
+                    in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                        .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
+                )
             }
-            .padding(DesignTokens.Spacing.md)
-            .background(
-                DesignTokens.Common.Background.card(scheme),
-                in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                    .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
-            )
         }
     }
 
