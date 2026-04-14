@@ -164,14 +164,7 @@ final class ImageOptimizationViewModel {
     // MARK: - Compression
 
     func compress() async {
-        // Ensure we have write access before starting
-        do {
-            try await ensurePhotosWriteAccess()
-        } catch {
-            errorMessage = (error as? TrimrPixError)?.errorDescription ?? "Photos access denied"
-            return
-        }
-
+        // Show compressing step immediately for instant feedback
         withAnimation { currentStep = .compressing }
         isCompressing = true
         wasCancelled = false
@@ -179,12 +172,27 @@ final class ImageOptimizationViewModel {
         currentImageIndex = 0
         errorMessage = nil
 
+        // Ensure we have write access
+        do {
+            try await ensurePhotosWriteAccess()
+        } catch {
+            // Permission denied — go to result with error on all images
+            let permError = error as? TrimrPixError ?? .photosAccessDenied
+            for i in images.indices { images[i].error = permError }
+            isCompressing = false
+            withAnimation { currentStep = .result }
+            return
+        }
+
         let service = compressionService
         let currentQuality = quality
         let currentFormat = format
         let currentMetadata = metadataOptions
 
         compressionTask = Task {
+            // Yield to let SwiftUI render the compressing step before heavy work
+            try? await Task.sleep(for: .milliseconds(50))
+
             for i in images.indices {
                 if Task.isCancelled { break }
 
@@ -238,27 +246,27 @@ final class ImageOptimizationViewModel {
     // MARK: - Photos Library
 
     private func replaceInPhotosLibrary(assetIdentifier: String, compressedData: Data) async throws {
-        // Try direct fetch first, then fall back to searching all assets
-        var asset: PHAsset?
+        // Fetch asset off the main actor to avoid blocking UI
+        let asset: PHAsset = try await Task.detached {
+            // Try direct fetch first
+            let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil)
+            if let found = fetchResult.firstObject { return found }
 
-        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [assetIdentifier], options: nil)
-        asset = fetchResult.firstObject
-
-        // PhotosPickerItem.itemIdentifier may not match PHAsset.localIdentifier directly
-        // If direct fetch fails, try matching by stripping the /L0/001 suffix
-        if asset == nil {
+            // PhotosPickerItem.itemIdentifier may include /L0/001 suffix — strip it
             let baseId = assetIdentifier.components(separatedBy: "/").first ?? assetIdentifier
             let retryResult = PHAsset.fetchAssets(withLocalIdentifiers: [baseId], options: nil)
-            asset = retryResult.firstObject
-        }
+            if let found = retryResult.firstObject { return found }
 
-        guard let asset else {
             throw TrimrPixError.assetNotFound(assetIdentifier)
-        }
+        }.value
+
+        // Allow iCloud downloads so we can edit photos not stored locally
+        let editOptions = PHContentEditingInputRequestOptions()
+        editOptions.isNetworkAccessAllowed = true
 
         // Request content editing input to modify asset in-place
         let input = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<PHContentEditingInput, Error>) in
-            asset.requestContentEditingInput(with: nil) { input, _ in
+            asset.requestContentEditingInput(with: editOptions) { input, _ in
                 if let input {
                     continuation.resume(returning: input)
                 } else {

@@ -42,6 +42,8 @@ struct TrimrPix_for_iOSApp: App {
             options.attachScreenshot = true
             options.attachViewHierarchy = true
             options.enableMetricKit = true
+            options.enableCaptureFailedRequests = true
+            options.enableAutoPerformanceTracing = true
         }
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
