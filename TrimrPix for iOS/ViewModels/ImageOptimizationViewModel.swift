@@ -273,7 +273,12 @@ final class ImageOptimizationViewModel {
 
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
-        try compressedData.write(to: output.renderedContentURL)
+
+        do {
+            try compressedData.write(to: output.renderedContentURL)
+        } catch {
+            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+        }
 
         // Mark the edit with an adjustment data identifier
         let adjustmentData = PHAdjustmentData(
@@ -284,9 +289,13 @@ final class ImageOptimizationViewModel {
         output.adjustmentData = adjustmentData
 
         // Apply the edit in-place — no create+delete, no duplicates
-        try await PHPhotoLibrary.shared().performChanges {
-            let request = PHAssetChangeRequest(for: asset)
-            request.contentEditingOutput = output
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetChangeRequest(for: asset)
+                request.contentEditingOutput = output
+            }
+        } catch {
+            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
     }
 
