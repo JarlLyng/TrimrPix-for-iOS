@@ -518,6 +518,16 @@ private struct ConfirmStep: View {
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.bottom, DesignTokens.Spacing.xxl)
         }
+        .alert("Photo access required", isPresented: $viewModel.showPhotosAccessAlert) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("TrimrPix needs full access to your photo library to compress and replace photos. Please enable access in Settings.")
+        }
     }
 
     private func summaryRow(label: String, value: String) -> some View {

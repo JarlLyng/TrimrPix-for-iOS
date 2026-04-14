@@ -54,6 +54,7 @@ final class ImageOptimizationViewModel {
 
     var estimatedTotalSavingsPercentage: Int = 0
     var errorMessage: String?
+    var showPhotosAccessAlert = false
 
     // MARK: - Dependencies
 
@@ -162,25 +163,22 @@ final class ImageOptimizationViewModel {
     // MARK: - Compression
 
     func compress() async {
-        // Show compressing step immediately for instant feedback
+        // Ensure we have write access before showing progress
+        do {
+            try await ensurePhotosWriteAccess()
+        } catch {
+            // Show alert prompting user to grant access in Settings
+            showPhotosAccessAlert = true
+            return
+        }
+
+        // Permission granted — show compressing step
         withAnimation { currentStep = .compressing }
         isCompressing = true
         wasCancelled = false
         compressionProgress = 0
         currentImageIndex = 0
         errorMessage = nil
-
-        // Ensure we have write access
-        do {
-            try await ensurePhotosWriteAccess()
-        } catch {
-            // Permission denied — go to result with error on all images
-            let permError = error as? TrimrPixError ?? .photosAccessDenied
-            for i in images.indices { images[i].error = permError }
-            isCompressing = false
-            withAnimation { currentStep = .result }
-            return
-        }
 
         let service = compressionService
         let currentQuality = quality
@@ -311,5 +309,6 @@ final class ImageOptimizationViewModel {
         currentImageIndex = 0
         estimatedTotalSavingsPercentage = 0
         errorMessage = nil
+        showPhotosAccessAlert = false
     }
 }
