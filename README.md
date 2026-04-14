@@ -2,6 +2,8 @@
 
 Compress photos from your iOS Photos library in-place. One job: make files smaller.
 
+**Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com) · **macOS version:** [trimrpix.iamjarl.com](https://trimrpix.iamjarl.com)
+
 ## Features
 
 - **Select & compress** — pick photos, choose quality and format, slide to confirm

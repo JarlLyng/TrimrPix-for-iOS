@@ -3,11 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrimrPix for iOS — Compress Photos on iPhone</title>
-    <meta name="description" content="TrimrPix for iOS compresses photos in your iPhone's photo library. Save space without losing quality. No cloud, no accounts, fully private.">
-    <meta property="og:title" content="TrimrPix for iOS — Compress Photos on iPhone">
-    <meta property="og:description" content="Save space on your iPhone by compressing photos in-place. No cloud, no accounts, fully private.">
+    <title>TrimrPix — Compress Photos & Free Up iPhone Space</title>
+    <meta name="description" content="Compress photos in your iPhone's photo library in-place. Reduce photo size up to 80% without visible quality loss. No cloud, no accounts, fully offline and private.">
+    <meta name="keywords" content="compress photos iOS, reduce photo size iPhone, free up space iPhone, photo compressor offline, HEIC compressor, strip EXIF data iOS, in-place photo compression">
+    <link rel="canonical" href="https://trimrpixforios.iamjarl.com/">
+    <!-- Open Graph -->
+    <meta property="og:title" content="TrimrPix — Compress Photos & Free Up iPhone Space">
+    <meta property="og:description" content="Reduce photo size on your iPhone by compressing photos in-place. No cloud, no accounts, fully private.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trimrpixforios.iamjarl.com/">
+    <meta property="og:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TrimrPix — Compress Photos & Free Up iPhone Space">
+    <meta name="twitter:description" content="Reduce photo size on your iPhone by compressing photos in-place. No cloud, no accounts, fully private.">
+    <meta name="twitter:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
+    <!-- Apple Smart App Banner (opdater app-id når appen er live) -->
+    <!-- <meta name="apple-itunes-app" content="app-id=YOUR_APP_ID"> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,50 +54,50 @@
         "mainEntity": [
             {
                 "@type": "Question",
-                "name": "What image formats does TrimrPix for iOS support?",
+                "name": "What image formats does TrimrPix support?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "TrimrPix for iOS supports JPEG, PNG, WebP, and HEIC. Choose the output format that works best for your needs."
+                    "text": "JPEG, PNG, WebP, and HEIC. You pick the output format per batch, so you can convert between formats while compressing."
                 }
             },
             {
                 "@type": "Question",
-                "name": "How much can I reduce file sizes?",
+                "name": "How much space can I save by compressing photos on iPhone?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "It depends on the image and quality level. Many photos can be reduced by 30-80% while keeping visual quality high."
+                    "text": "Typically 30-80%, depending on your photos and the quality level you choose. TrimrPix shows you the estimated savings before you commit."
                 }
             },
             {
                 "@type": "Question",
-                "name": "Does TrimrPix work offline?",
+                "name": "Does TrimrPix work without internet?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes. All compression happens on your iPhone. Your photos never leave your device."
+                    "text": "Yes, 100% offline. Every bit of compression happens on your iPhone. No servers, no cloud, no data leaves your device."
                 }
             },
             {
                 "@type": "Question",
-                "name": "What happens to my original photos?",
+                "name": "What happens to my original photos when I compress them?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Originals are replaced in-place with the compressed version. There are no duplicates. This action cannot be undone, so TrimrPix shows a clear confirmation before compressing."
+                    "text": "They're replaced in-place with the smaller version. No duplicates. This can't be undone, which is why TrimrPix shows a clear summary and requires a slide-to-confirm gesture before compressing."
                 }
             },
             {
                 "@type": "Question",
-                "name": "Does it work with iCloud Photos?",
+                "name": "Does TrimrPix work with iCloud Photos?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes. TrimrPix automatically downloads iCloud photos when needed, compresses them, and saves the result back to your library."
+                    "text": "Yes. If a photo is stored in iCloud, TrimrPix downloads it automatically, compresses it, and saves the result back."
                 }
             },
             {
                 "@type": "Question",
-                "name": "What iOS version do I need?",
+                "name": "Can I control what metadata is kept or removed from photos?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "TrimrPix requires iOS 26.2 or later."
+                    "text": "Yes. You choose exactly which metadata categories to keep: date/time, GPS location, camera settings, copyright info, and Apple data."
                 }
             }
         ]
@@ -406,6 +418,63 @@
             .screenshot-item {
                 width: 180px;
             }
+        }
+
+        /* ── Video ── */
+        .video-section {
+            padding: 0 0 80px;
+        }
+
+        .video-section .container {
+            text-align: center;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            aspect-ratio: 16 / 9;
+            background: var(--bg-alt);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .video-placeholder {
+            display: none; /* Skjult indtil video er klar */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .video-placeholder .play-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
         }
 
         /* ── Features ── */
@@ -811,7 +880,7 @@
     <div class="container">
         <div class="hero-badge">Also available on Mac &mdash; <a href="https://trimrpix.iamjarl.com/">TrimrPix for macOS</a></div>
         <h1>Compress photos.<br>Keep the memories.</h1>
-        <p>Shrink photos in your iPhone's library without visible quality loss. Select, compress, and free up space &mdash; fast, private, and fully offline.</p>
+        <p>Your iPhone is full, but your photos matter. TrimrPix shrinks them in-place &mdash; right inside your Photos library. No cloud uploads, no duplicates, no accounts. Just smaller files and more space.</p>
         <a href="#" class="cta-button">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             Download on the App Store
@@ -860,11 +929,21 @@
     </div>
 </section>
 
+<!-- Video sektion: Fjern kommentaren og indsæt YouTube embed-URL når video er klar
+<section class="video-section">
+    <div class="container">
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" title="TrimrPix for iOS — How it works" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
+</section>
+-->
+
 <section class="features" id="features">
     <div class="container">
         <div class="section-label">Features</div>
         <h2 class="section-title">Everything you need. Nothing you don't.</h2>
-        <p class="section-subtitle">One job: make your photos smaller. TrimrPix stays out of the way and gets it done.</p>
+        <p class="section-subtitle">I built TrimrPix to do one thing well: make your photo files smaller. No bloat, no upsells, no nonsense.</p>
         <div class="feature-grid">
             <div class="feature-card">
                 <div class="feature-icon">📐</div>
@@ -904,7 +983,7 @@
     <div class="container">
         <div class="section-label">How it works</div>
         <h2 class="section-title">Three steps. That's it.</h2>
-        <p class="section-subtitle">No setup, no accounts, no learning curve.</p>
+        <p class="section-subtitle">No sign-up, no tutorial needed. Open the app and you're compressing in under a minute.</p>
         <div class="steps">
             <div class="step">
                 <div class="step-number">1</div>
@@ -928,8 +1007,8 @@
 <section class="cta-section">
     <div class="container">
         <div class="cta-card">
-            <h2>Free up space on your iPhone</h2>
-            <p>Download TrimrPix and start compressing photos in seconds. No account required.</p>
+            <h2>Stop deleting memories to free up space</h2>
+            <p>Compress your photos instead. TrimrPix takes seconds and you keep every single photo.</p>
             <a href="#" class="cta-button">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 Download on the App Store
@@ -945,27 +1024,27 @@
         <div class="faq-grid">
             <div class="faq-item">
                 <h3>What image formats does TrimrPix support?</h3>
-                <p>TrimrPix for iOS supports JPEG, PNG, WebP, and HEIC. Choose the output format that works best for your needs.</p>
+                <p>JPEG, PNG, WebP, and HEIC. You pick the output format per batch, so you can convert between formats while compressing. Most people stick with JPEG or HEIC for the best balance of quality and size.</p>
             </div>
             <div class="faq-item">
-                <h3>How much can I reduce file sizes?</h3>
-                <p>It depends on the image and quality level. Many photos can be reduced by 30&ndash;80% while keeping visual quality high.</p>
+                <h3>How much space can I actually save?</h3>
+                <p>Typically 30&ndash;80%, depending on your photos and the quality level you choose. TrimrPix shows you the estimated savings before you commit, so you always know what you're getting.</p>
             </div>
             <div class="faq-item">
-                <h3>Does TrimrPix work offline?</h3>
-                <p>Yes. All compression happens on your iPhone. Your photos never leave your device.</p>
+                <h3>Does TrimrPix work without internet?</h3>
+                <p>Yes, 100% offline. Every bit of compression happens on your iPhone. No servers, no cloud, no data leaves your device. That's the whole point &mdash; I built it this way because your photos are nobody else's business.</p>
             </div>
             <div class="faq-item">
                 <h3>What happens to my original photos?</h3>
-                <p>Originals are replaced in-place with the compressed version. There are no duplicates. This action cannot be undone, so TrimrPix shows a clear confirmation before compressing.</p>
+                <p>They're replaced in-place with the smaller version. No duplicates clogging your library. This can't be undone, which is why TrimrPix shows a clear summary and requires a slide-to-confirm gesture before compressing.</p>
             </div>
             <div class="faq-item">
                 <h3>Does it work with iCloud Photos?</h3>
-                <p>Yes. TrimrPix automatically downloads iCloud photos when needed, compresses them, and saves the result back to your library.</p>
+                <p>Yes. If a photo is stored in iCloud, TrimrPix downloads it automatically, compresses it, and saves the result back. You don't have to do anything extra.</p>
             </div>
             <div class="faq-item">
-                <h3>What iOS version do I need?</h3>
-                <p>TrimrPix requires iOS 26.2 or later.</p>
+                <h3>Can I control what metadata is kept or removed?</h3>
+                <p>Yes. You choose exactly which metadata categories to keep: date/time, GPS location, camera settings, copyright info, and Apple data. Want to strip GPS from every photo? Just toggle it off.</p>
             </div>
         </div>
     </div>
