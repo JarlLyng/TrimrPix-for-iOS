@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import StoreKit
 import IAMJARLDesignTokens
 
 struct ContentView: View {
@@ -592,6 +593,7 @@ private struct CompressingStep: View {
 private struct ResultStep: View {
     @Bindable var viewModel: ImageOptimizationViewModel
     @Environment(\.colorScheme) private var scheme
+    @Environment(\.requestReview) private var requestReview
 
     private var successCount: Int {
         viewModel.images.filter(\.isCompressed).count
@@ -708,6 +710,12 @@ private struct ResultStep: View {
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.bottom, DesignTokens.Spacing.xxl)
+        }
+        .onAppear {
+            // Ask for a review after a fully successful compression
+            if successCount > 0 && !hasErrors && !wasCancelled {
+                requestReview()
+            }
         }
     }
 
