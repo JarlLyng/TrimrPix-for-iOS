@@ -1,88 +1,75 @@
 # CLAUDE.md — TrimrPix for iOS
 
-Project context for developers and AI assistants working on this codebase.
+Quick-start context for developers and AI assistants. Detailed specs in `docs/`.
 
 ## What is TrimrPix?
 
-TrimrPix for iOS compresses photos from the user's Photos library in-place. One job: make files smaller. No cloud, no accounts, no internet required for core functionality.
+iOS app that compresses photos from the user's Photos library in-place. One job: make files smaller. No cloud, no accounts, no internet required.
 
 ## Tech stack
 
-- **Swift** / **iOS 26.2+** / **SwiftUI**
-- **PhotosUI** — `PhotosPicker` for image selection
-- **Photos** — `PHPhotoLibrary` + `PHContentEditingOutput` for in-place replacement
+- **Swift / iOS 26.2+ / SwiftUI** — UI and app lifecycle
+- **PhotosUI** — `PhotosPicker` for image selection (works without permission)
+- **Photos** — `PHContentEditingOutput` for in-place replacement (requires `.authorized` or `.limited`)
 - **ImageIO / Core Graphics** — compression, metadata processing
-- **Sentry** — crash and performance monitoring (SPM, static framework)
-- **IAMJARLDesignTokens** — design system (SPM, from github.com/JarlLyng/iamjarl-design)
+- **StoreKit** — `requestReview()` after successful compression
+- **Sentry** — crash/performance monitoring (SPM, static framework)
+- **IAMJARLDesignTokens** — design tokens (SPM, github.com/JarlLyng/iamjarl-design)
 
-## Architecture
+## Architecture at a glance
 
-MVVM with step-based navigation. Single ViewModel drives the entire flow.
+MVVM, single ViewModel, step-based navigation. Details: [docs/architecture.md](docs/architecture.md).
 
 ```
-Views (SwiftUI)  →  ImageOptimizationViewModel (@Observable, @MainActor)  →  CompressionService (nonisolated, Sendable)  →  Models (Sendable value types)
+Views (SwiftUI)  →  ImageOptimizationViewModel (@Observable, @MainActor)  →  CompressionService (nonisolated, Sendable)
 ```
 
-### App flow (AppStep enum)
+**App flow**: `selectPhotos` → `configure` → `confirm` → `compressing` → `result`
 
-`selectPhotos` → `configure` → `confirm` → `compressing` → `result`
-
-### Key files
+## Key files
 
 | File | Purpose |
 |------|---------|
 | `TrimrPix_for_iOSApp.swift` | Entry point, Sentry init |
-| `ContentView.swift` | All 5 step views (SelectPhotos, Configure, Confirm, Compressing, Result) |
-| `ViewModels/ImageOptimizationViewModel.swift` | All state, photo loading, compression orchestration, Photos library replacement |
-| `Services/CompressionService.swift` | JPEG/PNG/WebP/HEIC compression via ImageIO, metadata stripping |
+| `ContentView.swift` | All 5 step views + Photos access alert |
+| `ViewModels/ImageOptimizationViewModel.swift` | All state, compression orchestration, Photos library replacement |
+| `Services/CompressionService.swift` | JPEG/PNG/WebP/HEIC compression via ImageIO |
 | `Services/ColorQuantizer.swift` | Median-cut color quantization for lossy PNG |
 | `Models/MetadataStrippingOptions.swift` | Granular metadata control (keep/strip per category) |
-| `Models/ImageItem.swift` | Per-image state (original data, compressed size, thumbnail, errors) |
-| `Models/CompressionQuality.swift` | Same (0.95) / Good (0.80) / Smaller (0.60) |
-| `Models/OutputFormat.swift` | JPEG, PNG, WebP, HEIC |
-| `Models/TrimrPixError.swift` | All error types |
+| `Models/ImageItem.swift` | Per-image state |
 | `Views/SlideToConfirmView.swift` | Drag gesture confirmation (85% threshold) |
+
+## Photos permission model
+
+`PhotosPicker` works **without** any permission — Apple handles it out-of-process. But **writing** back to the library requires `.readWrite` authorization (`.authorized` or `.limited` both work). If denied, the app shows an alert with an "Open Settings" button. See `ensurePhotosWriteAccess()` in the ViewModel.
 
 ## Concurrency model
 
-- ViewModel is `@MainActor` (project uses `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`)
-- `CompressionService` is `nonisolated` + `Sendable` — safe to call from detached tasks
-- Compression runs in `Task.detached(priority: .userInitiated)` to keep UI responsive
-- `compress()` spawns a fire-and-forget `Task` stored in `compressionTask` (supports cancellation)
-- `replaceInPhotosLibrary` uses `withCheckedThrowingContinuation` to bridge callback-based `requestContentEditingInput`
+- Project uses `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`
+- `CompressionService` is `nonisolated` + `Sendable`
+- Heavy compression runs in `Task.detached(priority: .userInitiated)`
+- `compress()` spawns a fire-and-forget `Task` (supports cancellation)
+- `PHAsset.fetchAssets` runs in a detached task to avoid blocking UI
+- `requestContentEditingInput` is bridged via `withCheckedThrowingContinuation`
 
-## Secrets
+## Setup
 
-`Secrets.swift` is gitignored. Copy from `Secrets.swift.template` and fill in:
-- `sentryDSN` — Sentry DSN string
-- `sentryAuthToken` — for dSYM upload build phase
-- `sentryOrg` — Sentry organization slug
-- `sentryProject` — Sentry project slug
-
-Sentry auth token is also stored in `Sentry.xcconfig` (gitignored) as `SENTRY_AUTH_TOKEN` for the build phase script.
+1. Copy `Secrets.swift.template` → `Secrets.swift`, fill in Sentry values
+2. Create `Sentry.xcconfig` with `SENTRY_AUTH_TOKEN = <token>` (for dSYM upload build phase)
+3. File → Packages → Resolve Package Versions in Xcode
 
 ## Build notes
 
-- **dSYM upload**: Release builds run a "Upload dSYMs to Sentry" build phase using sentry-cli
-- **Sandbox disabled on Release**: `ENABLE_USER_SCRIPT_SANDBOXING = NO` on Release config for sentry-cli network access
-- **"Upload Symbols Failed" warning**: Expected — Sentry's static framework via SPM doesn't include dSYMs in the archive. Harmless; sentry-cli handles your app's dSYMs separately
-- **Package update**: After pulling, run File → Packages → Resolve Package Versions in Xcode
-
-## Design system
-
-Uses `IAMJARLDesignTokens` from the `iamjarl-design` SPM package. All colors are mode-aware (light/dark) via `DesignTokens.Common.*` with a `colorScheme` parameter. Typography, spacing, and radius tokens are also from this package.
-
-## Privacy
-
-- `NSPhotoLibraryUsageDescription` set in build settings
-- `PrivacyInfo.xcprivacy` declares crash data + performance data collection (Sentry)
-- No tracking, no third-party analytics beyond Sentry
-- Photos are processed entirely on-device
+- **"Upload Symbols Failed"** warning in Xcode is expected and harmless (Sentry static framework via SPM)
+- **Sandbox disabled on Release** for sentry-cli network access
+- **sentry-cli** must be installed (`brew install getsentry/tools/sentry-cli`)
 
 ## Common tasks
 
-**Add a new metadata category**: Add a property to `MetadataStrippingOptions`, update `processedProperties(from:)`, add entry to `labels` array.
+**Add a metadata category**: Add property to `MetadataStrippingOptions`, update `processedProperties(from:)`, add entry to `labels` array.
 
-**Change compression behavior**: Edit `CompressionService.compress()`. Format-specific logic is in `compressWithDestination` (JPEG/WebP/HEIC) and `compressPNG`.
+**Change compression behavior**: Edit `CompressionService.compress()`. Format-specific logic in `compressWithDestination` (JPEG/WebP/HEIC) and `compressPNG`.
 
-**Add a new step**: Add case to `AppStep` enum, add view in `ContentView.swift`, update step indicator if needed.
+**Add a new step**: Add case to `AppStep`, add view in `ContentView.swift`, update step indicator.
+
+**Change error messages**: Edit `TrimrPixError` — all user-facing error strings are there.
