@@ -146,14 +146,12 @@ final class ImageOptimizationViewModel {
     private func ensurePhotosWriteAccess() async throws {
         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         switch status {
-        case .authorized:
+        case .authorized, .limited:
+            // Both full and limited access allow editing user-selected photos
             return
-        case .limited:
-            // Limited access won't let us modify arbitrary assets
-            throw TrimrPixError.photosAccessRestricted
         case .notDetermined:
             let newStatus = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
-            if newStatus != .authorized {
+            if newStatus != .authorized && newStatus != .limited {
                 throw TrimrPixError.photosAccessDenied
             }
         default:
