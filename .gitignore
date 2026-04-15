@@ -3,6 +3,9 @@ Secrets.xcconfig
 Sentry.xcconfig
 **/Secrets.swift
 
+# Claude Code (local settings may contain tokens)
+.claude/settings.local.json
+
 # Xcode
 *.xcuserstate
 xcuserdata/
