@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trimrpixforios.iamjarl.com/sitemap.xml

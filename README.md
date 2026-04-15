@@ -39,6 +39,10 @@ Swift · SwiftUI · PhotosUI · Photos · ImageIO · StoreKit · [Sentry](https:
 - [`docs/spec.md`](docs/spec.md) — product specification
 - [`docs/architecture.md`](docs/architecture.md) — technical architecture
 
+## Roadmap
+
+All planned work is tracked as [GitHub Issues](../../issues). Check `gh issue list` for current tasks.
+
 ## License
 
 Private — all rights reserved.
