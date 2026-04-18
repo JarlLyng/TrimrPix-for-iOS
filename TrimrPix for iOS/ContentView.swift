@@ -15,6 +15,11 @@ struct ContentView: View {
     @State private var viewModel = ImageOptimizationViewModel()
     @Environment(\.colorScheme) private var scheme
 
+    /// Max content width. On iPad and wide iPhone landscape, content is
+    /// centered at this width so the single-column compressor UI stays
+    /// readable instead of stretching across the full screen.
+    private let maxContentWidth: CGFloat = 640
+
     var body: some View {
         ZStack {
             DesignTokens.Common.Background.app(scheme)
@@ -38,6 +43,8 @@ struct ContentView: View {
                     ResultStep(viewModel: viewModel)
                 }
             }
+            .frame(maxWidth: maxContentWidth)
+            .frame(maxWidth: .infinity) // center in parent on wider screens
         }
         .onChange(of: viewModel.selectedPhotos) {
             Task { await viewModel.loadSelectedPhotos() }

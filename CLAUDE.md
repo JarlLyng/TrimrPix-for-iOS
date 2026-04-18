@@ -31,12 +31,12 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - No background processing while app is closed
 - No before/after preview comparison
 - No Apple Watch support
-- No iPad-optimized layout (yet — see GitHub Issues)
 - Not open source — repo is private
 
 ## Requirements
 
 - **iOS 26.2+** (NOT iOS 15, 16, 17, or 18 — specifically 26.2+)
+- Runs on **iPhone and iPad** — universal app, content is centered at max 640pt width on wider screens
 - Photos library access: full or limited (write access required for in-place replacement)
 
 ## Tech stack
