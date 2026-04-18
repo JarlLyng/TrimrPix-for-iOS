@@ -124,6 +124,7 @@ private struct SelectPhotosStep: View {
             Image(systemName: "photo.on.rectangle.angled")
                 .dynamicFont(size: 72, weight: .thin, relativeTo: .largeTitle)
                 .foregroundStyle(DesignTokens.Common.primary(scheme))
+                .accessibilityHidden(true)
 
             // Title
             VStack(spacing: DesignTokens.Spacing.sm) {
@@ -161,6 +162,7 @@ private struct SelectPhotosStep: View {
                 HStack(spacing: DesignTokens.Spacing.sm) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
+                        .accessibilityHidden(true)
                     Text(viewModel.images.count == 1 ? "1 photo selected" : "\(viewModel.images.count) photos selected")
                         .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                         .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
@@ -445,6 +447,7 @@ private struct ConfigureStep: View {
                 Image(systemName: "arrow.down.circle.fill")
                     .dynamicFont(size: DesignTokens.Typography.Size.xl, relativeTo: .title2)
                     .foregroundStyle(DesignTokens.ColorToken.State.success)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Estimated savings")
@@ -493,6 +496,7 @@ private struct ConfirmStep: View {
             Image(systemName: "info.circle.fill")
                 .dynamicFont(size: 56, relativeTo: .largeTitle)
                 .foregroundStyle(DesignTokens.Common.primary(scheme))
+                .accessibilityHidden(true)
 
             // Title and description
             VStack(spacing: DesignTokens.Spacing.md) {
@@ -664,6 +668,7 @@ private struct ResultStep: View {
             Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors || wasCancelled ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
                 .dynamicFont(size: 72, relativeTo: .largeTitle)
                 .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors || wasCancelled ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
+                .accessibilityHidden(true)
 
             // Title
             Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
@@ -710,6 +715,7 @@ private struct ResultStep: View {
                             Image(systemName: "exclamationmark.circle.fill")
                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
                                 .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                .accessibilityHidden(true)
 
                             Text(item.error?.localizedDescription ?? "Unknown error")
                                 .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)

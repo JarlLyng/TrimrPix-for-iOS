@@ -60,20 +60,7 @@ struct SlideToConfirmView: View {
                             .onEnded { _ in
                                 guard !isConfirmed else { return }
                                 if offset >= maxOffset * 0.85 {
-                                    // Confirmed
-                                    withAnimation(AccessibilityAnimation.aware(.spring(duration: 0.3))) {
-                                        offset = maxOffset
-                                        isConfirmed = true
-                                    }
-
-                                    // Haptic
-                                    let generator = UINotificationFeedbackGenerator()
-                                    generator.notificationOccurred(.success)
-
-                                    // Delay slightly before triggering action
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                        onConfirmed()
-                                    }
+                                    confirm(snapTo: maxOffset)
                                 } else {
                                     // Snap back
                                     withAnimation(AccessibilityAnimation.aware(.spring(duration: 0.4, bounce: 0.3))) {
@@ -84,7 +71,34 @@ struct SlideToConfirmView: View {
                     )
             }
             .frame(height: trackHeight)
+            // VoiceOver: users cannot perform the drag gesture, so expose the
+            // whole control as a single activatable button. Double-tap triggers
+            // the same confirm flow as sliding to the end.
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Compress")
+            .accessibilityHint("Double tap to start compressing. This replaces original photos and cannot be undone.")
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction {
+                guard !isConfirmed else { return }
+                confirm(snapTo: maxOffset)
+            }
         }
         .frame(height: trackHeight)
+    }
+
+    private func confirm(snapTo maxOffset: CGFloat) {
+        withAnimation(AccessibilityAnimation.aware(.spring(duration: 0.3))) {
+            offset = maxOffset
+            isConfirmed = true
+        }
+
+        // Haptic
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+
+        // Delay slightly before triggering action so the animation settles
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            onConfirmed()
+        }
     }
 }
