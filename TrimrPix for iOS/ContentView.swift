@@ -57,7 +57,7 @@ struct ContentView: View {
 
                 if viewModel.currentStep != .selectPhotos && viewModel.currentStep != .compressing {
                     Button("Start over") {
-                        withAnimation { viewModel.reset() }
+                        withAnimation(AccessibilityAnimation.default) { viewModel.reset() }
                     }
                     .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
@@ -189,7 +189,7 @@ private struct SelectPhotosStep: View {
 
                 if viewModel.hasImages {
                     Button {
-                        withAnimation { viewModel.currentStep = .configure }
+                        withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .configure }
                         Task { await viewModel.estimateSavings() }
                     } label: {
                         HStack(spacing: DesignTokens.Spacing.sm) {
@@ -266,7 +266,7 @@ private struct ConfigureStep: View {
                     .overlay(DesignTokens.Common.Border.subtle(scheme))
 
                 Button {
-                    withAnimation { viewModel.currentStep = .confirm }
+                    withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .confirm }
                 } label: {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: "arrow.right")
@@ -510,7 +510,7 @@ private struct ConfirmStep: View {
                 }
 
                 Button("Cancel") {
-                    withAnimation { viewModel.currentStep = .configure }
+                    withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .configure }
                 }
                 .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                 .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
@@ -564,7 +564,7 @@ private struct CompressingStep: View {
                     .stroke(DesignTokens.Common.primary(scheme), style: StrokeStyle(lineWidth: 4, lineCap: .round))
                     .frame(width: 120, height: 120)
                     .rotationEffect(.degrees(-90))
-                    .animation(.linear, value: viewModel.compressionProgress)
+                    .animation(AccessibilityAnimation.aware(.linear), value: viewModel.compressionProgress)
 
                 VStack(spacing: 2) {
                     Text("\(Int(viewModel.compressionProgress * 100))%")
@@ -709,7 +709,7 @@ private struct ResultStep: View {
 
             // Done button
             Button {
-                withAnimation { viewModel.reset() }
+                withAnimation(AccessibilityAnimation.default) { viewModel.reset() }
             } label: {
                 Text("Compress more photos")
                     .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
