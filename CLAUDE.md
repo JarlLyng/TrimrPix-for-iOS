@@ -110,6 +110,7 @@ Before starting new work, check open issues: `gh issue list`
 - ✅ #2 Reduce Motion support
 - ✅ #3 Differentiate without color alone (step indicator)
 - ✅ #4 iPad support (640pt max-width centered layout)
+- ✅ #15 Competitor analysis → `docs/COMPETITOR_ANALYSIS.md`
 
 ### Open issues (as of April 2026)
 
@@ -131,10 +132,13 @@ Before starting new work, check open issues: `gh issue list`
 - #12 Product Hunt launch
 - #13 Community outreach: Reddit, Hacker News, Indie Hackers
 - #14 Contact iOS blogs for reviews
-- #15 Run competitor analysis
 - #16 App Store localization (DA, DE, FR, JA)
 - #19 Update App Store Connect accessibility declarations at launch
 - #20 Prepare App Store screenshots (iPhone + iPad)
+
+**Future features (v1.1+, surfaced by competitor analysis):**
+- #22 Target-size mode (compress to fit a specific file size)
+- #23 Share Extension (compress from Photos share sheet)
 
 ## Marketing site
 
@@ -148,6 +152,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 | `docs/privacy.html` | Dedicated privacy policy — data collection (Sentry only), on-device processing, children's privacy |
 | `docs/CNAME` | Custom domain: `trimrpixforios.iamjarl.com` |
 | `docs/SEO_STRATEGY.md` | SEO & GEO strategy with current implementation status and action plan |
+| `docs/COMPETITOR_ANALYSIS.md` | Top 5 competitor breakdown, differentiators, positioning recommendations |
 | `docs/screenshot-{1-4}-*.png` | 4 app screenshots used on website |
 
 ### SEO already implemented
