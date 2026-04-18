@@ -1,6 +1,19 @@
 # SEO & GEO Strategi for TrimrPix for iOS
 
-Sidst opdateret: 15. april 2026
+Sidst opdateret: 19. april 2026
+
+---
+
+## Positioneringspivot (2026-04-19)
+
+Baseret på `docs/COMPETITOR_ANALYSIS.md` er positioneringen skiftet fra generisk "compress photos" til **in-place replacement som headline-differentiator**. Kategorilederen (Compress Photos & Pictures, 22K reviews) har ikke in-place, og reviewere tigger om det. Vi vil etablere kategorien før de kopierer feature'en.
+
+**Ændringer gennemført:**
+- App Store subtitle: "Compress Photos on iPhone" → "Compress Photos In Place" (24 tegn)
+- Website hero h1: "Compress photos. Keep the memories." → "Compress photos. No duplicates."
+- Meta keywords: tilføjet "in-place photo compressor", "no duplicates", "replace originals", "photo compressor no ads"
+- Feature card "In-place replacement" flyttet fra position 5/6 til position 1/6
+- Highlights-pillen "Reduce size up to 80%" erstattet med "Replaces originals"
 
 ---
 

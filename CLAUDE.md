@@ -168,8 +168,8 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 - All App Store download links are `href="#"` — update with real URL when live
 
 ### App Store Connect (prepared)
-- **Subtitle:** "Compress Photos on iPhone"
-- **Keywords:** `compress photos,reduce photo size,free up space,photo compressor,shrink photos,strip metadata,HEIC compress,photo optimizer,save storage,offline photos`
+- **Subtitle:** "Compress Photos In Place" — leads with differentiator (24 chars, under 30 limit). See `docs/COMPETITOR_ANALYSIS.md` for rationale.
+- **Keywords:** `in-place photo compressor,no duplicates,compress photos,reduce photo size,free up space,photo compressor no ads,HEIC compress,strip metadata,WebP compressor,replace originals`
 - **Primary Category:** Photo & Video
 - **Secondary Category:** Utilities
 - **Copyright:** 2026 IAMJARL
