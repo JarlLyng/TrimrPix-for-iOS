@@ -36,7 +36,7 @@ struct SlideToConfirmView: View {
 
                 // Label
                 Text("Slide to compress")
-                    .font(.system(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                     .frame(maxWidth: .infinity)
                     .opacity(1 - progress)
@@ -47,7 +47,7 @@ struct SlideToConfirmView: View {
                     .frame(width: thumbSize, height: thumbSize)
                     .overlay(
                         Image(systemName: isConfirmed ? "checkmark" : "arrow.right")
-                            .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
+                            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
                             .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
                     )
                     .offset(x: trackPadding + offset)

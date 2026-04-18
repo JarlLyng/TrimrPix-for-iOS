@@ -50,7 +50,7 @@ struct ContentView: View {
         VStack(spacing: DesignTokens.Spacing.sm) {
             HStack {
                 Text("TrimrPix")
-                    .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
                 Spacer()
@@ -59,7 +59,7 @@ struct ContentView: View {
                     Button("Start over") {
                         withAnimation { viewModel.reset() }
                     }
-                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                 }
             }
@@ -97,17 +97,17 @@ private struct SelectPhotosStep: View {
 
             // Icon
             Image(systemName: "photo.on.rectangle.angled")
-                .font(.system(size: 72, weight: .thin))
+                .dynamicFont(size: 72, weight: .thin, relativeTo: .largeTitle)
                 .foregroundStyle(DesignTokens.Common.primary(scheme))
 
             // Title
             VStack(spacing: DesignTokens.Spacing.sm) {
                 Text("Select photos")
-                    .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
                 Text("Choose the photos you want to compress from your library")
-                    .font(.system(size: DesignTokens.Typography.Size.base))
+                    .dynamicFont(size: DesignTokens.Typography.Size.base)
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, DesignTokens.Spacing.xxl)
@@ -119,7 +119,7 @@ private struct SelectPhotosStep: View {
                     ProgressView()
                         .controlSize(.small)
                     Text("Loading photos...")
-                        .font(.system(size: DesignTokens.Typography.Size.base))
+                        .dynamicFont(size: DesignTokens.Typography.Size.base)
                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                 }
                 .padding(.vertical, DesignTokens.Spacing.md)
@@ -137,7 +137,7 @@ private struct SelectPhotosStep: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                     Text(viewModel.images.count == 1 ? "1 photo selected" : "\(viewModel.images.count) photos selected")
-                        .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
+                        .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                         .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 }
                 .padding(.vertical, DesignTokens.Spacing.md)
@@ -164,9 +164,9 @@ private struct SelectPhotosStep: View {
                 ) {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: hasSelected ? "arrow.triangle.2.circlepath" : "plus")
-                            .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
+                            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                         Text(hasSelected ? "Choose different photos" : "Choose from Photos")
-                            .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
+                            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                     }
                     .foregroundStyle(hasSelected
                                      ? DesignTokens.Common.primary(scheme)
@@ -194,7 +194,7 @@ private struct SelectPhotosStep: View {
                     } label: {
                         HStack(spacing: DesignTokens.Spacing.sm) {
                             Text("Next")
-                                .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
+                                .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
                             Image(systemName: "arrow.right")
                         }
                         .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
@@ -234,7 +234,7 @@ private struct ConfigureStep: View {
                             .pickerStyle(.segmented)
 
                             Text(viewModel.quality.description)
-                                .font(.system(size: DesignTokens.Typography.Size.sm))
+                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                                 .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -271,7 +271,7 @@ private struct ConfigureStep: View {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: "arrow.right")
                         Text("Next")
-                            .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
+                            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
                     }
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
                     .frame(maxWidth: .infinity)
@@ -326,10 +326,10 @@ private struct ConfigureStep: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(viewModel.images.count == 1 ? "1 photo" : "\(viewModel.images.count) photos")
-                    .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 Text(viewModel.totalOriginalSize.formattedSize)
-                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
             }
 
@@ -349,7 +349,7 @@ private struct ConfigureStep: View {
     private func settingsSection(title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             Text(title)
-                .font(.system(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold))
+                .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
                 .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                 .textCase(.uppercase)
 
@@ -362,7 +362,7 @@ private struct ConfigureStep: View {
             VStack(spacing: DesignTokens.Spacing.sm) {
                 // Explanation
                 Text("Choose which metadata to keep. Disabled items will be permanently removed.")
-                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -377,10 +377,10 @@ private struct ConfigureStep: View {
                         Toggle(isOn: binding) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(option.label)
-                                    .font(.system(size: DesignTokens.Typography.Size.base))
+                                    .dynamicFont(size: DesignTokens.Typography.Size.base)
                                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                                 Text(isKept ? option.description : "Will be removed")
-                                    .font(.system(size: DesignTokens.Typography.Size.xs))
+                                    .dynamicFont(size: DesignTokens.Typography.Size.xs, relativeTo: .caption)
                                     .foregroundStyle(isKept
                                         ? DesignTokens.Common.Text.tertiary(scheme)
                                         : DesignTokens.ColorToken.State.warning)
@@ -414,19 +414,19 @@ private struct ConfigureStep: View {
                 ProgressView()
                     .controlSize(.small)
                 Text("Estimating...")
-                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
             } else {
                 Image(systemName: "arrow.down.circle.fill")
-                    .font(.system(size: DesignTokens.Typography.Size.xl))
+                    .dynamicFont(size: DesignTokens.Typography.Size.xl, relativeTo: .title2)
                     .foregroundStyle(DesignTokens.ColorToken.State.success)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Estimated savings")
-                        .font(.system(size: DesignTokens.Typography.Size.sm))
+                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
-                        .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                        .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                 }
 
@@ -466,17 +466,17 @@ private struct ConfirmStep: View {
 
             // Icon — informational, not alarming
             Image(systemName: "info.circle.fill")
-                .font(.system(size: 56))
+                .dynamicFont(size: 56, relativeTo: .largeTitle)
                 .foregroundStyle(DesignTokens.Common.primary(scheme))
 
             // Title and description
             VStack(spacing: DesignTokens.Spacing.md) {
                 Text("Ready to compress")
-                    .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
                 Text("The original photos will be replaced with compressed versions. This cannot be undone.")
-                    .font(.system(size: DesignTokens.Typography.Size.base))
+                    .dynamicFont(size: DesignTokens.Typography.Size.base)
                     .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, DesignTokens.Spacing.lg)
@@ -512,7 +512,7 @@ private struct ConfirmStep: View {
                 Button("Cancel") {
                     withAnimation { viewModel.currentStep = .configure }
                 }
-                .font(.system(size: DesignTokens.Typography.Size.sm))
+                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                 .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
@@ -533,11 +533,11 @@ private struct ConfirmStep: View {
     private func summaryRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: DesignTokens.Typography.Size.sm))
+                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                 .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
             Spacer()
             Text(value)
-                .font(.system(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold))
+                .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
                 .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
         }
     }
@@ -568,18 +568,18 @@ private struct CompressingStep: View {
 
                 VStack(spacing: 2) {
                     Text("\(Int(viewModel.compressionProgress * 100))%")
-                        .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                        .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                         .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 }
             }
 
             VStack(spacing: DesignTokens.Spacing.sm) {
                 Text("Compressing...")
-                    .font(.system(size: DesignTokens.Typography.Size.lg, weight: DesignTokens.Typography.Weight.semibold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.lg, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .title3)
                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
                 Text("Photo \(viewModel.currentImageIndex + 1) of \(viewModel.images.count)")
-                    .font(.system(size: DesignTokens.Typography.Size.base))
+                    .dynamicFont(size: DesignTokens.Typography.Size.base)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
             }
 
@@ -590,7 +590,7 @@ private struct CompressingStep: View {
                 viewModel.cancelCompression()
             } label: {
                 Text("Cancel")
-                    .font(.system(size: DesignTokens.Typography.Size.sm))
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
             }
             .padding(.bottom, DesignTokens.Spacing.xxl)
@@ -637,12 +637,12 @@ private struct ResultStep: View {
 
             // Icon
             Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors || wasCancelled ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
-                .font(.system(size: 72))
+                .dynamicFont(size: 72, relativeTo: .largeTitle)
                 .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors || wasCancelled ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
 
             // Title
             Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
-                .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
+                .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                 .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
             // Stats
@@ -684,10 +684,10 @@ private struct ResultStep: View {
                         HStack(spacing: DesignTokens.Spacing.sm) {
                             Image(systemName: "exclamationmark.circle.fill")
                                 .foregroundStyle(DesignTokens.ColorToken.State.error)
-                                .font(.system(size: DesignTokens.Typography.Size.sm))
+                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
 
                             Text(item.error?.localizedDescription ?? "Unknown error")
-                                .font(.system(size: DesignTokens.Typography.Size.sm))
+                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                                 .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                         }
                     }
@@ -712,7 +712,7 @@ private struct ResultStep: View {
                 withAnimation { viewModel.reset() }
             } label: {
                 Text("Compress more photos")
-                    .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
+                    .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
                     .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignTokens.Spacing.lg)
@@ -732,11 +732,11 @@ private struct ResultStep: View {
     private func statRow(label: String, value: String, color: Color? = nil) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: DesignTokens.Typography.Size.base))
+                .dynamicFont(size: DesignTokens.Typography.Size.base)
                 .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
             Spacer()
             Text(value)
-                .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold))
+                .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
                 .foregroundStyle(color ?? DesignTokens.Common.Text.primary(scheme))
         }
     }
