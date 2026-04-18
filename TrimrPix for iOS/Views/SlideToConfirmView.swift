@@ -61,7 +61,7 @@ struct SlideToConfirmView: View {
                                 guard !isConfirmed else { return }
                                 if offset >= maxOffset * 0.85 {
                                     // Confirmed
-                                    withAnimation(.spring(duration: 0.3)) {
+                                    withAnimation(AccessibilityAnimation.aware(.spring(duration: 0.3))) {
                                         offset = maxOffset
                                         isConfirmed = true
                                     }
@@ -76,7 +76,7 @@ struct SlideToConfirmView: View {
                                     }
                                 } else {
                                     // Snap back
-                                    withAnimation(.spring(duration: 0.4, bounce: 0.3)) {
+                                    withAnimation(AccessibilityAnimation.aware(.spring(duration: 0.4, bounce: 0.3))) {
                                         offset = 0
                                     }
                                 }

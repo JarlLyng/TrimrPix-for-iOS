@@ -173,7 +173,7 @@ final class ImageOptimizationViewModel {
         }
 
         // Permission granted — show compressing step
-        withAnimation { currentStep = .compressing }
+        withAnimation(AccessibilityAnimation.default) { currentStep = .compressing }
         isCompressing = true
         wasCancelled = false
         compressionProgress = 0
@@ -229,7 +229,7 @@ final class ImageOptimizationViewModel {
 
             isCompressing = false
             compressionTask = nil
-            withAnimation { currentStep = .result }
+            withAnimation(AccessibilityAnimation.default) { currentStep = .result }
         }
 
     }
