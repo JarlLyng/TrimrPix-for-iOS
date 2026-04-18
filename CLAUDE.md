@@ -105,23 +105,36 @@ Feature requests, bugs, and future work are tracked as **GitHub Issues** on the 
 
 Before starting new work, check open issues: `gh issue list`
 
-### Current open issues (as of April 2026)
-1. Add Dynamic Type support (Larger Text) — `enhancement`, `accessibility`
-2. Respect Reduced Motion accessibility setting — `enhancement`, `accessibility`
-3. Differentiate without color alone — `enhancement`, `accessibility`
-4. iPad support — `enhancement`
-5. Test all output formats (JPEG, PNG, HEIC, WebP) — `testing`
-6. Test large batch compression (10+ photos) — `testing`
-7. Verify Dark Mode colors across all screens — `testing`
-8. Test iCloud photos compression (download + save back) — `testing`
-9. Record demo video and embed on website — `marketing`
-10. Activate App Store links and Smart App Banner at launch — `marketing`
-11. Set up Google Search Console and analytics — `marketing`
-12. Product Hunt launch — `marketing`
-13. Community outreach: Reddit, Hacker News, Indie Hackers — `marketing`
-14. Contact iOS blogs for reviews — `marketing`
-15. Run competitor analysis — `marketing`
-16. App Store localization (DA, DE, FR, JA) — `marketing`, `enhancement`
+### Closed issues (shipped)
+- ✅ #1 Dynamic Type support (Larger Text)
+- ✅ #2 Reduce Motion support
+- ✅ #3 Differentiate without color alone (step indicator)
+- ✅ #4 iPad support (640pt max-width centered layout)
+
+### Open issues (as of April 2026)
+
+**Testing (manual, needs device):**
+- #5 Test all output formats (JPEG, PNG, HEIC, WebP)
+- #6 Test large batch compression (10+ photos)
+- #7 Verify Dark Mode colors across all screens
+- #8 Test iCloud photos compression (download + save back)
+- #17 Verify accessibility features on device (VoiceOver, Dynamic Type, Reduce Motion)
+- #18 Test iPad layout and functionality
+
+**Testing (automation):**
+- #21 Add unit tests for core services
+
+**Marketing (launch + post-launch):**
+- #9 Record demo video and embed on website
+- #10 Activate App Store links and Smart App Banner at launch
+- #11 Set up Google Search Console and analytics
+- #12 Product Hunt launch
+- #13 Community outreach: Reddit, Hacker News, Indie Hackers
+- #14 Contact iOS blogs for reviews
+- #15 Run competitor analysis
+- #16 App Store localization (DA, DE, FR, JA)
+- #19 Update App Store Connect accessibility declarations at launch
+- #20 Prepare App Store screenshots (iPhone + iPad)
 
 ## Marketing site
 
