@@ -75,12 +75,30 @@ struct ContentView: View {
     private var stepIndicator: some View {
         HStack(spacing: DesignTokens.Spacing.xs) {
             ForEach(0..<4, id: \.self) { index in
+                let isActive = index <= viewModel.currentStep.index
                 Capsule()
-                    .fill(index <= viewModel.currentStep.index
+                    .fill(isActive
                           ? DesignTokens.Common.primary(scheme)
                           : DesignTokens.Common.Border.subtle(scheme))
-                    .frame(height: 3)
+                    // Differentiate without color: active steps are taller
+                    // so progress is visible even at grayscale or with color
+                    // vision deficiencies.
+                    .frame(height: isActive ? 4 : 2)
+                    .opacity(isActive ? 1.0 : 0.6)
             }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step \(viewModel.currentStep.index + 1) of 4")
+        .accessibilityValue(stepName(for: viewModel.currentStep))
+    }
+
+    private func stepName(for step: AppStep) -> String {
+        switch step {
+        case .selectPhotos: return "Select photos"
+        case .configure: return "Configure"
+        case .confirm: return "Confirm"
+        case .compressing: return "Compressing"
+        case .result: return "Result"
         }
     }
 }
