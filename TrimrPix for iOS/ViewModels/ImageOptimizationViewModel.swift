@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import PhotosUI
 import Photos
+import Sentry
 
 // MARK: - Step
 
@@ -235,7 +236,12 @@ final class ImageOptimizationViewModel {
                     images[i].isCompressed = true
                 } catch {
                     if !Task.isCancelled {
-                        images[i].error = error as? TrimrPixError ?? .unknown(underlyingError: error)
+                        let trimrError = error as? TrimrPixError ?? .unknown(underlyingError: error)
+                        images[i].error = trimrError
+                        // Send the real underlying error to Sentry so we can
+                        // diagnose why individual photos fail. The UI only
+                        // shows the localized description, which loses detail.
+                        Self.reportPhotoError(trimrError, assetIdentifier: images[i].assetIdentifier)
                     }
                 }
 
@@ -260,6 +266,8 @@ final class ImageOptimizationViewModel {
     // MARK: - Photos Library
 
     private func replaceInPhotosLibrary(assetIdentifier: String, compressedData: Data) async throws {
+        Self.breadcrumb("replace.start", data: ["asset": assetIdentifier, "bytes": compressedData.count])
+
         // Fetch asset off the main actor to avoid blocking UI
         let asset: PHAsset = try await Task.detached {
             // Try direct fetch first
@@ -274,20 +282,37 @@ final class ImageOptimizationViewModel {
             throw TrimrPixError.assetNotFound(assetIdentifier)
         }.value
 
+        Self.breadcrumb("replace.asset_fetched", data: [
+            "mediaType": asset.mediaType.rawValue,
+            "mediaSubtypes": asset.mediaSubtypes.rawValue,
+            "sourceType": asset.sourceType.rawValue,
+            "canEdit": asset.canPerform(.content)
+        ])
+
         // Allow iCloud downloads so we can edit photos not stored locally
         let editOptions = PHContentEditingInputRequestOptions()
         editOptions.isNetworkAccessAllowed = true
 
         // Request content editing input to modify asset in-place
         let input = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<PHContentEditingInput, Error>) in
-            asset.requestContentEditingInput(with: editOptions) { input, _ in
+            asset.requestContentEditingInput(with: editOptions) { input, info in
                 if let input {
                     continuation.resume(returning: input)
                 } else {
-                    continuation.resume(throwing: TrimrPixError.assetReplaceFailed(underlyingError: nil))
+                    // info dictionary contains PHContentEditingInputErrorKey,
+                    // PHContentEditingInputCancelledKey, etc. — capture for diagnosis.
+                    let underlying = info[PHContentEditingInputErrorKey] as? Error
+                    Self.breadcrumb("replace.edit_input_failed", level: .error, data: [
+                        "info_keys": info.keys.map { "\($0)" },
+                        "cancelled": info[PHContentEditingInputCancelledKey] as? Bool ?? false,
+                        "error": underlying.map { "\($0)" } ?? "nil"
+                    ])
+                    continuation.resume(throwing: TrimrPixError.assetReplaceFailed(underlyingError: underlying))
                 }
             }
         }
+
+        Self.breadcrumb("replace.edit_input_ok")
 
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
@@ -295,8 +320,11 @@ final class ImageOptimizationViewModel {
         do {
             try compressedData.write(to: output.renderedContentURL)
         } catch {
+            Self.breadcrumb("replace.write_failed", level: .error, data: ["error": "\(error)"])
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
+
+        Self.breadcrumb("replace.wrote_bytes")
 
         // Mark the edit with an adjustment data identifier
         let adjustmentData = PHAdjustmentData(
@@ -313,7 +341,48 @@ final class ImageOptimizationViewModel {
                 request.contentEditingOutput = output
             }
         } catch {
+            Self.breadcrumb("replace.perform_changes_failed", level: .error, data: [
+                "error": "\(error)",
+                "nserror": (error as NSError).description
+            ])
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+        }
+
+        Self.breadcrumb("replace.done")
+    }
+
+    // MARK: - Sentry helpers
+
+    private static func breadcrumb(_ message: String, level: SentryLevel = .info, data: [String: Any] = [:]) {
+        let crumb = Breadcrumb(level: level, category: "compression")
+        crumb.message = message
+        crumb.data = data
+        SentrySDK.addBreadcrumb(crumb)
+    }
+
+    private static func reportPhotoError(_ error: TrimrPixError, assetIdentifier: String) {
+        // Build an NSError with the underlying cause so Sentry groups sensibly
+        // and we keep full domain/code info from the Photos framework.
+        let underlying: Error? = {
+            switch error {
+            case .assetReplaceFailed(let u), .compressionFailed(_, let u),
+                 .imageLoadFailed(let u), .unknown(let u):
+                return u
+            default:
+                return nil
+            }
+        }()
+
+        let reportable = underlying ?? error
+        SentrySDK.capture(error: reportable) { scope in
+            scope.setTag(value: "compression", key: "feature")
+            scope.setTag(value: "\(error)", key: "trimrpix_error")
+            scope.setContext(value: [
+                "asset_identifier": assetIdentifier,
+                "trimrpix_error_case": "\(error)",
+                "localized": error.localizedDescription,
+                "underlying": underlying.map { "\($0)" } ?? "nil"
+            ], key: "photo_compression")
         }
     }
 
