@@ -349,13 +349,23 @@ final class ImageOptimizationViewModel {
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
 
-        // Resolve the actual output format from the rendered URL's extension.
-        // Photos sets this based on the asset's original resource type (e.g.
-        // `.heic` for HEIC originals). Writing JPEG bytes to a `.heic` URL
-        // produces PHPhotosErrorInvalidResource (3302) on commit.
+        // Resolve the target format from the original asset's photo resource
+        // UTI, NOT from renderedContentURL.pathExtension. Photos sometimes
+        // hands us a `.JPG` URL even when the underlying asset is HEIC or PNG
+        // (an artifact of how content-editing inputs are prepared). If we
+        // trust the URL extension and write JPEG bytes, commit fails with
+        // PHPhotosErrorInvalidResource (3302) because validation checks
+        // against the original resource's UTI.
+        //
+        // Falls back to URL extension then to userFormat if we can't find a
+        // primary photo resource (extremely unlikely for `mediaType == .image`).
+        let primaryResourceUTI = resources.first(where: { $0.type == .photo })?.uniformTypeIdentifier
         let urlExtension = output.renderedContentURL.pathExtension
-        let resolvedFormat = OutputFormat.from(pathExtension: urlExtension) ?? userFormat
+        let resolvedFormat = OutputFormat.from(uti: primaryResourceUTI ?? "")
+            ?? OutputFormat.from(pathExtension: urlExtension)
+            ?? userFormat
         Self.breadcrumb("replace.format_resolved", data: [
+            "primaryResourceUTI": primaryResourceUTI ?? "none",
             "urlExtension": urlExtension,
             "userFormat": "\(userFormat)",
             "resolvedFormat": "\(resolvedFormat)",
