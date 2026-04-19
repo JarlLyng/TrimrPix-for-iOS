@@ -372,18 +372,17 @@ final class ImageOptimizationViewModel {
             "overridden": resolvedFormat != userFormat
         ])
 
-        // Compress to the format Photos expects. autoreleasepool keeps
-        // Core Graphics / ImageIO transient objects from accumulating.
-        let compressedData = try await Task.detached(priority: .userInitiated) {
-            try autoreleasepool {
-                try service.compress(
-                    data: originalData,
-                    quality: quality,
-                    format: resolvedFormat,
-                    metadataOptions: metadataOptions
-                )
-            }
-        }.value
+        // DIAGNOSTIC: skip compression entirely and write the original bytes
+        // back to the asset. If performChanges still rejects with 3302 this
+        // proves the issue is in the replacement flow itself (missing
+        // auxiliary resources: pairedVideo for Live Photos, HDR gain map,
+        // spatial stereo, depth map), not in our HEIC/JPEG encoder. Will be
+        // replaced with real compression once we know where the bug is.
+        let compressedData = originalData
+        Self.breadcrumb("replace.diagnostic_passthrough", data: [
+            "writingOriginalBytes": true,
+            "skippedFormat": "\(resolvedFormat)"
+        ])
 
         do {
             try compressedData.write(to: output.renderedContentURL)
