@@ -201,38 +201,27 @@ final class ImageOptimizationViewModel {
                         throw TrimrPixError.invalidImageData
                     }
 
-                    // Wrap compression in autoreleasepool so Core Graphics /
-                    // ImageIO objects (CGImageSource, CGImage, decoded bitmaps)
-                    // are released at the end of each iteration instead of
-                    // accumulating until the run loop drains. Without this the
-                    // app is watchdog-terminated on batches of large photos.
-                    let compressedData = try await Task.detached(priority: .userInitiated) {
-                        try autoreleasepool {
-                            try service.compress(
-                                data: originalData,
-                                quality: currentQuality,
-                                format: currentFormat,
-                                metadataOptions: currentMetadata
-                            )
-                        }
-                    }.value
+                    // Compress + replace in one step. replaceInPhotosLibrary
+                    // determines the actual format from the Photos-framework
+                    // rendered URL (which Photos requires to match the asset's
+                    // original format — mismatch → PHPhotosErrorInvalidResource
+                    // 3302 on commit) and compresses to that format, not the
+                    // user's chosen format. For in-place replacement the user's
+                    // format choice has to yield; format conversion would
+                    // require creating a new asset.
+                    let compressedSize = try await replaceInPhotosLibrary(
+                        assetIdentifier: images[i].assetIdentifier,
+                        originalData: originalData,
+                        service: service,
+                        quality: currentQuality,
+                        userFormat: currentFormat,
+                        metadataOptions: currentMetadata
+                    )
 
                     if Task.isCancelled { break }
 
-                    images[i].compressedSize = Int64(compressedData.count)
-
-                    // Release original data as soon as we have the compressed
-                    // version. Previously we held it until end of iteration,
-                    // which meant up to ~15× N MB sat in RAM during the slow
-                    // Photos-library replace step.
+                    images[i].compressedSize = compressedSize
                     images[i].releaseData()
-
-                    // Replace in Photos library — only mark as compressed if this succeeds
-                    try await replaceInPhotosLibrary(
-                        assetIdentifier: images[i].assetIdentifier,
-                        compressedData: compressedData
-                    )
-
                     images[i].isCompressed = true
                 } catch {
                     if !Task.isCancelled {
@@ -265,8 +254,26 @@ final class ImageOptimizationViewModel {
 
     // MARK: - Photos Library
 
-    private func replaceInPhotosLibrary(assetIdentifier: String, compressedData: Data) async throws {
-        Self.breadcrumb("replace.start", data: ["asset": assetIdentifier, "bytes": compressedData.count])
+    /// Compress `originalData` and replace the asset in the Photos library
+    /// in place. The compression format is determined by the asset's original
+    /// format (read from `PHContentEditingOutput.renderedContentURL`), not by
+    /// `userFormat` — Photos rejects commits where the rendered file's format
+    /// doesn't match the asset (`PHPhotosErrorInvalidResource`, code 3302).
+    ///
+    /// Returns the size of the compressed data actually written.
+    private func replaceInPhotosLibrary(
+        assetIdentifier: String,
+        originalData: Data,
+        service: CompressionService,
+        quality: CompressionQuality,
+        userFormat: OutputFormat,
+        metadataOptions: MetadataStrippingOptions
+    ) async throws -> Int64 {
+        Self.breadcrumb("replace.start", data: [
+            "asset": assetIdentifier,
+            "originalBytes": originalData.count,
+            "userFormat": "\(userFormat)"
+        ])
 
         // Fetch asset off the main actor to avoid blocking UI
         let asset: PHAsset = try await Task.detached {
@@ -317,6 +324,32 @@ final class ImageOptimizationViewModel {
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
 
+        // Resolve the actual output format from the rendered URL's extension.
+        // Photos sets this based on the asset's original resource type (e.g.
+        // `.heic` for HEIC originals). Writing JPEG bytes to a `.heic` URL
+        // produces PHPhotosErrorInvalidResource (3302) on commit.
+        let urlExtension = output.renderedContentURL.pathExtension
+        let resolvedFormat = OutputFormat.from(pathExtension: urlExtension) ?? userFormat
+        Self.breadcrumb("replace.format_resolved", data: [
+            "urlExtension": urlExtension,
+            "userFormat": "\(userFormat)",
+            "resolvedFormat": "\(resolvedFormat)",
+            "overridden": resolvedFormat != userFormat
+        ])
+
+        // Compress to the format Photos expects. autoreleasepool keeps
+        // Core Graphics / ImageIO transient objects from accumulating.
+        let compressedData = try await Task.detached(priority: .userInitiated) {
+            try autoreleasepool {
+                try service.compress(
+                    data: originalData,
+                    quality: quality,
+                    format: resolvedFormat,
+                    metadataOptions: metadataOptions
+                )
+            }
+        }.value
+
         do {
             try compressedData.write(to: output.renderedContentURL)
         } catch {
@@ -324,7 +357,7 @@ final class ImageOptimizationViewModel {
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
 
-        Self.breadcrumb("replace.wrote_bytes")
+        Self.breadcrumb("replace.wrote_bytes", data: ["bytes": compressedData.count])
 
         // Mark the edit with an adjustment data identifier
         let adjustmentData = PHAdjustmentData(
@@ -348,7 +381,8 @@ final class ImageOptimizationViewModel {
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
 
-        Self.breadcrumb("replace.done")
+        Self.breadcrumb("replace.done", data: ["compressedBytes": compressedData.count])
+        return Int64(compressedData.count)
     }
 
     // MARK: - Sentry helpers
