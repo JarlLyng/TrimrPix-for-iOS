@@ -200,13 +200,31 @@ final class ImageOptimizationViewModel {
                         throw TrimrPixError.invalidImageData
                     }
 
+                    // Wrap compression in autoreleasepool so Core Graphics /
+                    // ImageIO objects (CGImageSource, CGImage, decoded bitmaps)
+                    // are released at the end of each iteration instead of
+                    // accumulating until the run loop drains. Without this the
+                    // app is watchdog-terminated on batches of large photos.
                     let compressedData = try await Task.detached(priority: .userInitiated) {
-                        try service.compress(data: originalData, quality: currentQuality, format: currentFormat, metadataOptions: currentMetadata)
+                        try autoreleasepool {
+                            try service.compress(
+                                data: originalData,
+                                quality: currentQuality,
+                                format: currentFormat,
+                                metadataOptions: currentMetadata
+                            )
+                        }
                     }.value
 
                     if Task.isCancelled { break }
 
                     images[i].compressedSize = Int64(compressedData.count)
+
+                    // Release original data as soon as we have the compressed
+                    // version. Previously we held it until end of iteration,
+                    // which meant up to ~15× N MB sat in RAM during the slow
+                    // Photos-library replace step.
+                    images[i].releaseData()
 
                     // Replace in Photos library — only mark as compressed if this succeeds
                     try await replaceInPhotosLibrary(
@@ -221,7 +239,7 @@ final class ImageOptimizationViewModel {
                     }
                 }
 
-                // Free memory — original data no longer needed
+                // Defensive: ensure data is released even on error path
                 images[i].releaseData()
                 images[i].isCompressing = false
                 compressionProgress = Double(i + 1) / Double(images.count)
