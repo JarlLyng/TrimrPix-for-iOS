@@ -105,12 +105,19 @@ Feature requests, bugs, and future work are tracked as **GitHub Issues** on the 
 
 Before starting new work, check open issues: `gh issue list`
 
+### 🚨 Current launch blocker
+**#26** — pristine HEIC photos from iPhone 16 Pro Max / iOS 26 fail in-place replace with `PHPhotosErrorInvalidResource` (3302). Verified NOT a format/encoding bug via passthrough diagnostic. Hypothesis: `PhotosPickerItem.loadTransferable` drops auxiliary image data (HDR gain map, spatial stereo) required for commit validation. Three options documented in the issue; **Option A (PHAssetResourceManager for raw bytes) is recommended** and solves #25 for free. **Start here next session.**
+
 ### Closed issues (shipped)
 - ✅ #1 Dynamic Type support (Larger Text)
 - ✅ #2 Reduce Motion support
 - ✅ #3 Differentiate without color alone (step indicator)
 - ✅ #4 iPad support (640pt max-width centered layout)
 - ✅ #15 Competitor analysis → `docs/COMPETITOR_ANALYSIS.md`
+
+### Previously resolved (same session as #26 work)
+- Watchdog-termination crash on batch compress — fixed via autoreleasepool + early releaseData() (commit b46eb1a)
+- Full Sentry observability for photo-replace flow — capture NSError userInfo, breadcrumbs at every step, primaryResourceUTI, adjustmentFormat (commits d5ba10a, 2588035)
 
 ### Open issues (as of April 2026)
 
@@ -124,6 +131,11 @@ Before starting new work, check open issues: `gh issue list`
 
 **Testing (automation):**
 - #21 Add unit tests for core services
+
+**Bugs / must-fix before launch:**
+- 🚨 **#26 Pristine HEIC photos fail in-place replace (3302)** — launch blocker, see top of section
+- #24 Remove Sentry launch diagnostic before App Store submission
+- #25 Lazy-load photo data (reduces RAM; subsumed by #26's recommended fix)
 
 **Marketing (launch + post-launch):**
 - #9 Record demo video and embed on website
