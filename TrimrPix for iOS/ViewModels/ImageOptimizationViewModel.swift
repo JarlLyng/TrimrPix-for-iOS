@@ -289,11 +289,23 @@ final class ImageOptimizationViewModel {
             throw TrimrPixError.assetNotFound(assetIdentifier)
         }.value
 
+        // Inspect all resources attached to the asset. Live Photos carry both
+        // a `photo` and a `pairedVideo` resource; Portrait mode adds depth;
+        // Spatial photos embed two images. If we only write a still image but
+        // Photos is expecting multiple resources, the commit is rejected with
+        // PHPhotosErrorInvalidResource (3302).
+        let resources = PHAssetResource.assetResources(for: asset)
+        let resourceSummary = resources.map { r -> String in
+            "type=\(r.type.rawValue) uti=\(r.uniformTypeIdentifier)"
+        }
+
         Self.breadcrumb("replace.asset_fetched", data: [
             "mediaType": asset.mediaType.rawValue,
             "mediaSubtypes": asset.mediaSubtypes.rawValue,
             "sourceType": asset.sourceType.rawValue,
-            "canEdit": asset.canPerform(.content)
+            "canEdit": asset.canPerform(.content),
+            "resources": resourceSummary,
+            "resourceCount": resources.count
         ])
 
         // Allow iCloud downloads so we can edit photos not stored locally
@@ -387,9 +399,24 @@ final class ImageOptimizationViewModel {
                 request.contentEditingOutput = output
             }
         } catch {
+            let nsError = error as NSError
+            // Pull everything we can out of userInfo — Photos sometimes
+            // populates NSLocalizedFailureReason, NSUnderlyingError, or a
+            // stack of NSMultipleUnderlyingErrorsKey entries that contain
+            // the actual reason for rejection.
+            var userInfoDump: [String: String] = [:]
+            for (key, value) in nsError.userInfo {
+                userInfoDump["\(key)"] = "\(value)".prefix(300).description
+            }
+            let underlyings = (nsError.userInfo["NSMultipleUnderlyingErrorsKey"] as? [Error]) ?? []
             Self.breadcrumb("replace.perform_changes_failed", level: .error, data: [
-                "error": "\(error)",
-                "nserror": (error as NSError).description
+                "domain": nsError.domain,
+                "code": nsError.code,
+                "localizedDescription": nsError.localizedDescription,
+                "localizedFailureReason": nsError.localizedFailureReason ?? "nil",
+                "userInfo": userInfoDump,
+                "underlyingCount": underlyings.count,
+                "underlyings": underlyings.prefix(3).map { "\($0)".prefix(300).description }
             ])
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
