@@ -39,15 +39,29 @@ nonisolated enum OutputFormat: String, CaseIterable, Identifiable, Sendable {
 
     /// Map a file extension (case-insensitive, without leading dot) to an
     /// `OutputFormat`, or nil if it's an unsupported format (e.g. `.dng` RAW).
-    /// Used for in-place Photos-library replacement where the output file
-    /// must match the asset's original format or Photos will reject the
-    /// commit with `PHPhotosErrorInvalidResource` (code 3302).
     static func from(pathExtension ext: String) -> OutputFormat? {
         switch ext.lowercased() {
         case "jpg", "jpeg": return .jpeg
         case "png": return .png
         case "webp": return .webp
         case "heic", "heif": return .heic
+        default: return nil
+        }
+    }
+
+    /// Map a Uniform Type Identifier to an `OutputFormat`. Used for in-place
+    /// Photos-library replacement where the output bytes must match the
+    /// asset's *original* resource UTI, not the `renderedContentURL`'s file
+    /// extension (Photos sometimes hands us a `.JPG` URL for HEIC originals
+    /// because PhotosPicker/content-editing transcodes for the input side,
+    /// but the commit-time validation checks against the original UTI and
+    /// rejects with `PHPhotosErrorInvalidResource` (3302) on mismatch).
+    static func from(uti: String) -> OutputFormat? {
+        switch uti.lowercased() {
+        case "public.jpeg": return .jpeg
+        case "public.png": return .png
+        case "org.webmproject.webp", "public.webp": return .webp
+        case "public.heic", "public.heif": return .heic
         default: return nil
         }
     }
