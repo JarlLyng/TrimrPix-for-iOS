@@ -300,6 +300,15 @@ final class ImageOptimizationViewModel {
         let editOptions = PHContentEditingInputRequestOptions()
         editOptions.isNetworkAccessAllowed = true
 
+        // Declare that we can handle *any* prior adjustment data. Without this
+        // Photos rejects commits on photos that have existing edits (from
+        // Apple Photos editor, other apps, or our own previous TrimrPix runs)
+        // with PHPhotosErrorInvalidResource (3302). We rewrite the entire
+        // image content anyway, so we don't actually need to interpret the
+        // prior adjustment — we just need to claim compatibility so Photos
+        // lets us start a new edit chain on top.
+        editOptions.canHandleAdjustmentData = { _ in true }
+
         // Request content editing input to modify asset in-place
         let input = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<PHContentEditingInput, Error>) in
             asset.requestContentEditingInput(with: editOptions) { input, info in
@@ -319,7 +328,11 @@ final class ImageOptimizationViewModel {
             }
         }
 
-        Self.breadcrumb("replace.edit_input_ok")
+        Self.breadcrumb("replace.edit_input_ok", data: [
+            "hasAdjustmentData": input.adjustmentData != nil,
+            "adjustmentFormat": input.adjustmentData?.formatIdentifier ?? "none",
+            "adjustmentVersion": input.adjustmentData?.formatVersion ?? "none"
+        ])
 
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
