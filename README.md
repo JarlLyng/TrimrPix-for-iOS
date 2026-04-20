@@ -1,5 +1,7 @@
 # TrimrPix for iOS
 
+[![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
+
 Compress photos from your iOS Photos library in-place. One job: make files smaller.
 
 **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com) · **macOS version:** [trimrpix.iamjarl.com](https://trimrpix.iamjarl.com)
