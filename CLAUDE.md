@@ -105,19 +105,18 @@ Feature requests, bugs, and future work are tracked as **GitHub Issues** on the 
 
 Before starting new work, check open issues: `gh issue list`
 
-### 🚨 Current launch blocker
-**#26** — pristine HEIC photos from iPhone 16 Pro Max / iOS 26 fail in-place replace with `PHPhotosErrorInvalidResource` (3302). Verified NOT a format/encoding bug via passthrough diagnostic. Hypothesis: `PhotosPickerItem.loadTransferable` drops auxiliary image data (HDR gain map, spatial stereo) required for commit validation. Three options documented in the issue; **Option A (PHAssetResourceManager for raw bytes) is recommended** and solves #25 for free. **Start here next session.**
-
 ### Closed issues (shipped)
 - ✅ #1 Dynamic Type support (Larger Text)
 - ✅ #2 Reduce Motion support
 - ✅ #3 Differentiate without color alone (step indicator)
 - ✅ #4 iPad support (640pt max-width centered layout)
 - ✅ #15 Competitor analysis → `docs/COMPETITOR_ANALYSIS.md`
+- ✅ #20 App Store screenshots prepared and uploaded
+- ✅ #24 Sentry launch diagnostic removed
+- ✅ #26 Pristine HEIC replace failure — solved via hybrid in-place + batched copy-delete fallback (commits 7d19e98, 9771388). Zero errors in Sentry over 2 post-fix test runs.
 
-### Previously resolved (same session as #26 work)
-- Watchdog-termination crash on batch compress — fixed via autoreleasepool + early releaseData() (commit b46eb1a)
-- Full Sentry observability for photo-replace flow — capture NSError userInfo, breadcrumbs at every step, primaryResourceUTI, adjustmentFormat (commits d5ba10a, 2588035)
+### Photo replacement architecture
+In-place replacement via `PHContentEditingOutput` is attempted first. For photos Photos rejects with `PHPhotosErrorInvalidResource` (3302) — typically pristine HEIC with HDR gain map / spatial stereo on iOS 26 — the replacement falls back to creating a new asset from the compressed bytes (preserving creation date, location, and favorite) and deleting the original. All fallback photos within a batch are committed in a single `performChanges` transaction so the user sees exactly one iOS deletion confirmation sheet regardless of how many photos take the fallback path. See `replaceInPhotosLibrary` and `commitPendingFallbacks` in `ImageOptimizationViewModel`.
 
 ### Open issues (as of April 2026)
 
@@ -132,10 +131,8 @@ Before starting new work, check open issues: `gh issue list`
 **Testing (automation):**
 - #21 Add unit tests for core services
 
-**Bugs / must-fix before launch:**
-- 🚨 **#26 Pristine HEIC photos fail in-place replace (3302)** — launch blocker, see top of section
-- #24 Remove Sentry launch diagnostic before App Store submission
-- #25 Lazy-load photo data (reduces RAM; subsumed by #26's recommended fix)
+**Bugs / enhancements (not blocking launch):**
+- #25 Lazy-load photo data (reduces RAM upfront; current autoreleasepool fix handles typical batches)
 
 **Marketing (launch + post-launch):**
 - #9 Record demo video and embed on website
@@ -146,7 +143,6 @@ Before starting new work, check open issues: `gh issue list`
 - #14 Contact iOS blogs for reviews
 - #16 App Store localization (DA, DE, FR, JA)
 - #19 Update App Store Connect accessibility declarations at launch
-- #20 Prepare App Store screenshots (iPhone + iPad)
 
 **Future features (v1.1+, surfaced by competitor analysis):**
 - #22 Target-size mode (compress to fit a specific file size)
