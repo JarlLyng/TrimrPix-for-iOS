@@ -197,12 +197,21 @@ final class ImageOptimizationViewModel {
                 images[i].isCompressing = true
 
                 do {
-                    // Compress + replace in one step. Original bytes are read
-                    // from PHContentEditingInput.fullSizeImageURL inside
-                    // replaceInPhotosLibrary — see there for why we stopped
-                    // using images[i].originalData (from PhotosPickerItem).
+                    guard let originalData = images[i].originalData else {
+                        throw TrimrPixError.invalidImageData
+                    }
+
+                    // Compress + replace in one step. replaceInPhotosLibrary
+                    // determines the actual format from the Photos-framework
+                    // rendered URL (which Photos requires to match the asset's
+                    // original format — mismatch → PHPhotosErrorInvalidResource
+                    // 3302 on commit) and compresses to that format, not the
+                    // user's chosen format. For in-place replacement the user's
+                    // format choice has to yield; format conversion would
+                    // require creating a new asset.
                     let compressedSize = try await replaceInPhotosLibrary(
                         assetIdentifier: images[i].assetIdentifier,
+                        originalData: originalData,
                         service: service,
                         quality: currentQuality,
                         userFormat: currentFormat,
@@ -245,21 +254,16 @@ final class ImageOptimizationViewModel {
 
     // MARK: - Photos Library
 
-    /// Compress the asset in-place in the Photos library.
-    ///
-    /// The original bytes are read from `PHContentEditingInput.fullSizeImageURL`,
-    /// NOT from `PhotosPickerItem.loadTransferable`. `loadTransferable` returns a
-    /// flattened, normalized image that strips HDR gain maps, spatial stereo
-    /// pairs, depth maps, and other auxiliary data embedded in the original
-    /// HEIC. Writing those flattened bytes back (even unchanged) is rejected
-    /// by Photos with `PHPhotosErrorInvalidResource` (3302) at commit time
-    /// because the asset's expected auxiliary content is missing. Reading from
-    /// `fullSizeImageURL` gives us the actual backing file with everything
-    /// preserved.
+    /// Compress `originalData` and replace the asset in the Photos library
+    /// in place. The compression format is determined by the asset's original
+    /// format (read from `PHContentEditingOutput.renderedContentURL`), not by
+    /// `userFormat` — Photos rejects commits where the rendered file's format
+    /// doesn't match the asset (`PHPhotosErrorInvalidResource`, code 3302).
     ///
     /// Returns the size of the compressed data actually written.
     private func replaceInPhotosLibrary(
         assetIdentifier: String,
+        originalData: Data,
         service: CompressionService,
         quality: CompressionQuality,
         userFormat: OutputFormat,
@@ -267,6 +271,7 @@ final class ImageOptimizationViewModel {
     ) async throws -> Int64 {
         Self.breadcrumb("replace.start", data: [
             "asset": assetIdentifier,
+            "originalBytes": originalData.count,
             "userFormat": "\(userFormat)"
         ])
 
@@ -338,23 +343,8 @@ final class ImageOptimizationViewModel {
         Self.breadcrumb("replace.edit_input_ok", data: [
             "hasAdjustmentData": input.adjustmentData != nil,
             "adjustmentFormat": input.adjustmentData?.formatIdentifier ?? "none",
-            "adjustmentVersion": input.adjustmentData?.formatVersion ?? "none",
-            "fullSizeImageURL": input.fullSizeImageURL?.lastPathComponent ?? "nil"
+            "adjustmentVersion": input.adjustmentData?.formatVersion ?? "none"
         ])
-
-        // Read the TRUE original bytes from fullSizeImageURL.
-        guard let fullSizeURL = input.fullSizeImageURL else {
-            Self.breadcrumb("replace.no_full_size_url", level: .error)
-            throw TrimrPixError.assetReplaceFailed(underlyingError: nil)
-        }
-        let originalData: Data
-        do {
-            originalData = try Data(contentsOf: fullSizeURL, options: .mappedIfSafe)
-        } catch {
-            Self.breadcrumb("replace.read_full_size_failed", level: .error, data: ["error": "\(error)"])
-            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
-        }
-        Self.breadcrumb("replace.read_full_size_ok", data: ["bytes": originalData.count])
 
         // Create editing output with compressed data
         let output = PHContentEditingOutput(contentEditingInput: input)
