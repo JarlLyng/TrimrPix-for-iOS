@@ -11,6 +11,30 @@ import PhotosUI
 import Photos
 import Sentry
 
+// MARK: - Replace outcome
+
+/// Result of replacing a photo. `inPlace` means we updated the original
+/// PHAsset via `PHContentEditingOutput`; `copied` means Photos rejected the
+/// in-place commit (typically pristine HEIC with HDR gain map or spatial
+/// stereo on iOS 26) so we fell back to creating a new asset from the
+/// compressed bytes and deleting the original, while preserving creation
+/// date, location, and favorite status.
+nonisolated enum ReplaceOutcome: Sendable {
+    case inPlace(size: Int64)
+    case copied(size: Int64)
+
+    var size: Int64 {
+        switch self {
+        case .inPlace(let s), .copied(let s): return s
+        }
+    }
+
+    var wasReplaced: Bool {
+        if case .copied = self { return true }
+        return false
+    }
+}
+
 // MARK: - Step
 
 nonisolated enum AppStep: Sendable {
@@ -209,7 +233,7 @@ final class ImageOptimizationViewModel {
                     // user's chosen format. For in-place replacement the user's
                     // format choice has to yield; format conversion would
                     // require creating a new asset.
-                    let compressedSize = try await replaceInPhotosLibrary(
+                    let outcome = try await replaceInPhotosLibrary(
                         assetIdentifier: images[i].assetIdentifier,
                         originalData: originalData,
                         service: service,
@@ -220,7 +244,8 @@ final class ImageOptimizationViewModel {
 
                     if Task.isCancelled { break }
 
-                    images[i].compressedSize = compressedSize
+                    images[i].compressedSize = outcome.size
+                    images[i].wasReplaced = outcome.wasReplaced
                     images[i].releaseData()
                     images[i].isCompressed = true
                 } catch {
@@ -260,7 +285,8 @@ final class ImageOptimizationViewModel {
     /// `userFormat` — Photos rejects commits where the rendered file's format
     /// doesn't match the asset (`PHPhotosErrorInvalidResource`, code 3302).
     ///
-    /// Returns the size of the compressed data actually written.
+    /// Returns a `ReplaceOutcome` indicating whether the replacement was done
+    /// truly in-place or via the copy-and-delete fallback, and the final size.
     private func replaceInPhotosLibrary(
         assetIdentifier: String,
         originalData: Data,
@@ -268,7 +294,7 @@ final class ImageOptimizationViewModel {
         quality: CompressionQuality,
         userFormat: OutputFormat,
         metadataOptions: MetadataStrippingOptions
-    ) async throws -> Int64 {
+    ) async throws -> ReplaceOutcome {
         Self.breadcrumb("replace.start", data: [
             "asset": assetIdentifier,
             "originalBytes": originalData.count,
@@ -408,12 +434,10 @@ final class ImageOptimizationViewModel {
                 let request = PHAssetChangeRequest(for: asset)
                 request.contentEditingOutput = output
             }
+            Self.breadcrumb("replace.done", data: ["compressedBytes": compressedData.count])
+            return .inPlace(size: Int64(compressedData.count))
         } catch {
             let nsError = error as NSError
-            // Pull everything we can out of userInfo — Photos sometimes
-            // populates NSLocalizedFailureReason, NSUnderlyingError, or a
-            // stack of NSMultipleUnderlyingErrorsKey entries that contain
-            // the actual reason for rejection.
             var userInfoDump: [String: String] = [:]
             for (key, value) in nsError.userInfo {
                 userInfoDump["\(key)"] = "\(value)".prefix(300).description
@@ -428,11 +452,74 @@ final class ImageOptimizationViewModel {
                 "underlyingCount": underlyings.count,
                 "underlyings": underlyings.prefix(3).map { "\($0)".prefix(300).description }
             ])
+
+            // Only fall back for PHPhotosErrorInvalidResource (3302). Other
+            // errors (permission, I/O, user-cancel) should propagate so the
+            // user sees a real failure rather than a silent copy.
+            let isInvalidResource = nsError.domain == "PHPhotosErrorDomain" && nsError.code == 3302
+            guard isInvalidResource else {
+                throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+            }
+
+            Self.breadcrumb("replace.fallback_start", data: ["reason": "PHPhotosErrorInvalidResource"])
+            try await fallbackCreateAndDelete(
+                asset: asset,
+                compressedData: compressedData,
+                format: resolvedFormat
+            )
+            Self.breadcrumb("replace.fallback_done", data: ["compressedBytes": compressedData.count])
+            return .copied(size: Int64(compressedData.count))
+        }
+    }
+
+    /// Fallback path when Photos rejects in-place replacement (typically for
+    /// pristine HEIC with auxiliary content on iOS 26). Creates a new asset
+    /// from the compressed bytes, copies essential metadata, and deletes the
+    /// original — all in a single `performChanges` transaction so there's no
+    /// intermediate state visible to the user.
+    private func fallbackCreateAndDelete(
+        asset: PHAsset,
+        compressedData: Data,
+        format: OutputFormat
+    ) async throws {
+        // Write compressed bytes to a temp file. PHAssetCreationRequest reads
+        // from a URL, not from Data, because Photos streams the file.
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(format.fileExtension)
+        do {
+            try compressedData.write(to: tempURL)
+        } catch {
+            Self.breadcrumb("replace.fallback_write_failed", level: .error, data: ["error": "\(error)"])
             throw TrimrPixError.assetReplaceFailed(underlyingError: error)
         }
+        defer { try? FileManager.default.removeItem(at: tempURL) }
 
-        Self.breadcrumb("replace.done", data: ["compressedBytes": compressedData.count])
-        return Int64(compressedData.count)
+        // Snapshot metadata before delete. Location and creationDate matter
+        // for library sort order and map-view grouping; isFavorite is visible
+        // UX. Other fields (keywords, description) aren't readable via PHAsset
+        // public API.
+        let creationDate = asset.creationDate
+        let location = asset.location
+        let isFavorite = asset.isFavorite
+
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                let resourceOptions = PHAssetResourceCreationOptions()
+                creationRequest.addResource(with: .photo, fileURL: tempURL, options: resourceOptions)
+                creationRequest.creationDate = creationDate
+                creationRequest.location = location
+                creationRequest.isFavorite = isFavorite
+
+                PHAssetChangeRequest.deleteAssets([asset] as NSArray)
+            }
+        } catch {
+            Self.breadcrumb("replace.fallback_perform_failed", level: .error, data: [
+                "error": "\((error as NSError).description)"
+            ])
+            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+        }
     }
 
     // MARK: - Sentry helpers

@@ -20,6 +20,14 @@ struct ImageItem: Identifiable {
     var thumbnail: UIImage?
     var isCompressing: Bool = false
     var isCompressed: Bool = false
+    /// True if this photo was compressed via copy-and-delete fallback rather
+    /// than true in-place replacement. Some photos (pristine HEIC with
+    /// auxiliary data like HDR gain maps or spatial stereo, Live Photos, etc.)
+    /// can't be replaced in place on iOS 26 because the Photos framework
+    /// validates auxiliary content on commit. For those we create a new asset
+    /// from the compressed data and delete the original, preserving creation
+    /// date, location, and favorite status.
+    var wasReplaced: Bool = false
     var error: TrimrPixError?
 
     init(assetIdentifier: String, data: Data) {
