@@ -13,26 +13,27 @@ import Sentry
 
 // MARK: - Replace outcome
 
-/// Result of replacing a photo. `inPlace` means we updated the original
-/// PHAsset via `PHContentEditingOutput`; `copied` means Photos rejected the
-/// in-place commit (typically pristine HEIC with HDR gain map or spatial
-/// stereo on iOS 26) so we fell back to creating a new asset from the
-/// compressed bytes and deleting the original, while preserving creation
-/// date, location, and favorite status.
+/// Result of trying to replace a photo. `inPlace` means the change committed
+/// immediately via `PHContentEditingOutput`; `needsFallback` means Photos
+/// rejected the in-place commit (typically pristine HEIC with HDR gain map
+/// or spatial stereo on iOS 26) and the caller should batch this photo's
+/// compressed bytes with other fallbacks for a single create-new-and-delete
+/// transaction at the end of the batch — keeping user-facing deletion
+/// confirmation prompts down to one per run rather than one per photo.
 nonisolated enum ReplaceOutcome: Sendable {
     case inPlace(size: Int64)
-    case copied(size: Int64)
+    case needsFallback(compressedData: Data, tempURL: URL, size: Int64)
+}
 
-    var size: Int64 {
-        switch self {
-        case .inPlace(let s), .copied(let s): return s
-        }
-    }
-
-    var wasReplaced: Bool {
-        if case .copied = self { return true }
-        return false
-    }
+/// State accumulated during the compression loop for photos that need the
+/// create-new-and-delete fallback. Held until the loop finishes, then
+/// committed in a single `PHPhotoLibrary.performChanges` transaction so
+/// the user sees exactly one iOS deletion confirmation sheet.
+private struct PendingFallback {
+    let imageIndex: Int
+    let asset: PHAsset
+    let tempURL: URL
+    let size: Int64
 }
 
 // MARK: - Step
@@ -211,8 +212,9 @@ final class ImageOptimizationViewModel {
         let currentMetadata = metadataOptions
 
         compressionTask = Task {
-            // Yield to let SwiftUI render the compressing step before heavy work
             try? await Task.sleep(for: .milliseconds(50))
+
+            var pendingFallbacks: [PendingFallback] = []
 
             for i in images.indices {
                 if Task.isCancelled { break }
@@ -225,14 +227,6 @@ final class ImageOptimizationViewModel {
                         throw TrimrPixError.invalidImageData
                     }
 
-                    // Compress + replace in one step. replaceInPhotosLibrary
-                    // determines the actual format from the Photos-framework
-                    // rendered URL (which Photos requires to match the asset's
-                    // original format — mismatch → PHPhotosErrorInvalidResource
-                    // 3302 on commit) and compresses to that format, not the
-                    // user's chosen format. For in-place replacement the user's
-                    // format choice has to yield; format conversion would
-                    // require creating a new asset.
                     let outcome = try await replaceInPhotosLibrary(
                         assetIdentifier: images[i].assetIdentifier,
                         originalData: originalData,
@@ -244,25 +238,51 @@ final class ImageOptimizationViewModel {
 
                     if Task.isCancelled { break }
 
-                    images[i].compressedSize = outcome.size
-                    images[i].wasReplaced = outcome.wasReplaced
-                    images[i].releaseData()
-                    images[i].isCompressed = true
+                    switch outcome {
+                    case .inPlace(let size):
+                        images[i].compressedSize = size
+                        images[i].wasReplaced = false
+                        images[i].isCompressed = true
+                    case .needsFallback(_, let tempURL, let size):
+                        // Defer marking compressed until the batch fallback
+                        // transaction commits at end of loop. Photos requires
+                        // the PHAsset for the final performChanges, so fetch
+                        // it now while we're still iterating.
+                        if let asset = try? await Self.fetchAsset(identifier: images[i].assetIdentifier) {
+                            pendingFallbacks.append(PendingFallback(
+                                imageIndex: i,
+                                asset: asset,
+                                tempURL: tempURL,
+                                size: size
+                            ))
+                        } else {
+                            try? FileManager.default.removeItem(at: tempURL)
+                            images[i].error = .assetNotFound(images[i].assetIdentifier)
+                        }
+                    }
                 } catch {
                     if !Task.isCancelled {
                         let trimrError = error as? TrimrPixError ?? .unknown(underlyingError: error)
                         images[i].error = trimrError
-                        // Send the real underlying error to Sentry so we can
-                        // diagnose why individual photos fail. The UI only
-                        // shows the localized description, which loses detail.
                         Self.reportPhotoError(trimrError, assetIdentifier: images[i].assetIdentifier)
                     }
                 }
 
-                // Defensive: ensure data is released even on error path
                 images[i].releaseData()
                 images[i].isCompressing = false
                 compressionProgress = Double(i + 1) / Double(images.count)
+            }
+
+            // Batch-commit all fallbacks in a single performChanges so iOS
+            // only asks the user to confirm deletion once for the whole run.
+            if !pendingFallbacks.isEmpty && !Task.isCancelled {
+                await commitPendingFallbacks(pendingFallbacks)
+            } else {
+                // Either cancelled or no fallbacks — clean up any temp files
+                // we would otherwise leak.
+                for fallback in pendingFallbacks {
+                    try? FileManager.default.removeItem(at: fallback.tempURL)
+                }
             }
 
             isCompressing = false
@@ -461,65 +481,105 @@ final class ImageOptimizationViewModel {
                 throw TrimrPixError.assetReplaceFailed(underlyingError: error)
             }
 
-            Self.breadcrumb("replace.fallback_start", data: ["reason": "PHPhotosErrorInvalidResource"])
-            try await fallbackCreateAndDelete(
-                asset: asset,
+            // Write compressed bytes to a temp file for the later batch
+            // fallback transaction. We don't commit here — the caller
+            // accumulates all fallbacks and commits them in a single
+            // performChanges so iOS shows one deletion confirmation sheet.
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension(resolvedFormat.fileExtension)
+            do {
+                try compressedData.write(to: tempURL)
+            } catch {
+                Self.breadcrumb("replace.fallback_write_failed", level: .error, data: ["error": "\(error)"])
+                throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+            }
+
+            Self.breadcrumb("replace.fallback_queued", data: [
+                "reason": "PHPhotosErrorInvalidResource",
+                "tempURL": tempURL.lastPathComponent,
+                "bytes": compressedData.count
+            ])
+            return .needsFallback(
                 compressedData: compressedData,
-                format: resolvedFormat
+                tempURL: tempURL,
+                size: Int64(compressedData.count)
             )
-            Self.breadcrumb("replace.fallback_done", data: ["compressedBytes": compressedData.count])
-            return .copied(size: Int64(compressedData.count))
         }
     }
 
-    /// Fallback path when Photos rejects in-place replacement (typically for
-    /// pristine HEIC with auxiliary content on iOS 26). Creates a new asset
-    /// from the compressed bytes, copies essential metadata, and deletes the
-    /// original — all in a single `performChanges` transaction so there's no
-    /// intermediate state visible to the user.
-    private func fallbackCreateAndDelete(
-        asset: PHAsset,
-        compressedData: Data,
-        format: OutputFormat
-    ) async throws {
-        // Write compressed bytes to a temp file. PHAssetCreationRequest reads
-        // from a URL, not from Data, because Photos streams the file.
-        let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension(format.fileExtension)
-        do {
-            try compressedData.write(to: tempURL)
-        } catch {
-            Self.breadcrumb("replace.fallback_write_failed", level: .error, data: ["error": "\(error)"])
-            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
-        }
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-
-        // Snapshot metadata before delete. Location and creationDate matter
-        // for library sort order and map-view grouping; isFavorite is visible
-        // UX. Other fields (keywords, description) aren't readable via PHAsset
-        // public API.
-        let creationDate = asset.creationDate
-        let location = asset.location
-        let isFavorite = asset.isFavorite
+    /// Commit all queued fallback photos (create-new + delete-old) in a single
+    /// `performChanges` transaction. iOS shows exactly one deletion
+    /// confirmation sheet for the whole batch, regardless of how many photos
+    /// are being replaced. If the user declines, every queued photo is marked
+    /// as errored; if they accept, every queued photo is marked compressed
+    /// with `wasReplaced = true`.
+    private func commitPendingFallbacks(_ fallbacks: [PendingFallback]) async {
+        Self.breadcrumb("fallback.batch_commit_start", data: ["count": fallbacks.count])
 
         do {
             try await PHPhotoLibrary.shared().performChanges {
-                let creationRequest = PHAssetCreationRequest.forAsset()
-                let resourceOptions = PHAssetResourceCreationOptions()
-                creationRequest.addResource(with: .photo, fileURL: tempURL, options: resourceOptions)
-                creationRequest.creationDate = creationDate
-                creationRequest.location = location
-                creationRequest.isFavorite = isFavorite
+                for fallback in fallbacks {
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    let resourceOptions = PHAssetResourceCreationOptions()
+                    creationRequest.addResource(with: .photo, fileURL: fallback.tempURL, options: resourceOptions)
+                    // Preserve metadata that affects sort order and UX.
+                    // Keywords/description aren't readable via PHAsset public API.
+                    creationRequest.creationDate = fallback.asset.creationDate
+                    creationRequest.location = fallback.asset.location
+                    creationRequest.isFavorite = fallback.asset.isFavorite
+                }
+                let assetsToDelete = fallbacks.map(\.asset) as NSArray
+                PHAssetChangeRequest.deleteAssets(assetsToDelete)
+            }
 
-                PHAssetChangeRequest.deleteAssets([asset] as NSArray)
+            Self.breadcrumb("fallback.batch_commit_done", data: ["count": fallbacks.count])
+
+            for fallback in fallbacks {
+                images[fallback.imageIndex].compressedSize = fallback.size
+                images[fallback.imageIndex].wasReplaced = true
+                images[fallback.imageIndex].isCompressed = true
             }
         } catch {
-            Self.breadcrumb("replace.fallback_perform_failed", level: .error, data: [
-                "error": "\((error as NSError).description)"
+            let nsError = error as NSError
+            Self.breadcrumb("fallback.batch_commit_failed", level: .error, data: [
+                "domain": nsError.domain,
+                "code": nsError.code,
+                "description": nsError.localizedDescription,
+                "count": fallbacks.count
             ])
-            throw TrimrPixError.assetReplaceFailed(underlyingError: error)
+
+            // User declined the deletion confirmation, or Photos failed to
+            // commit for some other reason. Mark everything as errored so the
+            // user sees what didn't work rather than silent loss.
+            let fallbackError = TrimrPixError.assetReplaceFailed(underlyingError: error)
+            for fallback in fallbacks {
+                images[fallback.imageIndex].error = fallbackError
+                Self.reportPhotoError(fallbackError, assetIdentifier: images[fallback.imageIndex].assetIdentifier)
+            }
         }
+
+        // Temp files either became assets (Photos owns the data now) or
+        // will never be used — either way clean up our tmp dir entries.
+        for fallback in fallbacks {
+            try? FileManager.default.removeItem(at: fallback.tempURL)
+        }
+    }
+
+    /// Fetch a PHAsset by local identifier on a background thread, with the
+    /// same /L0/001-suffix retry we do in `replaceInPhotosLibrary`. Exposed
+    /// as a static helper so we can call it outside a replace cycle.
+    private static func fetchAsset(identifier: String) async throws -> PHAsset {
+        try await Task.detached {
+            let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)
+            if let found = fetchResult.firstObject { return found }
+
+            let baseId = identifier.components(separatedBy: "/").first ?? identifier
+            let retryResult = PHAsset.fetchAssets(withLocalIdentifiers: [baseId], options: nil)
+            if let found = retryResult.firstObject { return found }
+
+            throw TrimrPixError.assetNotFound(identifier)
+        }.value
     }
 
     // MARK: - Sentry helpers
