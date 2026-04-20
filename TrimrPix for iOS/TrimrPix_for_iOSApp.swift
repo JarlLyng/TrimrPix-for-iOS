@@ -52,14 +52,8 @@ struct TrimrPix_for_iOSApp: App {
             scope.setTag(value: "\(version) (\(build))", key: "app_version")
         }
 
-        // Diagnostic: force a test event on every launch so we can verify
-        // Sentry is receiving data during pre-launch testing. Remove before
-        // App Store submission — see GitHub issue tracker.
-        SentrySDK.capture(message: "Launch diagnostic — TrimrPix iOS v\(version) (\(build))")
-
         #if DEBUG
         print("[Sentry] Initialized for TrimrPix iOS v\(version)")
-        print("[Sentry] Sent launch diagnostic event — check Sentry dashboard in 1-2 min")
         #endif
     }
 
