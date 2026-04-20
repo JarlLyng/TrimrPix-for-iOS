@@ -638,6 +638,15 @@ private struct ResultStep: View {
         viewModel.images.filter(\.isCompressed).count
     }
 
+    /// Number of photos that were successfully compressed but couldn't be
+    /// replaced in-place — a new asset was created and the original deleted.
+    /// Used to disclose the non-in-place path in the result summary so users
+    /// understand why a few photos may briefly appear at the top of their
+    /// library.
+    private var replacedCount: Int {
+        viewModel.images.filter { $0.isCompressed && $0.wasReplaced }.count
+    }
+
     private var failCount: Int {
         viewModel.images.filter { $0.error != nil }.count
     }
@@ -661,19 +670,25 @@ private struct ResultStep: View {
     private var wasCancelled: Bool { viewModel.wasCancelled }
 
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.xl) {
-            Spacer()
+        VStack(spacing: 0) {
+            // Scrollable summary. The error list grows unbounded with batch
+            // size — a 20-photo batch with 15 failures used to push the
+            // Compress-more button below the screen. Wrapping content in
+            // ScrollView keeps the primary action pinned and everything else
+            // reachable.
+            ScrollView {
+                VStack(spacing: DesignTokens.Spacing.xl) {
+                    // Icon
+                    Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors || wasCancelled ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
+                        .dynamicFont(size: 72, relativeTo: .largeTitle)
+                        .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors || wasCancelled ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
+                        .accessibilityHidden(true)
+                        .padding(.top, DesignTokens.Spacing.xxl)
 
-            // Icon
-            Image(systemName: allFailed ? "xmark.circle.fill" : (hasErrors || wasCancelled ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"))
-                .dynamicFont(size: 72, relativeTo: .largeTitle)
-                .foregroundStyle(allFailed ? DesignTokens.ColorToken.State.error : (hasErrors || wasCancelled ? DesignTokens.ColorToken.State.warning : DesignTokens.ColorToken.State.success))
-                .accessibilityHidden(true)
-
-            // Title
-            Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
-                .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
-                .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                    // Title
+                    Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
+                        .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
+                        .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
             // Stats
             VStack(spacing: DesignTokens.Spacing.lg) {
@@ -688,6 +703,13 @@ private struct ResultStep: View {
                         label: "Failed",
                         value: "\(failCount)",
                         color: DesignTokens.ColorToken.State.error
+                    )
+                }
+
+                if replacedCount > 0 {
+                    statRow(
+                        label: "Replaced",
+                        value: "\(replacedCount)"
                     )
                 }
 
@@ -707,38 +729,39 @@ private struct ResultStep: View {
             )
             .padding(.horizontal, DesignTokens.Spacing.lg)
 
-            // Error details
-            if hasErrors {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                    ForEach(viewModel.images.filter { $0.error != nil }) { item in
-                        HStack(spacing: DesignTokens.Spacing.sm) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                                .foregroundStyle(DesignTokens.ColorToken.State.error)
-                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                                .accessibilityHidden(true)
+                    // Error details
+                    if hasErrors {
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                            ForEach(viewModel.images.filter { $0.error != nil }) { item in
+                                HStack(spacing: DesignTokens.Spacing.sm) {
+                                    Image(systemName: "exclamationmark.circle.fill")
+                                        .foregroundStyle(DesignTokens.ColorToken.State.error)
+                                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                        .accessibilityHidden(true)
 
-                            Text(item.error?.localizedDescription ?? "Unknown error")
-                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                                    Text(item.error?.localizedDescription ?? "Unknown error")
+                                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                        .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                                }
+                            }
                         }
+                        .padding(DesignTokens.Spacing.lg)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            DesignTokens.Common.Background.card(scheme),
+                            in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                                .stroke(DesignTokens.ColorToken.State.error.opacity(0.3), lineWidth: 1)
+                        )
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
                     }
                 }
-                .padding(DesignTokens.Spacing.lg)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    DesignTokens.Common.Background.card(scheme),
-                    in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                        .stroke(DesignTokens.ColorToken.State.error.opacity(0.3), lineWidth: 1)
-                )
-                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.bottom, DesignTokens.Spacing.lg)
             }
 
-            Spacer()
-
-            // Done button
+            // Done button — pinned below the scroll region
             Button {
                 withAnimation(AccessibilityAnimation.default) { viewModel.reset() }
             } label: {
