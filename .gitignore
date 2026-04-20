@@ -18,3 +18,21 @@ DerivedData/
 # SPM
 .build/
 .swiftpm/
+
+# Build artifacts & distribution
+*.ipa
+*.xcarchive
+build/
+
+# Signing & provisioning (never commit these)
+*.mobileprovision
+*.p8
+*.p12
+*.pem
+*.cer
+*.certSigningRequest
+
+# Environment files
+.env
+.env.*
+!.env.example
