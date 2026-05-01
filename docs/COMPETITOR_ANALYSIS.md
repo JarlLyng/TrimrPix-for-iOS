@@ -8,7 +8,7 @@
 
 ## Executive summary
 
-The iOS "compress photos" category is crowded, mature, and dominated by one incumbent (Compress Photos & Pictures by New Marketing Lab, ~22,000 ratings at 4.7). The rest of the field is a long tail of functionally similar apps that all do essentially the same thing: import photos, write compressed copies to a new album, and let the user manually delete the originals. Most rely on subscription or freemium-with-ads monetization. TrimrPix's strongest genuinely unprotected differentiator is **true in-place replacement of the original PHAsset in one step**, combined with **fully free, ad-free, privacy-first positioning** and **granular metadata control** (most competitors offer a single binary "strip metadata" toggle at best). The biggest risks are the incumbent's brand equity and review moat, and the fact that iOS 26.2+ requirement cuts the addressable market.
+The iOS "compress photos" category is crowded, mature, and dominated by one incumbent (Compress Photos & Pictures by New Marketing Lab, ~22,000 ratings at 4.7). The rest of the field is a long tail of functionally similar apps that all do essentially the same thing: import photos, write compressed copies to a new album, and let the user manually delete the originals. Most rely on subscription or freemium-with-ads monetization. TrimrPix's strongest genuinely unprotected differentiator is **true in-place replacement of the original PHAsset in one step**, combined with **honest one-time pricing ($1.99, no ads, no subscription, no tracking)** and **granular metadata control** (most competitors offer a single binary "strip metadata" toggle at best). The biggest risks are the incumbent's brand equity and review moat, and the fact that iOS 26.2+ requirement cuts the addressable market.
 
 ---
 
@@ -93,7 +93,7 @@ The iOS "compress photos" category is crowded, mature, and dominated by one incu
 | **HEIC** | Yes | Yes | Input only | Yes | Unclear | No |
 | **Granular metadata control (per category)** | Yes (date, GPS, camera, IPTC, Apple data) | No (binary toggle, Pro-only) | No | No (binary toggle) | No | No (auto-strip) |
 | **iCloud photo download + re-upload** | Yes (explicit) | Implicit | Implicit | Implicit | Implicit | Implicit |
-| **Price** | Free, no IAP | Freemium + ads + subs | Freemium + ads + subs | Freemium + ads | Weekly sub | Freemium + ads |
+| **Price** | $1.99 one-time | Freemium + ads + subs | Freemium + ads + subs | Freemium + ads | Weekly sub | Freemium + ads |
 | **Ads** | No | Yes (free tier) | Yes (free tier) | Yes | No | Yes (free tier) |
 | **Third-party tracking** | No (Sentry crash only, anonymous) | Per App Store label | Per App Store label | Yes (tracking IDs + usage) | Per App Store label | Per App Store label |
 
@@ -109,7 +109,7 @@ Ranked honestly by defensibility:
 
 2. **Granular metadata control (per-category, not binary).** Competitors offer at most a single "strip metadata" toggle, usually paywalled. TrimrPix exposes date/time, GPS, camera settings, IPTC, and Apple data as independent switches. This matches privacy-tool expectations and is directly marketable to journalists, activists, and OSINT-aware users.
 
-3. **Genuinely free with no ads, no subscription, no tracking.** Every top-5 competitor except TinyPic shows ads in the free tier, and TinyPic runs a weekly subscription. TrimrPix being free forever with only anonymous Sentry crash telemetry is a real positional advantage — especially when paired with the indie-developer narrative.
+3. **Honest one-time pricing — $1.99, no ads, no subscription, no tracking.** Every top-5 competitor except TinyPic shows ads in the free tier; TinyPic runs a weekly subscription that costs ~$155/year if not cancelled. TrimrPix at a single $1.99 charge with anonymous Sentry crash telemetry as the only data collection is the cheapest honest option in the category — cheaper than the lifetime tier of the incumbent ($12.99) and dramatically cheaper than any subscription competitor over even a month of use.
 
 4. **Broadest output format set + actual WebP.** Matched only by Easy Photo Compressor; beats the market leader on WebP.
 
@@ -123,21 +123,17 @@ What is **not** a differentiator: offline processing (everyone is offline); basi
 
 ### App Store subtitle and description lead
 
-Current prepared subtitle "Compress Photos on iPhone" is generic and leaves the differentiator on the table. Recommended alternatives (30 chars max):
+Live subtitle in App Store Connect is **"Compress Photos In Place"** (24 chars). Lead the description paragraph 1 with the in-place behavior: *"TrimrPix replaces your photos directly in your Photos library. No duplicates. No 'Compressed' album to clean up later."*
 
-- **"Shrink Photos, Keep Originals Replaced"** (40 — too long)
-- **"Compress & Replace. No Copies."** (31 — marginal)
-- **"Compress Photos In Place"** (24 — clear, SEO-aligned, honest)
-- **"Free Photo Compressor, No Copies"** (32 — fits)
-
-Recommendation: **"Free Photo Compressor, No Copies"** or **"Compress Photos In Place"**. Lead the description paragraph 1 with the in-place behavior: *"TrimrPix replaces your photos directly in your Photos library. No duplicates. No 'Compressed' album to clean up later."*
+Note: an earlier draft of this analysis recommended "Free Photo Compressor, No Copies" as a subtitle option. That recommendation is obsolete — TrimrPix is **$1.99 one-time**, not free. Use "Compress Photos In Place" instead.
 
 ### Least-competition, highest-intent keywords
 
 Based on category saturation:
 
 - `in-place photo compressor` / `replace original photos` — essentially zero competition
-- `photo compressor no ads` / `free photo compressor no subscription` — strong intent, competitors can't credibly claim this
+- `photo compressor no ads` / `photo compressor no subscription` — strong intent, competitors can't credibly claim this
+- `pay once photo compressor iPhone` / `one-time photo compressor` — directly attacks subscription-based competitors
 - `granular exif remover iOS` / `strip GPS keep date` — niche but high intent
 - `WebP compressor iPhone` — low competition (only Easy Photo Compressor competes)
 
@@ -150,7 +146,7 @@ Lower-priority (saturated):
 
 **"The only iPhone app that compresses photos by replacing the original — no duplicate album to clean up later."**
 
-This is factually defensible, visually demonstrable in one screen recording, and directly addresses the #1 pain point in reviews of the category leader. Secondary hook: **"Free, no ads, no subscription, no tracking — built by one person."** Indie/anti-SaaS narrative lands well on Hacker News, Daring Fireball, MacStories, iPhoneified, and Reddit r/apple.
+This is factually defensible, visually demonstrable in one screen recording, and directly addresses the #1 pain point in reviews of the category leader. Secondary hook: **"$1.99 once — no subscription, no ads, no tracking. Built by one person."** Indie/anti-SaaS narrative lands well on Hacker News, Daring Fireball, MacStories, iPhoneified, and Reddit r/apple. The honest-pricing angle (vs. competitors' weekly-subscription traps and ad-laden free tiers) is rhetorically strong precisely because it's *not* "free" — there's nothing to qualify or asterisk, the price is just visible up front.
 
 ### Underused positioning angles
 
@@ -170,7 +166,7 @@ This is factually defensible, visually demonstrable in one screen recording, and
 
 ### Most vulnerable competitor: TinyPic (Island Palm Mobile)
 
-Weekly subscription at $2.99/week is widely perceived as predatory pricing and triggers user backlash and App Store removal risk. Only 321 ratings despite being on iPhone/iPad/Mac. No metadata control, vague "AI" marketing. A free, no-subscription, more-featured app directly attacks its value proposition. TrimrPix should explicitly mention "no weekly subscription traps" in marketing copy.
+Weekly subscription at $2.99/week is widely perceived as predatory pricing and triggers user backlash and App Store removal risk. Only 321 ratings despite being on iPhone/iPad/Mac. No metadata control, vague "AI" marketing. A $1.99 one-time, no-subscription, more-featured app directly attacks its value proposition — TrimrPix at $1.99 is cheaper than even a single week of TinyPic. Marketing copy should explicitly mention "no weekly subscription traps."
 
 ### Also vulnerable: Image Size (WEBDIA)
 

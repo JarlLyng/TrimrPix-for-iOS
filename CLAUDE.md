@@ -9,7 +9,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Developer:** Jarl Lyng / [IAMJARL](https://iamjarl.com)
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** Private — all rights reserved (NOT open source)
-- **Price:** Free (no in-app purchases)
+- **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
 - **Status:** Pre-launch (Q2 2026)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
