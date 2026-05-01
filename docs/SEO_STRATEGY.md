@@ -33,7 +33,7 @@ Baseret på `docs/COMPETITOR_ANALYSIS.md` er positioneringen skiftet fra generis
 - Kræver iOS 26.2+
 
 ### Prismodel
-Gratis (ingen in-app purchases pt.)
+$1.99 USD engangsbetaling. Ingen in-app purchases, ingen subscription, ingen ads.
 
 ### Søsterapp
 **TrimrPix for macOS** — separat app med ekstra features (drag-and-drop, Watch Folder, AVIF/GIF). Eget website: [trimrpix.iamjarl.com](https://trimrpix.iamjarl.com). De to apps har separate marketing-sider, support-sider og privacy policies, men linker til hinanden.
