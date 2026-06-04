@@ -101,11 +101,11 @@ struct ContentView: View {
 
     private func stepName(for step: AppStep) -> String {
         switch step {
-        case .selectPhotos: return "Select photos"
-        case .configure: return "Configure"
-        case .confirm: return "Confirm"
-        case .compressing: return "Compressing"
-        case .result: return "Result"
+        case .selectPhotos: return String(localized: "Select photos")
+        case .configure: return String(localized: "Configure")
+        case .confirm: return String(localized: "Confirm")
+        case .compressing: return String(localized: "Compressing")
+        case .result: return String(localized: "Result")
         }
     }
 }
@@ -163,9 +163,15 @@ private struct SelectPhotosStep: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(DesignTokens.ColorToken.State.success)
                         .accessibilityHidden(true)
-                    Text(viewModel.images.count == 1 ? "1 photo selected" : "\(viewModel.images.count) photos selected")
-                        .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
-                        .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                    Group {
+                        if viewModel.images.count == 1 {
+                            Text("1 photo selected")
+                        } else {
+                            Text("\(viewModel.images.count) photos selected")
+                        }
+                    }
+                    .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
+                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 }
                 .padding(.vertical, DesignTokens.Spacing.md)
                 .padding(.horizontal, DesignTokens.Spacing.xl)
@@ -192,8 +198,14 @@ private struct SelectPhotosStep: View {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Image(systemName: hasSelected ? "arrow.triangle.2.circlepath" : "plus")
                             .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
-                        Text(hasSelected ? "Choose different photos" : "Choose from Photos")
-                            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
+                        Group {
+                            if hasSelected {
+                                Text("Choose different photos")
+                            } else {
+                                Text("Choose from Photos")
+                            }
+                        }
+                        .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
                     }
                     .foregroundStyle(hasSelected
                                      ? DesignTokens.Common.primary(scheme)
@@ -251,11 +263,11 @@ private struct ConfigureStep: View {
                     summaryCard
 
                     // Mode + its options (quality preset or per-photo target size)
-                    settingsSection(title: "Compression") {
+                    settingsSection(title: String(localized: "Compression")) {
                         VStack(spacing: DesignTokens.Spacing.md) {
                             Picker("Mode", selection: $viewModel.modeKind) {
                                 ForEach(CompressionModeKind.allCases) { kind in
-                                    Text(kind.rawValue).tag(kind)
+                                    Text(kind.displayName).tag(kind)
                                 }
                             }
                             .pickerStyle(.segmented)
@@ -264,7 +276,7 @@ private struct ConfigureStep: View {
                             case .quality:
                                 Picker("Quality", selection: $viewModel.quality) {
                                     ForEach(CompressionQuality.allCases) { level in
-                                        Text(level.rawValue).tag(level)
+                                        Text(level.displayName).tag(level)
                                     }
                                 }
                                 .pickerStyle(.segmented)
@@ -348,9 +360,15 @@ private struct ConfigureStep: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(viewModel.images.count == 1 ? "1 photo" : "\(viewModel.images.count) photos")
-                    .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
-                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                Group {
+                    if viewModel.images.count == 1 {
+                        Text("1 photo")
+                    } else {
+                        Text("\(viewModel.images.count) photos")
+                    }
+                }
+                .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.semibold)
+                .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
                 Text(viewModel.totalOriginalSize.formattedSize)
                     .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
@@ -381,7 +399,7 @@ private struct ConfigureStep: View {
     }
 
     private var metadataSection: some View {
-        settingsSection(title: "Metadata") {
+        settingsSection(title: String(localized: "Metadata")) {
             VStack(spacing: DesignTokens.Spacing.sm) {
                 // Explanation
                 Text("Choose which metadata to keep. Disabled items will be permanently removed.")
@@ -509,15 +527,15 @@ private struct ConfirmStep: View {
 
             // Summary
             VStack(spacing: DesignTokens.Spacing.md) {
-                summaryRow(label: "Photos", value: "\(viewModel.images.count)")
+                summaryRow(label: String(localized: "Photos"), value: "\(viewModel.images.count)")
                 switch viewModel.modeKind {
                 case .quality:
-                    summaryRow(label: "Quality", value: viewModel.quality.rawValue)
+                    summaryRow(label: String(localized: "Quality"), value: viewModel.quality.displayName)
                 case .targetSize:
-                    summaryRow(label: "Target size", value: viewModel.targetSize.label)
+                    summaryRow(label: String(localized: "Target size"), value: viewModel.targetSize.label)
                 }
-                summaryRow(label: "Metadata", value: metadataStrippedCount == 0 ? "Keep all" : "\(metadataStrippedCount) removed")
-                summaryRow(label: "Est. savings", value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
+                summaryRow(label: String(localized: "Metadata"), value: metadataStrippedCount == 0 ? String(localized: "Keep all") : String(localized: "\(metadataStrippedCount) removed"))
+                summaryRow(label: String(localized: "Est. savings"), value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
             }
             .padding(DesignTokens.Spacing.xl)
             .background(
@@ -669,6 +687,15 @@ private struct ResultStep: View {
     private var allFailed: Bool { successCount == 0 }
     private var wasCancelled: Bool { viewModel.wasCancelled }
 
+    /// Localized result headline. A `LocalizedStringKey` (not a String ternary)
+    /// so SwiftUI localizes it.
+    private var resultTitle: LocalizedStringKey {
+        if allFailed { return "Compression failed" }
+        if wasCancelled { return "Cancelled" }
+        if hasErrors { return "Partially complete" }
+        return "Done!"
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Scrollable summary. The error list grows unbounded with batch
@@ -686,21 +713,21 @@ private struct ResultStep: View {
                         .padding(.top, DesignTokens.Spacing.xxl)
 
                     // Title
-                    Text(allFailed ? "Compression failed" : (wasCancelled ? "Cancelled" : (hasErrors ? "Partially complete" : "Done!")))
+                    Text(resultTitle)
                         .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
                         .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
             // Stats
             VStack(spacing: DesignTokens.Spacing.lg) {
                 statRow(
-                    label: "Compressed",
-                    value: "\(successCount) of \(viewModel.images.count)",
+                    label: String(localized: "Compressed"),
+                    value: String(localized: "\(successCount) of \(viewModel.images.count)"),
                     color: successCount > 0 ? DesignTokens.Common.Text.primary(scheme) : DesignTokens.ColorToken.State.error
                 )
 
                 if hasErrors {
                     statRow(
-                        label: "Failed",
+                        label: String(localized: "Failed"),
                         value: "\(failCount)",
                         color: DesignTokens.ColorToken.State.error
                     )
@@ -708,14 +735,14 @@ private struct ResultStep: View {
 
                 if replacedCount > 0 {
                     statRow(
-                        label: "Replaced",
+                        label: String(localized: "Replaced"),
                         value: "\(replacedCount)"
                     )
                 }
 
                 if successCount > 0 {
-                    statRow(label: "Space saved", value: totalSaved.formattedSize)
-                    statRow(label: "Avg. savings", value: "\(averageSavings)%")
+                    statRow(label: String(localized: "Space saved"), value: totalSaved.formattedSize)
+                    statRow(label: String(localized: "Avg. savings"), value: "\(averageSavings)%")
                 }
             }
             .padding(DesignTokens.Spacing.xl)
@@ -739,7 +766,7 @@ private struct ResultStep: View {
                                         .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                                         .accessibilityHidden(true)
 
-                                    Text(item.error?.localizedDescription ?? "Unknown error")
+                                    Text(item.error?.localizedDescription ?? String(localized: "Unknown error"))
                                         .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
                                 }

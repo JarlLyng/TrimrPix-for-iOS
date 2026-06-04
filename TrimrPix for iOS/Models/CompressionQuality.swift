@@ -36,12 +36,22 @@ nonisolated enum CompressionQuality: String, CaseIterable, Identifiable, Sendabl
         }
     }
 
+    /// Localized name shown in the picker (rawValue stays English — it is the
+    /// persistence key).
+    var displayName: String {
+        switch self {
+        case .same: return String(localized: "Same")
+        case .good: return String(localized: "Good")
+        case .smaller: return String(localized: "Smaller")
+        }
+    }
+
     /// User-facing description of the quality level
     var description: String {
         switch self {
-        case .same: return "No visible quality loss"
-        case .good: return "Light compression, hard to tell the difference"
-        case .smaller: return "More aggressive compression"
+        case .same: return String(localized: "No visible quality loss")
+        case .good: return String(localized: "Light compression, hard to tell the difference")
+        case .smaller: return String(localized: "More aggressive compression")
         }
     }
 }

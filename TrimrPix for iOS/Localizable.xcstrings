@@ -1,0 +1,678 @@
+{
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "1 photo" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "1 billede" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "1 Foto" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "1 photo" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "1枚の写真" } }
+      }
+    },
+    "1 photo selected" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "1 billede valgt" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "1 Foto ausgewählt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "1 photo sélectionnée" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "1枚の写真を選択中" } }
+      }
+    },
+    "%lld photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "%lld billeder" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Fotos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%lld枚の写真" } }
+      }
+    },
+    "%lld photos selected" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "%lld billeder valgt" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Fotos ausgewählt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld photos sélectionnées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%lld枚の写真を選択中" } }
+      }
+    },
+    "%lld of %lld" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "%lld af %lld" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld von %lld" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld sur %lld" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%lld / %lld" } }
+      }
+    },
+    "%lld removed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "%lld fjernet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld entfernt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld supprimées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%lld個削除" } }
+      }
+    },
+    "An unknown error occurred" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Der opstod en ukendt fejl" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ein unbekannter Fehler ist aufgetreten" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Une erreur inconnue s'est produite" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "不明なエラーが発生しました" } }
+      }
+    },
+    "Apple data" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Apple-data" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Apple-Daten" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Données Apple" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Appleデータ" } }
+      }
+    },
+    "Avg. savings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Gns. besparelse" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Durchschn. Ersparnis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Économie moy." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "平均削減率" } }
+      }
+    },
+    "Camera settings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Kameraindstillinger" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kameraeinstellungen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réglages de l'appareil" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カメラ設定" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Annullér" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abbrechen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャンセル" } }
+      }
+    },
+    "Cancelled" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Annulleret" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abgebrochen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annulé" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャンセルしました" } }
+      }
+    },
+    "Choose different photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Vælg andre billeder" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Andere Fotos auswählen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir d'autres photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "別の写真を選択" } }
+      }
+    },
+    "Choose from Photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Vælg fra Fotos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aus Fotos auswählen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisir dans Photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真から選択" } }
+      }
+    },
+    "Choose the photos you want to compress from your library" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Vælg de billeder fra dit bibliotek, du vil komprimere" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wähle die Fotos aus deiner Mediathek, die du komprimieren möchtest" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez les photos de votre photothèque à compresser" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ライブラリから圧縮したい写真を選んでください" } }
+      }
+    },
+    "Choose which metadata to keep. Disabled items will be permanently removed." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Vælg hvilke metadata der skal bevares. Fravalgte data fjernes permanent." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wähle, welche Metadaten erhalten bleiben. Deaktivierte Einträge werden dauerhaft entfernt." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Choisissez les métadonnées à conserver. Les éléments désactivés seront supprimés définitivement." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "保持するメタデータを選択してください。オフにした項目は完全に削除されます。" } }
+      }
+    },
+    "Compress" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimér" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Komprimieren" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compresser" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮" } }
+      }
+    },
+    "Compress more photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimér flere billeder" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weitere Fotos komprimieren" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compresser plus de photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "他の写真を圧縮" } }
+      }
+    },
+    "Compressed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimeret" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Komprimiert" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compressées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮済み" } }
+      }
+    },
+    "Compressing..." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimerer…" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird komprimiert…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compression…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮中…" } }
+      }
+    },
+    "Compression" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimering" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Komprimierung" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compression" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮" } }
+      }
+    },
+    "Compression failed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Komprimering mislykkedes" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Komprimierung fehlgeschlagen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec de la compression" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮に失敗しました" } }
+      }
+    },
+    "Configure" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Konfigurér" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Konfigurieren" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Configurer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
+      }
+    },
+    "Confirm" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Bekræft" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bestätigen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Confirmer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "確認" } }
+      }
+    },
+    "Copyright & description" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Ophavsret og beskrivelse" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Copyright & Beschreibung" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Droits d'auteur et description" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "著作権と説明" } }
+      }
+    },
+    "Date & time" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Dato og tid" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Datum & Uhrzeit" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date et heure" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "日時" } }
+      }
+    },
+    "Done!" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Færdig!" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fertig!" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Terminé !" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "完了！" } }
+      }
+    },
+    "Double tap to start compressing. This replaces original photos and cannot be undone." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Dobbelttryk for at starte komprimering. Dette erstatter de originale billeder og kan ikke fortrydes." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Doppeltippen, um die Komprimierung zu starten. Dies ersetzt die Originalfotos und kann nicht rückgängig gemacht werden." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Touchez deux fois pour lancer la compression. Cela remplace les photos originales et est irréversible." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ダブルタップで圧縮を開始します。元の写真が置き換えられ、取り消せません。" } }
+      }
+    },
+    "Each photo is compressed to about this size or smaller. Photos already smaller are left unchanged." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Hvert billede komprimeres til omkring denne størrelse eller mindre. Billeder, der allerede er mindre, ændres ikke." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Jedes Foto wird auf etwa diese Größe oder kleiner komprimiert. Bereits kleinere Fotos bleiben unverändert." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chaque photo est compressée à environ cette taille ou moins. Les photos déjà plus petites ne sont pas modifiées." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "各写真はこのサイズ前後かそれ以下に圧縮されます。すでに小さい写真は変更されません。" } }
+      }
+    },
+    "Est. savings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Anslået besp." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gesch. Ersparnis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Écon. estimée" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "推定削減" } }
+      }
+    },
+    "Estimated savings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Anslået besparelse" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geschätzte Ersparnis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Économie estimée" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "推定削減量" } }
+      }
+    },
+    "Estimating..." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Beregner…" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird geschätzt…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Estimation…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "推定中…" } }
+      }
+    },
+    "Failed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Mislykkedes" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehlgeschlagen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "失敗" } }
+      }
+    },
+    "Failed to load image" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Kunne ikke indlæse billede" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bild konnte nicht geladen werden" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec du chargement de l'image" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "画像を読み込めませんでした" } }
+      }
+    },
+    "Failed to replace photo in library" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Kunne ikke erstatte billede i biblioteket" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Foto in der Mediathek konnte nicht ersetzt werden" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec du remplacement de la photo dans la photothèque" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ライブラリの写真を置き換えられませんでした" } }
+      }
+    },
+    "Format not supported: %@" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Format ikke understøttet: %@" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Format nicht unterstützt: %@" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Format non pris en charge : %@" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "サポートされていない形式: %@" } }
+      }
+    },
+    "GPS location" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "GPS-placering" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "GPS-Standort" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Position GPS" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "GPS位置情報" } }
+      }
+    },
+    "Good" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "God" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gut" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Bonne" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "標準" } }
+      }
+    },
+    "Grant photo access in Settings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Giv adgang til fotos i Indstillinger" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotozugriff in den Einstellungen erlauben" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Autoriser l'accès aux photos dans Réglages" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定で写真へのアクセスを許可してください" } }
+      }
+    },
+    "Invalid image data" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Ugyldige billeddata" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ungültige Bilddaten" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Données d'image non valides" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "無効な画像データ" } }
+      }
+    },
+    "Keep all" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Behold alle" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle behalten" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tout conserver" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "すべて保持" } }
+      }
+    },
+    "Latitude, longitude, altitude" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Bredde-, længdegrad, højde" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Breitengrad, Längengrad, Höhe" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Latitude, longitude, altitude" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "緯度、経度、高度" } }
+      }
+    },
+    "Light compression, hard to tell the difference" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Let komprimering, svær at se forskel" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Leichte Komprimierung, kaum ein Unterschied erkennbar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compression légère, différence difficile à percevoir" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "軽い圧縮で、違いはほとんどわかりません" } }
+      }
+    },
+    "Live Photo, HDR, burst info" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Live Photo, HDR, burst-info" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Live Photo, HDR, Serien-Infos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Live Photo, HDR, infos rafale" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Live Photo、HDR、バースト情報" } }
+      }
+    },
+    "Loading photos..." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Indlæser billeder…" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos werden geladen…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chargement des photos…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真を読み込み中…" } }
+      }
+    },
+    "Make sure the app has full photo access" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Sørg for, at appen har fuld adgang til fotos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Stelle sicher, dass die App vollen Fotozugriff hat" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Assurez-vous que l'app dispose d'un accès complet aux photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "アプリが写真へのフルアクセス権を持っていることを確認してください" } }
+      }
+    },
+    "Metadata" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Metadata" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Metadaten" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Métadonnées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "メタデータ" } }
+      }
+    },
+    "Mode" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Tilstand" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Modus" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mode" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "モード" } }
+      }
+    },
+    "Model, exposure, ISO, aperture" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Model, eksponering, ISO, blænde" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Modell, Belichtung, ISO, Blende" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modèle, exposition, ISO, ouverture" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "機種、露出、ISO、絞り" } }
+      }
+    },
+    "More aggressive compression" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Mere aggressiv komprimering" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Stärkere Komprimierung" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compression plus agressive" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "より強い圧縮" } }
+      }
+    },
+    "Next" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Næste" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Suivant" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "次へ" } }
+      }
+    },
+    "No visible quality loss" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Intet synligt kvalitetstab" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kein sichtbarer Qualitätsverlust" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune perte de qualité visible" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "目に見える画質低下なし" } }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Åbn Indstillinger" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen öffnen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir Réglages" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定を開く" } }
+      }
+    },
+    "Operation cancelled" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Handling annulleret" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Vorgang abgebrochen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Opération annulée" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "操作がキャンセルされました" } }
+      }
+    },
+    "Partially complete" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Delvist gennemført" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Teilweise abgeschlossen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Partiellement terminé" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "一部完了" } }
+      }
+    },
+    "Photo %lld of %lld" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Billede %lld af %lld" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Foto %lld von %lld" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Photo %lld sur %lld" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%2$lld枚中%1$lld枚目" } }
+      }
+    },
+    "Photo access required" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Adgang til fotos kræves" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotozugriff erforderlich" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accès aux photos requis" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真へのアクセスが必要です" } }
+      }
+    },
+    "Photo not found in library" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Billede ikke fundet i biblioteket" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Foto nicht in der Mediathek gefunden" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Photo introuvable dans la photothèque" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ライブラリに写真が見つかりません" } }
+      }
+    },
+    "Photographer, caption, keywords" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Fotograf, billedtekst, nøgleord" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotograf, Bildunterschrift, Schlagwörter" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Photographe, légende, mots-clés" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "撮影者、キャプション、キーワード" } }
+      }
+    },
+    "Photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Billeder" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真" } }
+      }
+    },
+    "Photos access denied" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Adgang til Fotos nægtet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotozugriff verweigert" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accès aux photos refusé" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真へのアクセスが拒否されました" } }
+      }
+    },
+    "Photos access restricted" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Adgang til Fotos begrænset" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotozugriff eingeschränkt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accès aux photos restreint" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真へのアクセスが制限されています" } }
+      }
+    },
+    "Photo access is restricted on this device" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Adgang til fotos er begrænset på denne enhed" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Der Fotozugriff ist auf diesem Gerät eingeschränkt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "L'accès aux photos est restreint sur cet appareil" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "このデバイスでは写真へのアクセスが制限されています" } }
+      }
+    },
+    "Quality" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Kvalitet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Qualität" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Qualité" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "画質" } }
+      }
+    },
+    "Ready to compress" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Klar til komprimering" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bereit zum Komprimieren" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Prêt à compresser" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮の準備完了" } }
+      }
+    },
+    "Replaced" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Erstattet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ersetzt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Remplacées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "置き換え済み" } }
+      }
+    },
+    "Result" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Resultat" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ergebnis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Résultat" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "結果" } }
+      }
+    },
+    "Same" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Samme" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gleich" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Identique" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "同じ" } }
+      }
+    },
+    "Select photos" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Vælg billeder" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos auswählen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sélectionner des photos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真を選択" } }
+      }
+    },
+    "Slide to compress" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Skub for at komprimere" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zum Komprimieren wischen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Glisser pour compresser" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "スライドして圧縮" } }
+      }
+    },
+    "Smaller" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Mindre" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kleiner" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plus petite" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "小さく" } }
+      }
+    },
+    "Space saved" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Plads sparet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gesparter Speicher" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Espace gagné" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "節約した容量" } }
+      }
+    },
+    "Start over" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Start forfra" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von vorn beginnen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Recommencer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "最初からやり直す" } }
+      }
+    },
+    "Step %lld of 4" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Trin %lld af 4" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schritt %lld von 4" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étape %lld sur 4" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ステップ %lld / 4" } }
+      }
+    },
+    "Target size" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Målstørrelse" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zielgröße" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Taille cible" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "目標サイズ" } }
+      }
+    },
+    "The original photos will be replaced with compressed versions. This cannot be undone." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "De originale billeder erstattes med komprimerede versioner. Dette kan ikke fortrydes." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Die Originalfotos werden durch komprimierte Versionen ersetzt. Dies kann nicht rückgängig gemacht werden." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les photos originales seront remplacées par des versions compressées. Cette action est irréversible." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "元の写真は圧縮版に置き換えられます。この操作は取り消せません。" } }
+      }
+    },
+    "TrimrPix needs full access to your photo library to compress and replace photos. Please enable access in Settings." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "TrimrPix kræver fuld adgang til dit fotobibliotek for at komprimere og erstatte billeder. Aktivér adgang i Indstillinger." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "TrimrPix benötigt vollen Zugriff auf deine Mediathek, um Fotos zu komprimieren und zu ersetzen. Bitte aktiviere den Zugriff in den Einstellungen." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "TrimrPix a besoin d'un accès complet à votre photothèque pour compresser et remplacer les photos. Veuillez activer l'accès dans Réglages." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真の圧縮と置き換えには、TrimrPixが写真ライブラリへのフルアクセスを必要とします。設定でアクセスを許可してください。" } }
+      }
+    },
+    "Try a different format or quality level" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Prøv et andet format eller kvalitetsniveau" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Versuche ein anderes Format oder eine andere Qualitätsstufe" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Essayez un autre format ou niveau de qualité" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "別の形式または画質レベルをお試しください" } }
+      }
+    },
+    "Try again. If the problem persists, restart the app" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Prøv igen. Hvis problemet fortsætter, genstart appen" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Versuche es erneut. Wenn das Problem weiterhin besteht, starte die App neu" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réessayez. Si le problème persiste, redémarrez l'app" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "もう一度お試しください。問題が解決しない場合はアプリを再起動してください" } }
+      }
+    },
+    "Unknown error" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Ukendt fejl" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Unbekannter Fehler" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur inconnue" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "不明なエラー" } }
+      }
+    },
+    "Unsupported image format: %@" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Ikke-understøttet billedformat: %@" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nicht unterstütztes Bildformat: %@" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Format d'image non pris en charge : %@" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "サポートされていない画像形式: %@" } }
+      }
+    },
+    "When the photo was taken" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Hvornår billedet blev taget" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wann das Foto aufgenommen wurde" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date de prise de la photo" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真が撮影された日時" } }
+      }
+    },
+    "Will be removed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Fjernes" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird entfernt" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sera supprimé" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "削除されます" } }
+      }
+    },
+    "%@ compression failed" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "%@-komprimering mislykkedes" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@-Komprimierung fehlgeschlagen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Échec de la compression %@" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%@の圧縮に失敗しました" } }
+      }
+    }
+  }
+}

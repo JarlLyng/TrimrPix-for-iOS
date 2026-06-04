@@ -26,6 +26,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **iCloud support** — downloads iCloud photos, compresses, saves back
 - **Fully offline** — no cloud, no accounts, no internet required
 - **Privacy-first** — only data collection is anonymous Sentry crash reports (stack traces, device type, iOS version, app version — no personal data)
+- **Localized** — EN (base) + DA, DE, FR, JA, in-app via `TrimrPix for iOS/Localizable.xcstrings` (String Catalog). DA is native-quality; DE/FR/JA are first-pass and should get a native review. Add UI strings as `Text("literal")` or `String(localized:)`; model/error display strings localize at their source (e.g. `CompressionQuality.displayName`, `TrimrPixError`). App Store *metadata* localization (DA/DE/FR/JA listings) is separate — done in App Store Connect at release.
 
 ### Features that do NOT exist (common hallucination targets)
 - No batch "entire library" mode — user selects specific photos

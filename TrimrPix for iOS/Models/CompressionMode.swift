@@ -24,6 +24,15 @@ nonisolated enum CompressionModeKind: String, CaseIterable, Identifiable, Sendab
     case targetSize = "Target size"
 
     var id: String { rawValue }
+
+    /// Localized name for the mode picker (rawValue stays English — it is the
+    /// persistence key).
+    var displayName: String {
+        switch self {
+        case .quality: return String(localized: "Quality")
+        case .targetSize: return String(localized: "Target size")
+        }
+    }
 }
 
 /// Preset per-photo target sizes. Values are decimal (1 MB = 1,000,000 bytes)

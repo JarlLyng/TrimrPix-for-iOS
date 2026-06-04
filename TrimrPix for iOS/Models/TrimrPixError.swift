@@ -32,42 +32,42 @@ nonisolated enum TrimrPixError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .imageLoadFailed:
-            return "Failed to load image"
+            return String(localized: "Failed to load image")
         case .unsupportedImageFormat(let format):
-            return "Unsupported image format: \(format)"
+            return String(localized: "Unsupported image format: \(format)")
         case .invalidImageData:
-            return "Invalid image data"
+            return String(localized: "Invalid image data")
         case .compressionFailed(let format, _):
-            return "\(format) compression failed"
+            return String(localized: "\(format) compression failed")
         case .formatNotSupported(let format):
-            return "Format not supported: \(format)"
+            return String(localized: "Format not supported: \(format)")
         case .photosAccessDenied:
-            return "Photos access denied"
+            return String(localized: "Photos access denied")
         case .photosAccessRestricted:
-            return "Photos access restricted"
+            return String(localized: "Photos access restricted")
         case .assetNotFound:
-            return "Photo not found in library"
+            return String(localized: "Photo not found in library")
         case .assetReplaceFailed:
-            return "Failed to replace photo in library"
+            return String(localized: "Failed to replace photo in library")
         case .userCancelled:
-            return "Operation cancelled"
+            return String(localized: "Operation cancelled")
         case .unknown:
-            return "An unknown error occurred"
+            return String(localized: "An unknown error occurred")
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .photosAccessDenied:
-            return "Grant photo access in Settings"
+            return String(localized: "Grant photo access in Settings")
         case .photosAccessRestricted:
-            return "Photo access is restricted on this device"
+            return String(localized: "Photo access is restricted on this device")
         case .compressionFailed:
-            return "Try a different format or quality level"
+            return String(localized: "Try a different format or quality level")
         case .assetReplaceFailed:
-            return "Make sure the app has full photo access"
+            return String(localized: "Make sure the app has full photo access")
         default:
-            return "Try again. If the problem persists, restart the app"
+            return String(localized: "Try again. If the problem persists, restart the app")
         }
     }
 }
