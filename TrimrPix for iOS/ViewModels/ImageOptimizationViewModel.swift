@@ -55,6 +55,42 @@ nonisolated enum AppStep: Sendable {
     }
 }
 
+// MARK: - Preferences
+
+/// Lightweight UserDefaults-backed store for the user's last-used settings.
+/// Only quality and metadata persist; `format` is not user-selectable (#30).
+/// Declared in the app's privacy policy as locally stored, never transmitted.
+private enum Preferences {
+    private static let qualityKey = "preferences.quality"
+    private static let metadataKey = "preferences.metadataOptions"
+
+    static var quality: CompressionQuality {
+        get {
+            guard let raw = UserDefaults.standard.string(forKey: qualityKey),
+                  let value = CompressionQuality(rawValue: raw) else {
+                return .good
+            }
+            return value
+        }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: qualityKey) }
+    }
+
+    static var metadataOptions: MetadataStrippingOptions {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: metadataKey),
+                  let value = try? JSONDecoder().decode(MetadataStrippingOptions.self, from: data) else {
+                return MetadataStrippingOptions()
+            }
+            return value
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(data, forKey: metadataKey)
+            }
+        }
+    }
+}
+
 // MARK: - ViewModel
 
 @MainActor
@@ -66,9 +102,19 @@ final class ImageOptimizationViewModel {
     var currentStep: AppStep = .selectPhotos
     var images: [ImageItem] = []
     var selectedPhotos: [PhotosPickerItem] = []
-    var quality: CompressionQuality = .good
+
+    /// Quality and metadata choices persist across launches and "Start over"
+    /// (see `Preferences`). `format` is not user-selectable — in-place
+    /// replacement always keeps the asset's original format (see #30) — so it
+    /// stays at its default and is only a last-resort fallback in
+    /// `replaceInPhotosLibrary`.
+    var quality: CompressionQuality = .good {
+        didSet { Preferences.quality = quality }
+    }
     var format: OutputFormat = .jpeg
-    var metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions()
+    var metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions() {
+        didSet { Preferences.metadataOptions = metadataOptions }
+    }
 
     var isLoadingImages = false
     var isCompressing = false
@@ -79,13 +125,21 @@ final class ImageOptimizationViewModel {
     var currentImageIndex: Int = 0
 
     var estimatedTotalSavingsPercentage: Int = 0
-    var errorMessage: String?
     var showPhotosAccessAlert = false
 
     // MARK: - Dependencies
 
     private let compressionService = CompressionService()
     private var compressionTask: Task<Void, Never>?
+    private var estimateTask: Task<Void, Never>?
+
+    // MARK: - Init
+
+    init() {
+        // Restore the user's last-used quality and metadata choices.
+        quality = Preferences.quality
+        metadataOptions = Preferences.metadataOptions
+    }
 
     // MARK: - Computed
 
@@ -107,7 +161,6 @@ final class ImageOptimizationViewModel {
         guard !selectedPhotos.isEmpty else { return }
 
         isLoadingImages = true
-        errorMessage = nil
 
         var newImages: [ImageItem] = []
 
@@ -131,6 +184,14 @@ final class ImageOptimizationViewModel {
 
     // MARK: - Estimation
 
+    /// Cancel any in-flight estimate and start a fresh one. Quality/metadata
+    /// toggles fire in quick succession; without cancellation a slower earlier
+    /// run could finish last and overwrite the result with a stale value (#34).
+    func scheduleEstimate() {
+        estimateTask?.cancel()
+        estimateTask = Task { await estimateSavings() }
+    }
+
     func estimateSavings() async {
         guard hasImages else {
             estimatedTotalSavingsPercentage = 0
@@ -149,6 +210,7 @@ final class ImageOptimizationViewModel {
             var original: Int64 = 0
             var estimated: Int64 = 0
             for image in imagesToEstimate {
+                if Task.isCancelled { break }
                 guard let data = image.originalData else { continue }
                 original += image.originalSize
                 estimated += service.estimateCompressedSize(
@@ -157,6 +219,10 @@ final class ImageOptimizationViewModel {
             }
             return (original, estimated)
         }.value
+
+        // A newer estimate superseded this one — let it own the result and the
+        // isEstimating flag rather than writing a stale value.
+        if Task.isCancelled { return }
 
         if totalOriginal > 0 {
             let savings = Double(totalOriginal - totalEstimated) / Double(totalOriginal) * 100
@@ -204,7 +270,6 @@ final class ImageOptimizationViewModel {
         wasCancelled = false
         compressionProgress = 0
         currentImageIndex = 0
-        errorMessage = nil
 
         let service = compressionService
         let currentQuality = quality
@@ -625,9 +690,8 @@ final class ImageOptimizationViewModel {
         currentStep = .selectPhotos
         images = []
         selectedPhotos = []
-        quality = .good
-        format = .jpeg
-        metadataOptions = MetadataStrippingOptions()
+        // Quality and metadata are deliberately preserved across "Start over"
+        // and "Compress more" — they're user preferences, not per-batch state.
         isLoadingImages = false
         isCompressing = false
         isEstimating = false
@@ -635,7 +699,6 @@ final class ImageOptimizationViewModel {
         compressionProgress = 0
         currentImageIndex = 0
         estimatedTotalSavingsPercentage = 0
-        errorMessage = nil
         showPhotosAccessAlert = false
     }
 }

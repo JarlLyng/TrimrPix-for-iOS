@@ -24,12 +24,15 @@ nonisolated enum CompressionQuality: String, CaseIterable, Identifiable, Sendabl
         }
     }
 
-    /// Whether PNG quantization should be applied at this quality level
-    var pngQuantizationEnabled: Bool {
+    /// Palette size for lossy PNG color quantization, or `nil` to skip
+    /// quantization and re-encode losslessly. Fewer colors → smaller files,
+    /// so the level genuinely differentiates PNG output (previously Good and
+    /// Smaller both quantized to 256 and produced identical files — see #32).
+    var pngMaxColors: Int? {
         switch self {
-        case .same: return false
-        case .good: return true
-        case .smaller: return true
+        case .same: return nil   // lossless re-encode, no color reduction
+        case .good: return 256
+        case .smaller: return 64
         }
     }
 

@@ -9,7 +9,7 @@ TrimrPix for iOS komprimerer billeder fra brugerens fotobibliotek. Én opgave: g
 ## Brugerflow
 
 1. **Vælg billeder** — multi-select via PhotosPicker (kræver ingen rettigheder). Antal og samlet størrelse vises.
-2. **Konfigurer** — vælg kvalitet, outputformat og metadata-indstillinger. Estimeret besparelse beregnes løbende.
+2. **Konfigurer** — vælg kvalitet og metadata-indstillinger. Estimeret besparelse beregnes løbende.
 3. **Bekræft** — oversigt over valg + advarsel om at originaler erstattes permanent. Bekræftes med slide-to-confirm. Hvis fotoadgang mangler, vises alert med "Open Settings".
 4. **Komprimering** — progressvisning med cirkulær indikator (billede X af Y). Kan annulleres.
 5. **Resultat** — antal komprimerede, samlet besparelse, gennemsnitlig besparelse. Ved fejl vises fejl pr. billede. Ved fuld succes kan App Store-anmeldelse foreslås.
@@ -26,7 +26,7 @@ Brugergrænsefladen er på **engelsk**.
 
 ## Outputformat
 
-Vælges pr. batch: **JPEG** (standard), **PNG**, **WebP**, **HEIC**.
+TrimrPix understøtter **JPEG**, **PNG**, **WebP** og **HEIC**. Hvert billede komprimeres og **bevarer sit oprindelige format** — formatet vælges ikke af brugeren. Det er en bevidst konsekvens af in-place-erstatning: Photos afviser commits hvor det renderede billedes format ikke matcher assetets oprindelige resource-UTI (`PHPhotosErrorInvalidResource`, 3302). Formatkonvertering hører til macOS-søsterappen.
 
 PNG bruger median-cut farve-kvantisering ved Good/Smaller for at reducere filstørrelse.
 

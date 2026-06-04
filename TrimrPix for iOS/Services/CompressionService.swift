@@ -35,18 +35,7 @@ nonisolated final class CompressionService: Sendable {
 
         let processedProps = metadataOptions.processedProperties(from: imageSource)
 
-        let compressedData: Data
-
-        switch format {
-        case .png:
-            compressedData = try compressPNG(cgImage: cgImage, quality: quality, properties: processedProps)
-        case .jpeg:
-            compressedData = try compressWithDestination(cgImage: cgImage, type: .jpeg, quality: quality, properties: processedProps)
-        case .webp:
-            compressedData = try compressWithDestination(cgImage: cgImage, type: .webP, quality: quality, properties: processedProps)
-        case .heic:
-            compressedData = try compressWithDestination(cgImage: cgImage, type: .heic, quality: quality, properties: processedProps)
-        }
+        let compressedData = try encode(cgImage: cgImage, format: format, quality: quality, properties: processedProps)
 
         // If compression made the file larger, return original with metadata processed
         if compressedData.count >= data.count {
@@ -56,17 +45,73 @@ nonisolated final class CompressionService: Sendable {
         return compressedData
     }
 
-    /// Estimates the compressed size without fully encoding
+    /// Estimates the compressed size by encoding a downscaled thumbnail and
+    /// scaling the result by pixel count, rather than fully encoding the image.
+    /// The savings estimate is recomputed for every photo on every quality and
+    /// metadata toggle, so a full-res encode per photo per change was wasteful
+    /// (#31). The `format` argument is only a fallback: in-place replacement
+    /// keeps each photo's original format, so we detect it from the data and
+    /// estimate against that — otherwise a HEIC/PNG/WebP original would be
+    /// estimated as JPEG and the number wouldn't match the real result.
     func estimateCompressedSize(
         data: Data,
         quality: CompressionQuality,
         format: OutputFormat,
         metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions()
     ) -> Int64 {
-        guard let compressed = try? compress(data: data, quality: quality, format: format, metadataOptions: metadataOptions) else {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
             return Int64(data.count)
         }
-        return Int64(compressed.count)
+
+        let resolvedFormat = OutputFormat.from(uti: (CGImageSourceGetType(source) as String?) ?? "") ?? format
+
+        // Decode a reduced-size thumbnail (caps the larger side at 1024px;
+        // never upscales). Far cheaper to encode than the full-res image.
+        let thumbOptions: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceThumbnailMaxPixelSize: 1024,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+        ]
+        guard let sample = CGImageSourceCreateThumbnailAtIndex(source, 0, thumbOptions as CFDictionary) else {
+            return Int64(data.count)
+        }
+
+        let imgProps = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any]
+        let fullWidth = imgProps?[kCGImagePropertyPixelWidth] as? Int ?? sample.width
+        let fullHeight = imgProps?[kCGImagePropertyPixelHeight] as? Int ?? sample.height
+        let originalPixels = max(1, fullWidth * fullHeight)
+        let samplePixels = max(1, sample.width * sample.height)
+
+        let processedProps = metadataOptions.processedProperties(from: source)
+        guard let sampleData = try? encode(cgImage: sample, format: resolvedFormat, quality: quality, properties: processedProps) else {
+            return Int64(data.count)
+        }
+
+        // Compressed size scales roughly with pixel count for a given format
+        // and quality. Cap at the original size (compression never helps for
+        // already-tiny files).
+        let scaled = Double(sampleData.count) * Double(originalPixels) / Double(samplePixels)
+        return min(Int64(scaled.rounded()), Int64(data.count))
+    }
+
+    /// Encodes a CGImage to the given format/quality. Shared by the real
+    /// compression path and the estimate so both stay in sync.
+    private func encode(
+        cgImage: CGImage,
+        format: OutputFormat,
+        quality: CompressionQuality,
+        properties: CFDictionary?
+    ) throws -> Data {
+        switch format {
+        case .png:
+            return try compressPNG(cgImage: cgImage, quality: quality, properties: properties)
+        case .jpeg:
+            return try compressWithDestination(cgImage: cgImage, type: .jpeg, quality: quality, properties: properties)
+        case .webp:
+            return try compressWithDestination(cgImage: cgImage, type: .webP, quality: quality, properties: properties)
+        case .heic:
+            return try compressWithDestination(cgImage: cgImage, type: .heic, quality: quality, properties: properties)
+        }
     }
 
     // MARK: - Private
@@ -116,9 +161,11 @@ nonisolated final class CompressionService: Sendable {
     ) throws -> Data {
         let metaOptions = (properties as? [CFString: Any]) ?? [:]
 
-        // Try lossy quantization for Good/Smaller quality levels
-        if quality.pngQuantizationEnabled {
-            if let quantizedImage = colorQuantizer.quantize(cgImage) {
+        // Try lossy quantization for Good/Smaller quality levels. The palette
+        // size comes from the quality level, so Smaller produces a smaller
+        // file than Good (#32). `same` returns nil → lossless re-encode below.
+        if let maxColors = quality.pngMaxColors {
+            if let quantizedImage = colorQuantizer.quantize(cgImage, maxColors: maxColors) {
                 let outputData = NSMutableData()
                 if let destination = CGImageDestinationCreateWithData(
                     outputData, UTType.png.identifier as CFString, 1, nil

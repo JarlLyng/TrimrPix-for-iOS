@@ -10,14 +10,14 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** Private — all rights reserved (NOT open source)
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
-- **Status:** Pre-launch (Q2 2026)
+- **Status:** Launched (App Store app-id 6761081919) — post-launch monitoring (#27)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
 ## App features (be precise — do not invent features that don't exist)
 
-- **Select & compress** — pick photos via PhotosPicker, choose quality and format, slide to confirm
+- **Select & compress** — pick photos via PhotosPicker, choose quality, slide to confirm
 - **In-place replacement** — originals are replaced directly in Photos library, no duplicates
-- **4 output formats** — JPEG, PNG, WebP, HEIC
+- **4 formats supported** — JPEG, PNG, WebP, HEIC. Each photo keeps its **original format** — there is NO user-facing format picker. Format conversion would force every photo through the create-and-delete fallback (Photos rejects in-place format changes, 3302), defeating in-place replacement; it's a macOS-only feature.
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
 - **Savings estimate** — see how much space you'll save before compressing
