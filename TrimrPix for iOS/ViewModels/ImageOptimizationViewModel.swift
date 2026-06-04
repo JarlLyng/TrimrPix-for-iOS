@@ -170,7 +170,9 @@ final class ImageOptimizationViewModel {
                     continue
                 }
                 let assetId = item.itemIdentifier ?? UUID().uuidString
-                let imageItem = ImageItem(assetIdentifier: assetId, data: data)
+                // `data` is consumed by the initializer (size + thumbnail) and
+                // released at the end of this iteration — never accumulated.
+                let imageItem = ImageItem(pickerItem: item, assetIdentifier: assetId, data: data)
                 newImages.append(imageItem)
             } catch {
                 // Skip images that fail to load
@@ -180,6 +182,12 @@ final class ImageOptimizationViewModel {
         images = newImages
         selectedPhotos = []
         isLoadingImages = false
+    }
+
+    /// Reload a photo's original bytes on demand. Used by the estimate and
+    /// compression loops so only one photo's data is resident at a time (#25).
+    private func loadOriginalData(for item: PhotosPickerItem) async -> Data? {
+        try? await item.loadTransferable(type: Data.self)
     }
 
     // MARK: - Estimation
@@ -200,25 +208,26 @@ final class ImageOptimizationViewModel {
 
         isEstimating = true
 
-        let imagesToEstimate = images
         let currentQuality = quality
         let currentFormat = format
         let currentMetadata = metadataOptions
         let service = compressionService
 
-        let (totalOriginal, totalEstimated) = await Task.detached(priority: .userInitiated) {
-            var original: Int64 = 0
-            var estimated: Int64 = 0
-            for image in imagesToEstimate {
-                if Task.isCancelled { break }
-                guard let data = image.originalData else { continue }
-                original += image.originalSize
-                estimated += service.estimateCompressedSize(
+        // Load and estimate one photo at a time so only a single photo's bytes
+        // are resident at once (#25). Each iteration's `data` is released before
+        // the next load.
+        var totalOriginal: Int64 = 0
+        var totalEstimated: Int64 = 0
+        for image in images {
+            if Task.isCancelled { return }
+            guard let data = await loadOriginalData(for: image.pickerItem) else { continue }
+            totalOriginal += image.originalSize
+            totalEstimated += await Task.detached(priority: .userInitiated) {
+                service.estimateCompressedSize(
                     data: data, quality: currentQuality, format: currentFormat, metadataOptions: currentMetadata
                 )
-            }
-            return (original, estimated)
-        }.value
+            }.value
+        }
 
         // A newer estimate superseded this one — let it own the result and the
         // isEstimating flag rather than writing a stale value.
@@ -288,7 +297,9 @@ final class ImageOptimizationViewModel {
                 images[i].isCompressing = true
 
                 do {
-                    guard let originalData = images[i].originalData else {
+                    // Load this photo's bytes only now, just before we need
+                    // them; they're released at the end of the iteration (#25).
+                    guard let originalData = await loadOriginalData(for: images[i].pickerItem) else {
                         throw TrimrPixError.invalidImageData
                     }
 
@@ -333,7 +344,6 @@ final class ImageOptimizationViewModel {
                     }
                 }
 
-                images[i].releaseData()
                 images[i].isCompressing = false
                 compressionProgress = Double(i + 1) / Double(images.count)
             }
