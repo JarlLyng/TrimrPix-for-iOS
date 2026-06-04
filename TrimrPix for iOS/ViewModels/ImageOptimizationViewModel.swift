@@ -63,6 +63,8 @@ nonisolated enum AppStep: Sendable {
 private enum Preferences {
     private static let qualityKey = "preferences.quality"
     private static let metadataKey = "preferences.metadataOptions"
+    private static let modeKindKey = "preferences.modeKind"
+    private static let targetSizeKey = "preferences.targetSize"
 
     static var quality: CompressionQuality {
         get {
@@ -73,6 +75,25 @@ private enum Preferences {
             return value
         }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: qualityKey) }
+    }
+
+    static var modeKind: CompressionModeKind {
+        get {
+            guard let raw = UserDefaults.standard.string(forKey: modeKindKey),
+                  let value = CompressionModeKind(rawValue: raw) else {
+                return .quality
+            }
+            return value
+        }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: modeKindKey) }
+    }
+
+    static var targetSize: TargetSize {
+        get {
+            let raw = UserDefaults.standard.object(forKey: targetSizeKey) as? Int64
+            return raw.flatMap(TargetSize.init(rawValue:)) ?? .mb1
+        }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: targetSizeKey) }
     }
 
     static var metadataOptions: MetadataStrippingOptions {
@@ -111,9 +132,26 @@ final class ImageOptimizationViewModel {
     var quality: CompressionQuality = .good {
         didSet { Preferences.quality = quality }
     }
+    /// Whether the user is compressing by quality preset or by per-photo target
+    /// size (#22). Persisted like the other preferences.
+    var modeKind: CompressionModeKind = .quality {
+        didSet { Preferences.modeKind = modeKind }
+    }
+    var targetSize: TargetSize = .mb1 {
+        didSet { Preferences.targetSize = targetSize }
+    }
     var format: OutputFormat = .jpeg
     var metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions() {
         didSet { Preferences.metadataOptions = metadataOptions }
+    }
+
+    /// The compression mode passed to `CompressionService`, derived from the
+    /// user's mode selection.
+    var compressionMode: CompressionMode {
+        switch modeKind {
+        case .quality: return .quality(quality)
+        case .targetSize: return .targetSize(targetSize.bytes)
+        }
     }
 
     var isLoadingImages = false
@@ -136,9 +174,11 @@ final class ImageOptimizationViewModel {
     // MARK: - Init
 
     init() {
-        // Restore the user's last-used quality and metadata choices.
+        // Restore the user's last-used settings.
         quality = Preferences.quality
         metadataOptions = Preferences.metadataOptions
+        modeKind = Preferences.modeKind
+        targetSize = Preferences.targetSize
     }
 
     // MARK: - Computed
@@ -207,6 +247,22 @@ final class ImageOptimizationViewModel {
         }
 
         isEstimating = true
+
+        // Target-size mode: each photo ends up at roughly the target (or stays
+        // as-is if already smaller), so we can estimate from byte counts alone
+        // — no need to load or encode anything.
+        if case .targetSize(let target) = compressionMode {
+            let totalOriginal = totalOriginalSize
+            let totalEstimated = images.reduce(Int64(0)) { $0 + min(target, $1.originalSize) }
+            if totalOriginal > 0 {
+                let savings = Double(totalOriginal - totalEstimated) / Double(totalOriginal) * 100
+                estimatedTotalSavingsPercentage = max(0, Int(savings.rounded()))
+            } else {
+                estimatedTotalSavingsPercentage = 0
+            }
+            isEstimating = false
+            return
+        }
 
         let currentQuality = quality
         let currentFormat = format
@@ -281,7 +337,7 @@ final class ImageOptimizationViewModel {
         currentImageIndex = 0
 
         let service = compressionService
-        let currentQuality = quality
+        let currentMode = compressionMode
         let currentFormat = format
         let currentMetadata = metadataOptions
 
@@ -307,7 +363,7 @@ final class ImageOptimizationViewModel {
                         assetIdentifier: images[i].assetIdentifier,
                         originalData: originalData,
                         service: service,
-                        quality: currentQuality,
+                        mode: currentMode,
                         userFormat: currentFormat,
                         metadataOptions: currentMetadata
                     )
@@ -386,14 +442,15 @@ final class ImageOptimizationViewModel {
         assetIdentifier: String,
         originalData: Data,
         service: CompressionService,
-        quality: CompressionQuality,
+        mode: CompressionMode,
         userFormat: OutputFormat,
         metadataOptions: MetadataStrippingOptions
     ) async throws -> ReplaceOutcome {
         Self.breadcrumb("replace.start", data: [
             "asset": assetIdentifier,
             "originalBytes": originalData.count,
-            "userFormat": "\(userFormat)"
+            "userFormat": "\(userFormat)",
+            "mode": "\(mode)"
         ])
 
         // Fetch asset off the main actor to avoid blocking UI
@@ -499,7 +556,7 @@ final class ImageOptimizationViewModel {
             try autoreleasepool {
                 try service.compress(
                     data: originalData,
-                    quality: quality,
+                    mode: mode,
                     format: resolvedFormat,
                     metadataOptions: metadataOptions
                 )

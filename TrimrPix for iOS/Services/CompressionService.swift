@@ -21,10 +21,11 @@ nonisolated final class CompressionService: Sendable {
 
     private let colorQuantizer = ColorQuantizer()
 
-    /// Compresses image data to the specified format and quality
+    /// Compresses image data using the given mode (fixed quality or a per-photo
+    /// target size) and format.
     func compress(
         data: Data,
-        quality: CompressionQuality,
+        mode: CompressionMode,
         format: OutputFormat,
         metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions()
     ) throws -> Data {
@@ -35,7 +36,13 @@ nonisolated final class CompressionService: Sendable {
 
         let processedProps = metadataOptions.processedProperties(from: imageSource)
 
-        let compressedData = try encode(cgImage: cgImage, format: format, quality: quality, properties: processedProps)
+        let compressedData: Data
+        switch mode {
+        case .quality(let quality):
+            compressedData = try encode(cgImage: cgImage, format: format, quality: quality, properties: processedProps)
+        case .targetSize(let target):
+            compressedData = try encodeToTarget(cgImage: cgImage, format: format, target: target, properties: processedProps)
+        }
 
         // If compression made the file larger, return original with metadata processed
         if compressedData.count >= data.count {
@@ -106,21 +113,59 @@ nonisolated final class CompressionService: Sendable {
         case .png:
             return try compressPNG(cgImage: cgImage, quality: quality, properties: properties)
         case .jpeg:
-            return try compressWithDestination(cgImage: cgImage, type: .jpeg, quality: quality, properties: properties)
+            return try compressWithDestination(cgImage: cgImage, type: .jpeg, lossyQuality: quality.quality, properties: properties)
         case .webp:
-            return try compressWithDestination(cgImage: cgImage, type: .webP, quality: quality, properties: properties)
+            return try compressWithDestination(cgImage: cgImage, type: .webP, lossyQuality: quality.quality, properties: properties)
         case .heic:
-            return try compressWithDestination(cgImage: cgImage, type: .heic, quality: quality, properties: properties)
+            return try compressWithDestination(cgImage: cgImage, type: .heic, lossyQuality: quality.quality, properties: properties)
         }
+    }
+
+    /// Encodes a CGImage so the result is at most `target` bytes. For lossy
+    /// formats (JPEG/HEIC/WebP) it binary-searches the quality parameter for
+    /// the highest quality that fits; for PNG it reduces the color palette.
+    /// If even the most aggressive setting exceeds the target, returns the
+    /// smallest result it could produce (the UI still reports the actual size).
+    private func encodeToTarget(
+        cgImage: CGImage,
+        format: OutputFormat,
+        target: Int64,
+        properties: CFDictionary?
+    ) throws -> Data {
+        if format == .png {
+            return try compressPNGToTarget(cgImage: cgImage, target: target, properties: properties)
+        }
+
+        let type = format.utType
+        var low = 0.0
+        var high = 1.0
+        var bestFitting: Data?
+
+        // ~7 iterations narrows quality to <1% — plenty for a size target.
+        for _ in 0..<7 {
+            let mid = (low + high) / 2
+            let candidate = try compressWithDestination(cgImage: cgImage, type: type, lossyQuality: mid, properties: properties)
+            if Int64(candidate.count) <= target {
+                bestFitting = candidate   // fits — try to spend the headroom on higher quality
+                low = mid
+            } else {
+                high = mid                // too big — back off quality
+            }
+        }
+
+        if let bestFitting { return bestFitting }
+        // Nothing fit; return the lowest-quality (smallest) encode we can make.
+        return try compressWithDestination(cgImage: cgImage, type: type, lossyQuality: 0.0, properties: properties)
     }
 
     // MARK: - Private
 
-    /// Compresses using CGImageDestination (JPEG, WebP, HEIC)
+    /// Compresses using CGImageDestination (JPEG, WebP, HEIC) at an explicit
+    /// lossy quality (0.0–1.0).
     private func compressWithDestination(
         cgImage: CGImage,
         type: UTType,
-        quality: CompressionQuality,
+        lossyQuality: Double,
         properties: CFDictionary?
     ) throws -> Data {
         let outputData = NSMutableData()
@@ -135,7 +180,7 @@ nonisolated final class CompressionService: Sendable {
         var options: [CFString: Any] = (properties as? [CFString: Any]) ?? [:]
 
         // Add compression quality
-        options[kCGImageDestinationLossyCompressionQuality] = quality.quality
+        options[kCGImageDestinationLossyCompressionQuality] = lossyQuality
 
         // Add progressive JPEG encoding
         if type == .jpeg {
@@ -159,39 +204,65 @@ nonisolated final class CompressionService: Sendable {
         quality: CompressionQuality,
         properties: CFDictionary?
     ) throws -> Data {
-        let metaOptions = (properties as? [CFString: Any]) ?? [:]
-
         // Try lossy quantization for Good/Smaller quality levels. The palette
         // size comes from the quality level, so Smaller produces a smaller
         // file than Good (#32). `same` returns nil → lossless re-encode below.
-        if let maxColors = quality.pngMaxColors {
-            if let quantizedImage = colorQuantizer.quantize(cgImage, maxColors: maxColors) {
-                let outputData = NSMutableData()
-                if let destination = CGImageDestinationCreateWithData(
-                    outputData, UTType.png.identifier as CFString, 1, nil
-                ) {
-                    CGImageDestinationAddImage(destination, quantizedImage, metaOptions as CFDictionary)
-                    if CGImageDestinationFinalize(destination) {
-                        return outputData as Data
-                    }
-                }
-            }
+        if let maxColors = quality.pngMaxColors,
+           let quantizedImage = colorQuantizer.quantize(cgImage, maxColors: maxColors),
+           let quantizedData = pngData(from: quantizedImage, properties: properties) {
+            return quantizedData
         }
 
         // Fallback: standard PNG re-encoding
+        guard let data = pngData(from: cgImage, properties: properties) else {
+            throw TrimrPixError.compressionFailed(format: "PNG", underlyingError: nil)
+        }
+        return data
+    }
+
+    /// Reduces the PNG palette until the result fits `target`, returning the
+    /// highest-fidelity (most colors) version that fits, or the smallest
+    /// version achievable if none fit.
+    private func compressPNGToTarget(
+        cgImage: CGImage,
+        target: Int64,
+        properties: CFDictionary?
+    ) throws -> Data {
+        var smallest: Data?
+        for colors in [256, 128, 64, 32, 16] {
+            guard let quantized = colorQuantizer.quantize(cgImage, maxColors: colors),
+                  let data = pngData(from: quantized, properties: properties) else {
+                continue
+            }
+            if smallest == nil || data.count < smallest!.count {
+                smallest = data
+            }
+            if Int64(data.count) <= target {
+                return data   // most colors that still fits
+            }
+        }
+        if let smallest { return smallest }
+
+        // Quantization unavailable — fall back to a lossless re-encode.
+        guard let data = pngData(from: cgImage, properties: properties) else {
+            throw TrimrPixError.compressionFailed(format: "PNG", underlyingError: nil)
+        }
+        return data
+    }
+
+    /// Encodes a CGImage as PNG with the given metadata properties.
+    private func pngData(from cgImage: CGImage, properties: CFDictionary?) -> Data? {
         let outputData = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(
             outputData, UTType.png.identifier as CFString, 1, nil
         ) else {
-            throw TrimrPixError.compressionFailed(format: "PNG", underlyingError: nil)
+            return nil
         }
-
-        CGImageDestinationAddImage(destination, cgImage, metaOptions as CFDictionary)
-
+        let options = (properties as? [CFString: Any]) ?? [:]
+        CGImageDestinationAddImage(destination, cgImage, options as CFDictionary)
         guard CGImageDestinationFinalize(destination) else {
-            throw TrimrPixError.compressionFailed(format: "PNG", underlyingError: nil)
+            return nil
         }
-
         return outputData as Data
     }
 

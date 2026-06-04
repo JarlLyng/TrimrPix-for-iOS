@@ -18,7 +18,9 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Select & compress** — pick photos via PhotosPicker, choose quality, slide to confirm
 - **In-place replacement** — originals are replaced directly in Photos library, no duplicates
 - **4 formats supported** — JPEG, PNG, WebP, HEIC. Each photo keeps its **original format** — there is NO user-facing format picker. Format conversion would force every photo through the create-and-delete fallback (Photos rejects in-place format changes, 3302), defeating in-place replacement; it's a macOS-only feature.
+- **2 compression modes** — Quality (3 levels) or Target size (per-photo byte budget). NOT a total-batch budget.
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
+- **Target-size mode** — pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB); the service binary-searches lossy quality (JPEG/HEIC/WebP) or palette size (PNG) to fit. Photos already smaller are left unchanged. See `CompressionMode` / `encodeToTarget`.
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
 - **Savings estimate** — see how much space you'll save before compressing
 - **iCloud support** — downloads iCloud photos, compresses, saves back
@@ -145,7 +147,7 @@ In-place replacement via `PHContentEditingOutput` is attempted first. For photos
 - #19 Update App Store Connect accessibility declarations at launch
 
 **Future features (v1.1+, surfaced by competitor analysis):**
-- #22 Target-size mode (compress to fit a specific file size)
+- ✅ #22 Target-size mode — shipped in 1.1 (`CompressionMode.targetSize`, `encodeToTarget`)
 - #23 Share Extension (compress from Photos share sheet)
 
 ## Marketing site
