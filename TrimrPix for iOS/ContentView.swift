@@ -250,20 +250,43 @@ private struct ConfigureStep: View {
                     // Summary card
                     summaryCard
 
-                    // Quality selection
-                    settingsSection(title: "Quality") {
+                    // Mode + its options (quality preset or per-photo target size)
+                    settingsSection(title: "Compression") {
                         VStack(spacing: DesignTokens.Spacing.md) {
-                            Picker("Quality", selection: $viewModel.quality) {
-                                ForEach(CompressionQuality.allCases) { level in
-                                    Text(level.rawValue).tag(level)
+                            Picker("Mode", selection: $viewModel.modeKind) {
+                                ForEach(CompressionModeKind.allCases) { kind in
+                                    Text(kind.rawValue).tag(kind)
                                 }
                             }
                             .pickerStyle(.segmented)
 
-                            Text(viewModel.quality.description)
-                                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                                .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            switch viewModel.modeKind {
+                            case .quality:
+                                Picker("Quality", selection: $viewModel.quality) {
+                                    ForEach(CompressionQuality.allCases) { level in
+                                        Text(level.rawValue).tag(level)
+                                    }
+                                }
+                                .pickerStyle(.segmented)
+
+                                Text(viewModel.quality.description)
+                                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                            case .targetSize:
+                                Picker("Target size", selection: $viewModel.targetSize) {
+                                    ForEach(TargetSize.allCases) { size in
+                                        Text(size.label).tag(size)
+                                    }
+                                }
+                                .pickerStyle(.segmented)
+
+                                Text("Each photo is compressed to about this size or smaller. Photos already smaller are left unchanged.")
+                                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }
                     }
 
@@ -300,6 +323,8 @@ private struct ConfigureStep: View {
             }
         }
         .onChange(of: viewModel.quality) { viewModel.scheduleEstimate() }
+        .onChange(of: viewModel.modeKind) { viewModel.scheduleEstimate() }
+        .onChange(of: viewModel.targetSize) { viewModel.scheduleEstimate() }
         .onChange(of: viewModel.metadataOptions) { viewModel.scheduleEstimate() }
     }
 
@@ -485,7 +510,12 @@ private struct ConfirmStep: View {
             // Summary
             VStack(spacing: DesignTokens.Spacing.md) {
                 summaryRow(label: "Photos", value: "\(viewModel.images.count)")
-                summaryRow(label: "Quality", value: viewModel.quality.rawValue)
+                switch viewModel.modeKind {
+                case .quality:
+                    summaryRow(label: "Quality", value: viewModel.quality.rawValue)
+                case .targetSize:
+                    summaryRow(label: "Target size", value: viewModel.targetSize.label)
+                }
                 summaryRow(label: "Metadata", value: metadataStrippedCount == 0 ? "Keep all" : "\(metadataStrippedCount) removed")
                 summaryRow(label: "Est. savings", value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
             }

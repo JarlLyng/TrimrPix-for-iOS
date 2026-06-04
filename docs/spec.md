@@ -16,6 +16,13 @@ TrimrPix for iOS komprimerer billeder fra brugerens fotobibliotek. Én opgave: g
 
 Brugergrænsefladen er på **engelsk**.
 
+## Komprimeringstilstande
+
+Brugeren vælger mellem to tilstande i Konfigurer-trinnet:
+
+- **Quality** — fast kvalitetsniveau (se nedenfor).
+- **Target size** — en mål-filstørrelse **pr. billede** (500 KB / 1 MB / 2 MB / 5 MB). Tjenesten binær-søger lossy-kvaliteten (JPEG/HEIC/WebP) — eller reducerer paletten (PNG) — for at ramme målet. Billeder der allerede er mindre end målet røres ikke. Rammes målet ikke selv ved laveste kvalitet, bruges det mindst mulige resultat (faktisk størrelse vises altid i resultatet). Det er et **pr.-billede**-budget, ikke et samlet batch-budget.
+
 ## Kvalitetsniveauer
 
 | Niveau | Kvalitet | Beskrivelse | Typisk besparelse |
