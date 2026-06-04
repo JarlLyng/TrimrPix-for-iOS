@@ -39,8 +39,13 @@ struct TrimrPix_for_iOSApp: App {
             options.enableAutoSessionTracking = true
             options.enableAppHangTracking = true
             options.appHangTimeoutInterval = 2
-            options.attachScreenshot = true
-            options.attachViewHierarchy = true
+            // Screenshots and view hierarchy are intentionally disabled: the
+            // Configure/Confirm/Result screens render thumbnails of the user's
+            // selected photos, and capturing them on crash would transmit photo
+            // content to Sentry — contradicting our privacy promise that photos
+            // never leave the device. See issue #28.
+            options.attachScreenshot = false
+            options.attachViewHierarchy = false
             options.enableMetricKit = true
             options.enableCaptureFailedRequests = true
             options.enableAutoPerformanceTracing = true

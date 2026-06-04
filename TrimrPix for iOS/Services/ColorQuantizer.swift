@@ -21,8 +21,10 @@ nonisolated final class ColorQuantizer: Sendable {
         self.maxColors = maxColors
     }
 
-    /// Quantizes a CGImage to the configured number of colors
-    func quantize(_ image: CGImage) -> CGImage? {
+    /// Quantizes a CGImage to a limited color palette. Pass `maxColors` to
+    /// override the instance default (used by quality levels to trade size for
+    /// fidelity); omit it to use the value the quantizer was created with.
+    func quantize(_ image: CGImage, maxColors: Int? = nil) -> CGImage? {
         let width = image.width
         let height = image.height
 
@@ -30,7 +32,7 @@ nonisolated final class ColorQuantizer: Sendable {
             return nil
         }
 
-        let palette = medianCut(pixels: pixels, maxColors: maxColors)
+        let palette = medianCut(pixels: pixels, maxColors: maxColors ?? self.maxColors)
         guard !palette.isEmpty else { return nil }
 
         return applyPalette(pixels: pixels, palette: palette, width: width, height: height)

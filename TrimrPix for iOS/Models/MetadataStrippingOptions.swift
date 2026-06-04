@@ -10,7 +10,7 @@ import ImageIO
 
 /// Controls which metadata categories are kept during compression.
 /// All toggles use "keep" semantics: true = keep, false = strip.
-nonisolated struct MetadataStrippingOptions: Sendable {
+nonisolated struct MetadataStrippingOptions: Sendable, Codable, Equatable {
     var keepDateTime: Bool = true
     var keepCameraSettings: Bool = false
     var keepGPS: Bool = false

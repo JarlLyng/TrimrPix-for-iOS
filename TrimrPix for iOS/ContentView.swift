@@ -217,7 +217,7 @@ private struct SelectPhotosStep: View {
                 if viewModel.hasImages {
                     Button {
                         withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .configure }
-                        Task { await viewModel.estimateSavings() }
+                        viewModel.scheduleEstimate()
                     } label: {
                         HStack(spacing: DesignTokens.Spacing.sm) {
                             Text("Next")
@@ -267,16 +267,6 @@ private struct ConfigureStep: View {
                         }
                     }
 
-                    // Format selection
-                    settingsSection(title: "Format") {
-                        Picker("Format", selection: $viewModel.format) {
-                            ForEach(OutputFormat.allCases) { fmt in
-                                Text(fmt.rawValue).tag(fmt)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-
                     // Metadata options
                     metadataSection
 
@@ -309,27 +299,8 @@ private struct ConfigureStep: View {
                 .padding(.vertical, DesignTokens.Spacing.md)
             }
         }
-        .onChange(of: viewModel.quality) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.format) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.metadataOptions.keepDateTime) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.metadataOptions.keepCameraSettings) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.metadataOptions.keepGPS) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.metadataOptions.keepIPTC) {
-            Task { await viewModel.estimateSavings() }
-        }
-        .onChange(of: viewModel.metadataOptions.keepAppleMaker) {
-            Task { await viewModel.estimateSavings() }
-        }
+        .onChange(of: viewModel.quality) { viewModel.scheduleEstimate() }
+        .onChange(of: viewModel.metadataOptions) { viewModel.scheduleEstimate() }
     }
 
     private var summaryCard: some View {
@@ -485,7 +456,7 @@ private struct ConfirmStep: View {
     }
 
     private var metadataStrippedCount: Int {
-        5 - metadataKeptCount
+        MetadataStrippingOptions.labels.count - metadataKeptCount
     }
 
     var body: some View {
@@ -515,7 +486,6 @@ private struct ConfirmStep: View {
             VStack(spacing: DesignTokens.Spacing.md) {
                 summaryRow(label: "Photos", value: "\(viewModel.images.count)")
                 summaryRow(label: "Quality", value: viewModel.quality.rawValue)
-                summaryRow(label: "Format", value: viewModel.format.rawValue)
                 summaryRow(label: "Metadata", value: metadataStrippedCount == 0 ? "Keep all" : "\(metadataStrippedCount) removed")
                 summaryRow(label: "Est. savings", value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
             }
