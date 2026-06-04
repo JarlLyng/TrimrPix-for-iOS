@@ -6,15 +6,24 @@
 //
 
 import Foundation
+import SwiftUI
 import UIKit
 import Photos
+import PhotosUI
 
-/// Represents an image selected from the Photos library for compression
+/// Represents an image selected from the Photos library for compression.
+///
+/// The full original bytes are deliberately NOT retained here — only the
+/// `PhotosPickerItem` token, the original byte count, and a small thumbnail.
+/// The bytes are reloaded lazily, one photo at a time, when estimating or
+/// compressing (#25), so a large batch never holds every photo's data in RAM
+/// at once.
 struct ImageItem: Identifiable {
 
     let id = UUID()
     let assetIdentifier: String
-    var originalData: Data?
+    /// Source token used to lazily reload the original bytes on demand.
+    let pickerItem: PhotosPickerItem
     let originalSize: Int64
     var compressedSize: Int64?
     var thumbnail: UIImage?
@@ -30,9 +39,12 @@ struct ImageItem: Identifiable {
     var wasReplaced: Bool = false
     var error: TrimrPixError?
 
-    init(assetIdentifier: String, data: Data) {
+    /// Builds an item from data loaded once at selection time. The `data` is
+    /// used only to derive the byte count and thumbnail — it is intentionally
+    /// not stored (see type doc / #25); compression reloads it via `pickerItem`.
+    init(pickerItem: PhotosPickerItem, assetIdentifier: String, data: Data) {
+        self.pickerItem = pickerItem
         self.assetIdentifier = assetIdentifier
-        self.originalData = data
         self.originalSize = Int64(data.count)
         self.thumbnail = ImageItem.generateThumbnail(from: data)
     }
@@ -42,11 +54,6 @@ struct ImageItem: Identifiable {
         guard let compressedSize, originalSize > 0 else { return 0 }
         let savings = Double(originalSize - compressedSize) / Double(originalSize) * 100
         return max(0, Int(savings.rounded()))
-    }
-
-    /// Release heavy data after compression to free memory
-    mutating func releaseData() {
-        originalData = nil
     }
 
     private static func generateThumbnail(from data: Data) -> UIImage? {
