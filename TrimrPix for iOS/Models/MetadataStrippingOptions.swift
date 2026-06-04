@@ -91,12 +91,12 @@ nonisolated struct MetadataStrippingOptions: Sendable, Codable, Equatable {
         return properties as CFDictionary
     }
 
-    /// User-facing labels for each option
+    /// User-facing labels for each option (localized)
     static let labels: [(keyPath: WritableKeyPath<MetadataStrippingOptions, Bool>, label: String, description: String)] = [
-        (\.keepDateTime, "Date & time", "When the photo was taken"),
-        (\.keepCameraSettings, "Camera settings", "Model, exposure, ISO, aperture"),
-        (\.keepGPS, "GPS location", "Latitude, longitude, altitude"),
-        (\.keepIPTC, "Copyright & description", "Photographer, caption, keywords"),
-        (\.keepAppleMaker, "Apple data", "Live Photo, HDR, burst info"),
+        (\.keepDateTime, String(localized: "Date & time"), String(localized: "When the photo was taken")),
+        (\.keepCameraSettings, String(localized: "Camera settings"), String(localized: "Model, exposure, ISO, aperture")),
+        (\.keepGPS, String(localized: "GPS location"), String(localized: "Latitude, longitude, altitude")),
+        (\.keepIPTC, String(localized: "Copyright & description"), String(localized: "Photographer, caption, keywords")),
+        (\.keepAppleMaker, String(localized: "Apple data"), String(localized: "Live Photo, HDR, burst info")),
     ]
 }
