@@ -179,7 +179,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 
 ### App Store Connect (prepared)
 - **Subtitle:** "Compress Photos In Place" — leads with differentiator (24 chars, under 30 limit). See `docs/COMPETITOR_ANALYSIS.md` for rationale.
-- **Keywords:** `in-place photo compressor,no duplicates,compress photos,reduce photo size,free up space,photo compressor no ads,HEIC compress,strip metadata,WebP compressor,replace originals`
+- **Keywords:** `in-place photo compressor,no duplicates,compress photos,reduce photo size,target size,free up space,photo compressor no ads,HEIC compress,strip metadata,WebP compressor,replace originals` (note: App Store keywords field is 100 chars — trim to the highest-value subset when entering)
 - **Primary Category:** Photo & Video
 - **Secondary Category:** Utilities
 - **Copyright:** 2026 IAMJARL
@@ -188,7 +188,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 
 **Add a metadata category**: Add property to `MetadataStrippingOptions`, update `processedProperties(from:)`, add entry to `labels` array.
 
-**Change compression behavior**: Edit `CompressionService.compress()`. Format-specific logic in `compressWithDestination` (JPEG/WebP/HEIC) and `compressPNG`.
+**Change compression behavior**: Edit `CompressionService.compress(data:mode:format:)`. `mode` is `.quality` or `.targetSize`. Quality path: `encode()` → `compressWithDestination(lossyQuality:)` (JPEG/WebP/HEIC) or `compressPNG`. Target path: `encodeToTarget` (binary-searches lossy quality, or `compressPNGToTarget` for PNG).
 
 **Add a new step**: Add case to `AppStep`, add view in `ContentView.swift`, update step indicator.
 
