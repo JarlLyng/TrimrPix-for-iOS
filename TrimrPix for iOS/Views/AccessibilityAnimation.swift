@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 //  AccessibilityAnimation.swift
 //  TrimrPix for iOS

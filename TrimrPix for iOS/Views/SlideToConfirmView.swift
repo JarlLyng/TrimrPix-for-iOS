@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 //  SlideToConfirmView.swift
 //  TrimrPix for iOS

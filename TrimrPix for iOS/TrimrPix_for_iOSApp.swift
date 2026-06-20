@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 //  TrimrPix_for_iOSApp.swift
 //  TrimrPix for iOS

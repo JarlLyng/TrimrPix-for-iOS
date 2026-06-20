@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 //
 //  DynamicFont.swift
 //  TrimrPix for iOS

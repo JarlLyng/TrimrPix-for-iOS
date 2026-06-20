@@ -8,7 +8,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 
 - **Developer:** Jarl Lyng / [IAMJARL](https://iamjarl.com)
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
-- **License:** Private — all rights reserved (NOT open source)
+- **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
 - **Status:** Launched (App Store app-id 6761081919) — post-launch monitoring (#27)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
@@ -34,7 +34,6 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - No background processing while app is closed
 - No before/after preview comparison
 - No Apple Watch support
-- Not open source — repo is private
 
 ## Requirements
 
@@ -113,7 +112,7 @@ Before starting new work, check open issues: `gh issue list`
 - ✅ #2 Reduce Motion support
 - ✅ #3 Differentiate without color alone (step indicator)
 - ✅ #4 iPad support (640pt max-width centered layout)
-- ✅ #15 Competitor analysis → `docs/COMPETITOR_ANALYSIS.md`
+- ✅ #15 Competitor analysis (kept in private notes, not in this public repo)
 - ✅ #20 App Store screenshots prepared and uploaded
 - ✅ #24 Sentry launch diagnostic removed
 - ✅ #26 Pristine HEIC replace failure — solved via hybrid in-place + batched copy-delete fallback (commits 7d19e98, 9771388). Zero errors in Sentry over 2 post-fix test runs.
@@ -162,9 +161,9 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 | `docs/support.html` | Dedicated support page — troubleshooting, FAQ link, contact, macOS cross-link |
 | `docs/privacy.html` | Dedicated privacy policy — data collection (Sentry only), on-device processing, children's privacy |
 | `docs/CNAME` | Custom domain: `trimrpixforios.iamjarl.com` |
-| `docs/SEO_STRATEGY.md` | SEO & GEO strategy with current implementation status and action plan |
-| `docs/COMPETITOR_ANALYSIS.md` | Top 5 competitor breakdown, differentiators, positioning recommendations |
 | `docs/screenshot-{1-4}-*.png` | 4 app screenshots used on website |
+
+> SEO and competitor-analysis notes are kept in private notes outside this public repo.
 
 ### SEO already implemented
 - Canonical URLs, Open Graph, Twitter Cards on all pages
@@ -179,7 +178,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 - All App Store download links are `href="#"` — update with real URL when live
 
 ### App Store Connect (prepared)
-- **Subtitle:** "Compress Photos In Place" — leads with differentiator (24 chars, under 30 limit). See `docs/COMPETITOR_ANALYSIS.md` for rationale.
+- **Subtitle:** "Compress Photos In Place" — leads with the in-place differentiator (24 chars, under 30 limit).
 - **Keywords:** `in-place photo compressor,no duplicates,compress photos,reduce photo size,target size,free up space,photo compressor no ads,HEIC compress,strip metadata,WebP compressor,replace originals` (note: App Store keywords field is 100 chars — trim to the highest-value subset when entering)
 - **Primary Category:** Photo & Video
 - **Secondary Category:** Utilities
