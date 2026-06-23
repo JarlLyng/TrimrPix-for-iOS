@@ -1,4 +1,3 @@
-<!-- Copy to <repo>/.github/pull_request_template.md -->
 ## What & why
 <!-- What does this change, and what problem does it solve? Link the issue: Closes #123 -->
 
