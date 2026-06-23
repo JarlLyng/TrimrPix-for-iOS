@@ -1,13 +1,30 @@
 # Changelog
 
 All notable changes to TrimrPix for iOS are documented here.
-Format follows [Keep a Changelog](https://keepachangelog.com/); this log starts at 1.2 —
-earlier releases predate it.
+Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [1.2] - 2026-06
+## [Unreleased] — 1.2
+
+### Added
+- **Localization** — Danish, German, French, and Japanese (in addition to English).
+
+### Internal
+- Unit tests for the core compression, quantization, and metadata services.
+
+## [1.1] — 2026-06
 
 ### Added
 - **Target-size mode** — pick a per-photo byte budget (500 KB / 1 MB / 2 MB / 5 MB); the app binary-searches quality (JPEG/HEIC/WebP) or palette size (PNG) to fit.
-- **Localization** — Danish, German, French, and Japanese (in addition to English).
 
-<!-- Fill in earlier 1.x entries here if you want them backfilled. -->
+### Changed
+- More reliable in-place replacement, including a fallback path for pristine HEIC (HDR gain map / spatial data) that iOS refuses to edit in place.
+- Lower memory use on large batches (photos are loaded one at a time).
+- Quality levels now differentiate PNG output (Same / Good / Smaller).
+- New app icon.
+
+### Fixed
+- Privacy & security hardening: crash reports no longer capture screenshots; the Sentry auth token is no longer compiled into the app binary.
+
+## [1.0] — 2026-04
+
+- Initial release: in-place photo compression for the iOS Photos library, quality presets, granular metadata control, JPEG/PNG/WebP/HEIC, fully offline.
