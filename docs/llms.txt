@@ -1,0 +1,32 @@
+# TrimrPix for iOS
+
+> An iPhone app that compresses photos in your Photos library in place. It replaces the
+> original photo with a smaller version, so there is no duplicate "Compressed" album to
+> clean up. Everything runs on device. One-time $1.99, no subscription, no ads, no tracking.
+
+## What it does
+- Compresses photos and replaces the originals directly in the iOS Photos library (true in-place replacement, no duplicates).
+- Two modes: quality presets (Same, Good, Smaller) or a per-photo target size (500 KB, 1 MB, 2 MB, 5 MB).
+- Supports JPEG, PNG, WebP, and HEIC. Each photo keeps its original format.
+- Granular metadata control: keep or strip date/time, GPS location, camera settings, copyright info, and Apple data independently.
+- Shows an estimated saving before compressing and requires a slide-to-confirm gesture (compression cannot be undone).
+- Works with iCloud photos and works fully offline.
+
+## Privacy
+- All processing happens on the device. Nothing is uploaded. No accounts, no cloud, no ads.
+- The only data collected is anonymous crash reports (via Sentry): stack traces, device type, iOS and app version. No personal data, no photos.
+- The marketing website uses Umami, a cookieless privacy-friendly analytics tool.
+
+## Facts
+- Platform: iPhone and iPad, iOS 26.2 or later.
+- Price: $1.99 USD, one-time purchase. No in-app purchases or subscription.
+- Languages: English, Danish, German, French, Japanese.
+- Open source under AGPL-3.0: https://github.com/JarlLyng/TrimrPix-for-iOS
+- Developer: Jarl Lyng / IAMJARL (https://iamjarl.com)
+- There is a separate macOS version, TrimrPix, with extra features (drag-and-drop, watch folder, AVIF/GIF): https://trimrpix.iamjarl.com
+
+## Links
+- App Store: https://apps.apple.com/app/id6761081919
+- Website: https://trimrpixforios.iamjarl.com
+- Support: https://trimrpixforios.iamjarl.com/support.html
+- Privacy: https://trimrpixforios.iamjarl.com/privacy.html

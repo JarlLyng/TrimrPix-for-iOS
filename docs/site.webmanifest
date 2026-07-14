@@ -1,0 +1,13 @@
+{
+  "name": "TrimrPix for iOS",
+  "short_name": "TrimrPix",
+  "description": "Compress photos on iPhone in place. No duplicate album, fully offline.",
+  "icons": [
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "browser",
+  "start_url": "/"
+}

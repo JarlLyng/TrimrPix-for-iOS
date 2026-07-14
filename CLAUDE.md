@@ -171,6 +171,8 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 - Schema.org `SoftwareApplication` + `FAQPage` structured data (JSON-LD)
 - BreadcrumbList JSON-LD on support.html and privacy.html
 - `sitemap.xml` and `robots.txt` in `docs/`
+- Favicon set (`favicon-16/32.png`, `apple-touch-icon.png`), `site.webmanifest`, `theme-color` — generated from the app icon
+- `llms.txt` (GEO — structured app facts for AI answer engines)
 - AEO-optimized FAQ (answers under 60 words, direct answer first)
 - Developer personality in copy (E-E-A-T)
 - Cross-links to other IAMJARL projects (Made by Human, WODrounds, Wean Nicotine) in all footers
