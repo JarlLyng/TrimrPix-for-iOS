@@ -121,7 +121,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ]; then\n  export SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN}\"\n  export SENTRY_ORG=iamjarl\n  export SENTRY_PROJECT=trimrpix-ios\n  \n  if [ -z \"$SENTRY_AUTH_TOKEN\" ]; then\n    echo \"warning: SENTRY_AUTH_TOKEN not set — skipping dSYM upload\"\n    exit 0\n  fi\n  \n  if [ -f /opt/homebrew/bin/sentry-cli ]; then\n    /opt/homebrew/bin/sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  elif command -v sentry-cli &> /dev/null; then\n    sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  else\n    echo \"warning: sentry-cli not found — skipping dSYM upload\"\n  fi\nfi\n";
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ]; then\n  export SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN}\"\n  export SENTRY_ORG=iamjarl\n  export SENTRY_PROJECT=trimrpix-ios\n  \n  if [ -z \"$SENTRY_AUTH_TOKEN\" ]; then\n    echo \"note: SENTRY_AUTH_TOKEN not set, skipping dSYM upload (expected on Xcode Cloud; upload locally via scripts/upload-dsyms.sh)\"\n    exit 0\n  fi\n  \n  if [ -f /opt/homebrew/bin/sentry-cli ]; then\n    /opt/homebrew/bin/sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  elif command -v sentry-cli &> /dev/null; then\n    sentry-cli debug-files upload --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  else\n    echo \"note: sentry-cli not found, skipping dSYM upload\"\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
