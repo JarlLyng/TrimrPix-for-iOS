@@ -22,7 +22,8 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
 - **Target-size mode** — pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB); the service binary-searches lossy quality (JPEG/HEIC/WebP) or palette size (PNG) to fit. Photos already smaller are left unchanged. See `CompressionMode` / `encodeToTarget`.
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
-- **Savings estimate** — see how much space you'll save before compressing
+- **Savings estimate** — see how much space you'll save before compressing (percentage + absolute size)
+- **Lifetime savings counter** — total bytes saved across all runs, shown on the result screen. Stored locally in UserDefaults, never transmitted (disclosed in privacy policy)
 - **iCloud support** — downloads iCloud photos, compresses, saves back
 - **Fully offline** — no cloud, no accounts, no internet required
 - **Privacy-first** — only data collection is anonymous Sentry crash reports (stack traces, device type, iOS version, app version — no personal data)

@@ -468,9 +468,17 @@ private struct ConfigureStep: View {
                     Text("Estimated savings")
                         .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-                    Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
-                        .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
-                        .foregroundStyle(DesignTokens.ColorToken.State.success)
+                    HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
+                        Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
+                            .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
+                            .foregroundStyle(DesignTokens.ColorToken.State.success)
+                        // Absolute size — people think in megabytes, not percent.
+                        if viewModel.estimatedTotalSavingsBytes > 0 {
+                            Text("~\(viewModel.estimatedTotalSavingsBytes.formattedSize)")
+                                .dynamicFont(size: DesignTokens.Typography.Size.base)
+                                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                        }
+                    }
                 }
 
                 Spacer()
@@ -536,7 +544,12 @@ private struct ConfirmStep: View {
                     summaryRow(label: String(localized: "Target size"), value: viewModel.targetSize.label)
                 }
                 summaryRow(label: String(localized: "Metadata"), value: metadataStrippedCount == 0 ? String(localized: "Keep all") : String(localized: "\(metadataStrippedCount) removed"))
-                summaryRow(label: String(localized: "Est. savings"), value: "~\(viewModel.estimatedTotalSavingsPercentage)%")
+                summaryRow(
+                    label: String(localized: "Est. savings"),
+                    value: viewModel.estimatedTotalSavingsBytes > 0
+                        ? "~\(viewModel.estimatedTotalSavingsPercentage)% (~\(viewModel.estimatedTotalSavingsBytes.formattedSize))"
+                        : "~\(viewModel.estimatedTotalSavingsPercentage)%"
+                )
             }
             .padding(DesignTokens.Spacing.xl)
             .background(
@@ -756,6 +769,15 @@ private struct ResultStep: View {
                     .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
             )
             .padding(.horizontal, DesignTokens.Spacing.lg)
+
+                    // Lifetime savings — the number that grows run after run.
+                    if successCount > 0 && viewModel.lifetimeBytesSaved > 0 {
+                        Text("You've saved \(viewModel.lifetimeBytesSaved.formattedSize) with TrimrPix so far.")
+                            .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                            .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, DesignTokens.Spacing.lg)
+                    }
 
                     // Error details
                     if hasErrors {

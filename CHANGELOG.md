@@ -7,6 +7,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 - **Localization** — Danish, German, French, and Japanese (in addition to English).
+- **Savings in megabytes** — the estimate now shows the absolute size alongside the percentage (e.g. ~45% · ~180 MB).
+- **Lifetime savings counter** — the result screen shows the total space you've saved across all runs. Stored locally on the device, never transmitted.
 
 ### Internal
 - Unit tests for the core compression, quantization, and metadata services.
