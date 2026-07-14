@@ -111,6 +111,15 @@ private enum Preferences {
             }
         }
     }
+
+    /// Lifetime total of bytes saved across all compressions. A local stat,
+    /// never transmitted; disclosed in the privacy policy alongside the other
+    /// locally stored preferences.
+    private static let lifetimeBytesSavedKey = "stats.lifetimeBytesSaved"
+    static var lifetimeBytesSaved: Int64 {
+        get { UserDefaults.standard.object(forKey: lifetimeBytesSavedKey) as? Int64 ?? 0 }
+        set { UserDefaults.standard.set(newValue, forKey: lifetimeBytesSavedKey) }
+    }
 }
 
 // MARK: - ViewModel
@@ -164,6 +173,11 @@ final class ImageOptimizationViewModel {
     var currentImageIndex: Int = 0
 
     var estimatedTotalSavingsPercentage: Int = 0
+    /// Absolute byte estimate matching `estimatedTotalSavingsPercentage` —
+    /// people think in megabytes, not percentages, so the UI shows both.
+    var estimatedTotalSavingsBytes: Int64 = 0
+    /// Lifetime total of bytes saved across all runs (persisted locally).
+    var lifetimeBytesSaved: Int64 = 0
     var showPhotosAccessAlert = false
 
     // MARK: - Dependencies
@@ -180,6 +194,7 @@ final class ImageOptimizationViewModel {
         metadataOptions = Preferences.metadataOptions
         modeKind = Preferences.modeKind
         targetSize = Preferences.targetSize
+        lifetimeBytesSaved = Preferences.lifetimeBytesSaved
     }
 
     // MARK: - Computed
@@ -241,9 +256,24 @@ final class ImageOptimizationViewModel {
         estimateTask = Task { await estimateSavings() }
     }
 
+    /// Store both the percentage and the absolute byte estimate for a
+    /// completed estimation pass.
+    private func applyEstimate(totalOriginal: Int64, totalEstimated: Int64) {
+        if totalOriginal > 0 {
+            let savedBytes = max(0, totalOriginal - totalEstimated)
+            let savings = Double(savedBytes) / Double(totalOriginal) * 100
+            estimatedTotalSavingsPercentage = Int(savings.rounded())
+            estimatedTotalSavingsBytes = savedBytes
+        } else {
+            estimatedTotalSavingsPercentage = 0
+            estimatedTotalSavingsBytes = 0
+        }
+    }
+
     func estimateSavings() async {
         guard hasImages else {
             estimatedTotalSavingsPercentage = 0
+            estimatedTotalSavingsBytes = 0
             return
         }
 
@@ -253,14 +283,8 @@ final class ImageOptimizationViewModel {
         // as-is if already smaller), so we can estimate from byte counts alone
         // — no need to load or encode anything.
         if case .targetSize(let target) = compressionMode {
-            let totalOriginal = totalOriginalSize
             let totalEstimated = images.reduce(Int64(0)) { $0 + min(target, $1.originalSize) }
-            if totalOriginal > 0 {
-                let savings = Double(totalOriginal - totalEstimated) / Double(totalOriginal) * 100
-                estimatedTotalSavingsPercentage = max(0, Int(savings.rounded()))
-            } else {
-                estimatedTotalSavingsPercentage = 0
-            }
+            applyEstimate(totalOriginal: totalOriginalSize, totalEstimated: totalEstimated)
             isEstimating = false
             return
         }
@@ -290,13 +314,7 @@ final class ImageOptimizationViewModel {
         // isEstimating flag rather than writing a stale value.
         if Task.isCancelled { return }
 
-        if totalOriginal > 0 {
-            let savings = Double(totalOriginal - totalEstimated) / Double(totalOriginal) * 100
-            estimatedTotalSavingsPercentage = max(0, Int(savings.rounded()))
-        } else {
-            estimatedTotalSavingsPercentage = 0
-        }
-
+        applyEstimate(totalOriginal: totalOriginal, totalEstimated: totalEstimated)
         isEstimating = false
     }
 
@@ -415,6 +433,18 @@ final class ImageOptimizationViewModel {
                 for fallback in pendingFallbacks {
                     try? FileManager.default.removeItem(at: fallback.tempURL)
                 }
+            }
+
+            // Add this run's savings to the lifetime counter. Done after the
+            // fallback commit so every successful photo has its compressedSize
+            // set. Local stat only, never transmitted.
+            let batchSaved = images.reduce(Int64(0)) { acc, item in
+                guard item.isCompressed, let compressed = item.compressedSize else { return acc }
+                return acc + max(0, item.originalSize - compressed)
+            }
+            if batchSaved > 0 {
+                lifetimeBytesSaved += batchSaved
+                Preferences.lifetimeBytesSaved = lifetimeBytesSaved
             }
 
             isCompressing = false
@@ -767,6 +797,8 @@ final class ImageOptimizationViewModel {
         compressionProgress = 0
         currentImageIndex = 0
         estimatedTotalSavingsPercentage = 0
+        estimatedTotalSavingsBytes = 0
+        // lifetimeBytesSaved is deliberately NOT reset — it's the all-time stat.
         showPhotosAccessAlert = false
     }
 }

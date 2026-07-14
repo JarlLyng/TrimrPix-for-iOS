@@ -666,6 +666,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "削除されます" } }
       }
     },
+    "You've saved %@ with TrimrPix so far." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Du har indtil videre sparet %@ med TrimrPix." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du hast mit TrimrPix bisher %@ gespart." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous avez économisé %@ avec TrimrPix jusqu'à présent." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "TrimrPixでこれまでに%@を節約しました。" } }
+      }
+    },
     "%@ compression failed" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "%@-komprimering mislykkedes" } },
