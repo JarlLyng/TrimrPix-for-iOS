@@ -32,10 +32,21 @@ struct TrimrPix_for_iOSApp: App {
             options.debug = true
             options.environment = "debug"
             options.tracesSampleRate = 1.0
+            options.enableAutoPerformanceTracing = true
             #else
             options.environment = "production"
-            options.tracesSampleRate = 0.2
+            // No performance tracing in production: the app makes no network
+            // calls, so transactions would be low-value, and MetricKit already
+            // covers launch time / hangs / energy natively. Keeps the crash
+            // focus lean and off Sentry's transaction quota.
+            options.tracesSampleRate = 0
+            options.enableAutoPerformanceTracing = false
             #endif
+
+            // Never send personally identifiable information. It's the default,
+            // but stated explicitly because privacy is the whole point (and the
+            // source is public).
+            options.sendDefaultPii = false
 
             options.enableAutoSessionTracking = true
             options.enableAppHangTracking = true
@@ -48,8 +59,9 @@ struct TrimrPix_for_iOSApp: App {
             options.attachScreenshot = false
             options.attachViewHierarchy = false
             options.enableMetricKit = true
-            options.enableCaptureFailedRequests = true
-            options.enableAutoPerformanceTracing = true
+            // enableCaptureFailedRequests intentionally omitted: the app is
+            // fully offline and makes no network requests, so there is nothing
+            // to capture.
         }
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
