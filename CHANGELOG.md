@@ -3,7 +3,7 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased] — 1.2
+## [1.2] — 2026-07
 
 ### Added
 - **Localization** — Danish, German, French, and Japanese (in addition to English).
