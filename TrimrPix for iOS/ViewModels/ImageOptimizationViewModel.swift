@@ -97,6 +97,21 @@ private enum Preferences {
         set { UserDefaults.standard.set(newValue.rawValue, forKey: targetSizeKey) }
     }
 
+    private static let useCustomTargetKey = "preferences.useCustomTarget"
+    static var useCustomTarget: Bool {
+        get { UserDefaults.standard.bool(forKey: useCustomTargetKey) }
+        set { UserDefaults.standard.set(newValue, forKey: useCustomTargetKey) }
+    }
+
+    private static let customTargetMBKey = "preferences.customTargetMB"
+    static var customTargetMB: Double {
+        get {
+            let v = UserDefaults.standard.double(forKey: customTargetMBKey)
+            return v > 0 ? v : 1.0
+        }
+        set { UserDefaults.standard.set(newValue, forKey: customTargetMBKey) }
+    }
+
     static var metadataOptions: MetadataStrippingOptions {
         get {
             guard let data = UserDefaults.standard.data(forKey: metadataKey),
@@ -159,9 +174,44 @@ final class ImageOptimizationViewModel {
     var targetSize: TargetSize = .mb1 {
         didSet { Preferences.targetSize = targetSize }
     }
+    /// Whether target-size mode uses a free custom value instead of a preset.
+    var useCustomTarget: Bool = false {
+        didSet { Preferences.useCustomTarget = useCustomTarget }
+    }
+    /// The user's custom target size in megabytes (decimal MB, e.g. 0.8).
+    var customTargetMB: Double = 1.0 {
+        didSet { Preferences.customTargetMB = customTargetMB }
+    }
     var format: OutputFormat = .jpeg
     var metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions() {
         didSet { Preferences.metadataOptions = metadataOptions }
+    }
+
+    /// The custom target as bytes, clamped to a sane range (50 KB – 50 MB) so
+    /// the encoder search always has room and can't be handed nonsense.
+    var customTargetBytes: Int64 {
+        let bytes = customTargetMB * 1_000_000
+        return Int64(min(max(bytes, 50_000), 50_000_000))
+    }
+
+    /// The effective per-photo target in bytes (preset or custom).
+    var effectiveTargetBytes: Int64 {
+        useCustomTarget ? customTargetBytes : targetSize.bytes
+    }
+
+    /// Binding-friendly selector combining presets and the custom option, so
+    /// one segmented control drives both.
+    var targetSizeOption: TargetSizeOption {
+        get { useCustomTarget ? .custom : .preset(targetSize) }
+        set {
+            switch newValue {
+            case .custom:
+                useCustomTarget = true
+            case .preset(let size):
+                useCustomTarget = false
+                targetSize = size
+            }
+        }
     }
 
     /// The compression mode passed to `CompressionService`, derived from the
@@ -169,7 +219,7 @@ final class ImageOptimizationViewModel {
     var compressionMode: CompressionMode {
         switch modeKind {
         case .quality: return .quality(quality)
-        case .targetSize: return .targetSize(targetSize.bytes)
+        case .targetSize: return .targetSize(effectiveTargetBytes)
         }
     }
 
@@ -203,6 +253,8 @@ final class ImageOptimizationViewModel {
         metadataOptions = Preferences.metadataOptions
         modeKind = Preferences.modeKind
         targetSize = Preferences.targetSize
+        useCustomTarget = Preferences.useCustomTarget
+        customTargetMB = Preferences.customTargetMB
         lifetimeBytesSaved = Preferences.lifetimeBytesSaved
     }
 

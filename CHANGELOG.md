@@ -5,6 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **Custom target size** — in Target size mode you can now enter any size instead of only the 500 KB / 1 MB / 2 MB / 5 MB presets, so you can hit an exact upload limit.
+
 ### Changed
 - The App Store review prompt now waits until you've had a few successful compressions (rather than asking on your very first run), so it lands after the app has proven useful.
 

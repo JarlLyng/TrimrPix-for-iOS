@@ -20,7 +20,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **4 formats supported** — JPEG, PNG, WebP, HEIC. Each photo keeps its **original format** — there is NO user-facing format picker. Format conversion would force every photo through the create-and-delete fallback (Photos rejects in-place format changes, 3302), defeating in-place replacement; it's a macOS-only feature.
 - **2 compression modes** — Quality (3 levels) or Target size (per-photo byte budget). NOT a total-batch budget.
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
-- **Target-size mode** — pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB); the service binary-searches lossy quality (JPEG/HEIC/WebP) or palette size (PNG) to fit. Photos already smaller are left unchanged. See `CompressionMode` / `encodeToTarget`.
+- **Target-size mode** — pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB, or a **custom** value the user types in MB); the service binary-searches lossy quality (JPEG/HEIC/WebP) or palette size (PNG) to fit. Photos already smaller are left unchanged. See `CompressionMode` / `TargetSizeOption` / `encodeToTarget`. Custom bytes are clamped 50 KB–50 MB (`customTargetBytes`).
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
 - **Savings estimate** — see how much space you'll save before compressing (percentage + absolute size)
 - **Lifetime savings counter** — total bytes saved across all runs, shown on the result screen. Stored locally in UserDefaults, never transmitted (disclosed in privacy policy)

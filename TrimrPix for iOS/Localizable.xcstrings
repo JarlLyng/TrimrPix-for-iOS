@@ -202,6 +202,22 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "著作権と説明" } }
       }
     },
+    "Custom" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Tilpasset" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benutzerdefiniert" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Personnalisé" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "カスタム" } }
+      }
+    },
+    "Size" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Størrelse" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Größe" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Taille" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "サイズ" } }
+      }
+    },
     "Date & time" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Dato og tid" } },

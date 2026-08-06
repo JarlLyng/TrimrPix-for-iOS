@@ -58,3 +58,29 @@ nonisolated enum TargetSize: Int64, CaseIterable, Identifiable, Sendable {
         }
     }
 }
+
+/// The target-size picker's options: the presets plus a "Custom" entry that
+/// reveals a free numeric field. Only a UI selector; the resolved byte value
+/// is computed in the view model.
+nonisolated enum TargetSizeOption: Hashable, Identifiable, Sendable {
+    case preset(TargetSize)
+    case custom
+
+    static var allCases: [TargetSizeOption] {
+        TargetSize.allCases.map(TargetSizeOption.preset) + [.custom]
+    }
+
+    var id: String {
+        switch self {
+        case .preset(let size): return "preset-\(size.rawValue)"
+        case .custom: return "custom"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .preset(let size): return size.label
+        case .custom: return String(localized: "Custom")
+        }
+    }
+}

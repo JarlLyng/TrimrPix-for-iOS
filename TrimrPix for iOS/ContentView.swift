@@ -288,12 +288,38 @@ private struct ConfigureStep: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
                             case .targetSize:
-                                Picker("Target size", selection: $viewModel.targetSize) {
-                                    ForEach(TargetSize.allCases) { size in
-                                        Text(size.label).tag(size)
+                                Picker("Target size", selection: $viewModel.targetSizeOption) {
+                                    ForEach(TargetSizeOption.allCases) { option in
+                                        Text(option.label).tag(option)
                                     }
                                 }
                                 .pickerStyle(.segmented)
+
+                                if viewModel.useCustomTarget {
+                                    HStack(spacing: DesignTokens.Spacing.sm) {
+                                        TextField("Size", value: $viewModel.customTargetMB, format: .number)
+                                            .keyboardType(.decimalPad)
+                                            .multilineTextAlignment(.trailing)
+                                            .frame(maxWidth: 90)
+                                            .padding(.vertical, DesignTokens.Spacing.sm)
+                                            .padding(.horizontal, DesignTokens.Spacing.md)
+                                            .background(
+                                                DesignTokens.Common.Background.card(scheme),
+                                                in: RoundedRectangle(cornerRadius: DesignTokens.Radius.sm)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: DesignTokens.Radius.sm)
+                                                    .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
+                                            )
+                                        Text("MB")
+                                            .dynamicFont(size: DesignTokens.Typography.Size.base)
+                                            .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                                        Spacer()
+                                        Text(viewModel.customTargetBytes.formattedSize)
+                                            .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                            .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                                    }
+                                }
 
                                 Text("Each photo is compressed to about this size or smaller. Photos already smaller are left unchanged.")
                                     .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
@@ -338,6 +364,8 @@ private struct ConfigureStep: View {
         .onChange(of: viewModel.quality) { viewModel.scheduleEstimate() }
         .onChange(of: viewModel.modeKind) { viewModel.scheduleEstimate() }
         .onChange(of: viewModel.targetSize) { viewModel.scheduleEstimate() }
+        .onChange(of: viewModel.useCustomTarget) { viewModel.scheduleEstimate() }
+        .onChange(of: viewModel.customTargetMB) { viewModel.scheduleEstimate() }
         .onChange(of: viewModel.metadataOptions) { viewModel.scheduleEstimate() }
     }
 
@@ -541,7 +569,10 @@ private struct ConfirmStep: View {
                 case .quality:
                     summaryRow(label: String(localized: "Quality"), value: viewModel.quality.displayName)
                 case .targetSize:
-                    summaryRow(label: String(localized: "Target size"), value: viewModel.targetSize.label)
+                    summaryRow(
+                        label: String(localized: "Target size"),
+                        value: viewModel.useCustomTarget ? viewModel.customTargetBytes.formattedSize : viewModel.targetSize.label
+                    )
                 }
                 summaryRow(label: String(localized: "Metadata"), value: metadataStrippedCount == 0 ? String(localized: "Keep all") : String(localized: "\(metadataStrippedCount) removed"))
                 summaryRow(
