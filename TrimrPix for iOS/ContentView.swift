@@ -826,8 +826,10 @@ private struct ResultStep: View {
             .padding(.bottom, DesignTokens.Spacing.xxl)
         }
         .onAppear {
-            // Ask for a review after a fully successful compression
-            if successCount > 0 && !hasErrors && !wasCancelled {
+            // Ask for a review only after a fully successful compression AND
+            // once the user has had a few successful runs (see
+            // shouldRequestReview) — not on their very first run.
+            if successCount > 0 && !hasErrors && !wasCancelled && viewModel.shouldRequestReview {
                 requestReview()
             }
         }

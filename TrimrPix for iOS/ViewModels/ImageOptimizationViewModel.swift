@@ -120,6 +120,15 @@ private enum Preferences {
         get { UserDefaults.standard.object(forKey: lifetimeBytesSavedKey) as? Int64 ?? 0 }
         set { UserDefaults.standard.set(newValue, forKey: lifetimeBytesSavedKey) }
     }
+
+    /// Count of runs that finished with at least one successfully compressed
+    /// photo. Used to time the App Store review prompt (asked on the 3rd, once
+    /// the user has clearly gotten value — not on the first run).
+    private static let successfulRunCountKey = "stats.successfulRunCount"
+    static var successfulRunCount: Int {
+        get { UserDefaults.standard.integer(forKey: successfulRunCountKey) }
+        set { UserDefaults.standard.set(newValue, forKey: successfulRunCountKey) }
+    }
 }
 
 // MARK: - ViewModel
@@ -209,6 +218,14 @@ final class ImageOptimizationViewModel {
 
     var canCompress: Bool {
         hasImages && !isCompressing && !isLoadingImages
+    }
+
+    /// Whether to trigger the App Store review prompt on the result screen.
+    /// Only once the user has had a few successful runs (3+), so the ask lands
+    /// after they've clearly gotten value rather than on their first run. iOS
+    /// still throttles how often the prompt actually appears.
+    var shouldRequestReview: Bool {
+        Preferences.successfulRunCount >= 3
     }
 
     // MARK: - Photo Loading
@@ -445,6 +462,12 @@ final class ImageOptimizationViewModel {
             if batchSaved > 0 {
                 lifetimeBytesSaved += batchSaved
                 Preferences.lifetimeBytesSaved = lifetimeBytesSaved
+            }
+
+            // Count this as a successful run if at least one photo compressed.
+            // Drives the review-prompt timing (see shouldRequestReview).
+            if images.contains(where: \.isCompressed) {
+                Preferences.successfulRunCount += 1
             }
 
             isCompressing = false

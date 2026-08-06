@@ -3,6 +3,11 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Changed
+- The App Store review prompt now waits until you've had a few successful compressions (rather than asking on your very first run), so it lands after the app has proven useful.
+
 ## [1.2] — 2026-07
 
 ### Added
