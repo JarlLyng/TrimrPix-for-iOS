@@ -6,7 +6,7 @@
 
 ## What it does
 - Compresses photos and replaces the originals directly in the iOS Photos library (true in-place replacement, no duplicates).
-- Two modes: quality presets (Same, Good, Smaller) or a per-photo target size (500 KB, 1 MB, 2 MB, 5 MB).
+- Two modes: quality presets (Same, Good, Smaller) or a per-photo target size (500 KB, 1 MB, 2 MB, 5 MB, or a custom size you type in).
 - Supports JPEG, PNG, WebP, and HEIC. Each photo keeps its original format.
 - Granular metadata control: keep or strip date/time, GPS location, camera settings, copyright info, and Apple data independently.
 - Shows an estimated saving before compressing and requires a slide-to-confirm gesture (compression cannot be undone).
