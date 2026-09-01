@@ -3,7 +3,7 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.3] — 2026-09
 
 ### Added
 - **Custom target size** — in Target size mode you can now enter any size instead of only the 500 KB / 1 MB / 2 MB / 5 MB presets, so you can hit an exact upload limit.
