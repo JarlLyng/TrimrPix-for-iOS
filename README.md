@@ -20,7 +20,7 @@ Compress photos from your iOS Photos library in-place. One job: make files small
 
 ## Requirements
 
-- iOS 26.2+
+- iOS 17.0+
 - iPhone or iPad (universal app)
 - Photos library access (full or limited)
 

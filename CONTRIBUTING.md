@@ -35,7 +35,7 @@ If unsure whether something fits, open an issue and ask before writing code.
 
 ## Code style
 
-- SwiftUI; iOS 26.2+.
+- SwiftUI; iOS 17.0+.
 - Use `iamjarl-design` tokens — no hardcoded colors/spacing/radius/type.
 - Localize UI strings (`Text("…")` / `String(localized:)`); see `Localizable.xcstrings`.
 - Privacy-first: nothing leaves the device except opt-in anonymous crash reports.

@@ -38,18 +38,18 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 
 ## Requirements
 
-- **Ships as iOS 26.2+** — but that is the *configured* `IPHONEOS_DEPLOYMENT_TARGET`, not a real
-  constraint. The code builds cleanly all the way down to **iOS 17.0**; the only thing that breaks
-  below it is `@Observable` (iOS 17). There are no `@available` guards, no iOS 26-era APIs, and the
-  design-system dependency supports iOS 16. Lowering it is tracked in **#53** and would need testing
-  on an older OS first (in-place replacement and the HEIC 3302 fallback were developed against
-  iOS 26 behavior). Do not describe 26.2 as a requirement — it is an unexamined default.
+- **iOS 17.0+** — lowered from 26.2 in #53, which was an unexamined Xcode default rather than a
+  decision. `@Observable` is what sets the floor at 17; there are no `@available` guards and no
+  iOS 26-era APIs in the sources. Verified end-to-end on an iOS 18.2 simulator (picker, estimate,
+  target-size and custom-size paths all work). **Still unverified below 18.2** — no iOS 17 runtime
+  was installed to test against, and in-place replacement plus the HEIC 3302 fallback were
+  originally developed against iOS 26 behavior.
 - Runs on **iPhone and iPad** — universal app, content is centered at max 640pt width on wider screens
 - Photos library access: full or limited (write access required for in-place replacement)
 
 ## Tech stack
 
-- **Swift / SwiftUI** — UI and app lifecycle (deployment target 26.2; real floor is iOS 17, see #53)
+- **Swift / SwiftUI** — UI and app lifecycle (deployment target iOS 17.0)
 - **PhotosUI** — `PhotosPicker` for image selection (works without permission)
 - **Photos** — `PHContentEditingOutput` for in-place replacement (requires `.authorized` or `.limited`)
 - **ImageIO / Core Graphics** — compression, metadata processing
@@ -130,7 +130,7 @@ In-place replacement via `PHContentEditingOutput` is attempted first. For photos
 This list drifts. Snapshot as of **2026-09** (11 open):
 
 **Highest impact:**
-- **#53 Deployment target is iOS 26.2 and nothing requires it.** Verified: builds clean at iOS 17.0, fails at 16.0 only on `@Observable`. Likely an eligibility problem masquerading as a discovery problem — the product page tells most visitors their phone cannot run the app. Needs testing on an older OS before lowering.
+- ~~#53 Deployment target~~ **lowered to iOS 17.0** (unreleased; ships in the next version). At release, update the marketing site — `docs/index.html` (hero line + `operatingSystem` in the JSON-LD) and `docs/llms.txt` still say "iOS 26.2 or later", which stays true until the new build is live.
 
 **Version-locked App Store metadata — these can only change with a version submission, so batch them into one release:**
 - #51 Subtitles untranslated in da/de/fr (keywords *are* translated; subtitle is one of only three indexed fields)

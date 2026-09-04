@@ -3,6 +3,14 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Changed
+- **Now runs on iOS 17 and later**, down from iOS 26.2. The old requirement was an Xcode default that nothing in the code needed, and it excluded most iPhones from installing the app at all. Verified end-to-end on iOS 18.2.
+
+### Fixed
+- The "will be removed" note under each metadata toggle showed in English on Danish, German, French and Japanese devices. The translations existed but were never looked up.
+
 ## [1.3] — 2026-09
 
 ### Added
