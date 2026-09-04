@@ -10,7 +10,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
-- **Status:** Launched (App Store app-id 6761081919) — post-launch monitoring (#27)
+- **Status:** Live on the App Store (app-id 6761081919). Current version **1.3** (released 2026-09)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
 ## App features (be precise — do not invent features that don't exist)
@@ -38,13 +38,18 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 
 ## Requirements
 
-- **iOS 26.2+** (NOT iOS 15, 16, 17, or 18 — specifically 26.2+)
+- **Ships as iOS 26.2+** — but that is the *configured* `IPHONEOS_DEPLOYMENT_TARGET`, not a real
+  constraint. The code builds cleanly all the way down to **iOS 17.0**; the only thing that breaks
+  below it is `@Observable` (iOS 17). There are no `@available` guards, no iOS 26-era APIs, and the
+  design-system dependency supports iOS 16. Lowering it is tracked in **#53** and would need testing
+  on an older OS first (in-place replacement and the HEIC 3302 fallback were developed against
+  iOS 26 behavior). Do not describe 26.2 as a requirement — it is an unexamined default.
 - Runs on **iPhone and iPad** — universal app, content is centered at max 640pt width on wider screens
 - Photos library access: full or limited (write access required for in-place replacement)
 
 ## Tech stack
 
-- **Swift / iOS 26.2+ / SwiftUI** — UI and app lifecycle
+- **Swift / SwiftUI** — UI and app lifecycle (deployment target 26.2; real floor is iOS 17, see #53)
 - **PhotosUI** — `PhotosPicker` for image selection (works without permission)
 - **Photos** — `PHContentEditingOutput` for in-place replacement (requires `.authorized` or `.limited`)
 - **ImageIO / Core Graphics** — compression, metadata processing
@@ -108,48 +113,35 @@ Feature requests, bugs, and future work are tracked as **GitHub Issues** on the 
 
 Before starting new work, check open issues: `gh issue list`
 
-### Closed issues (shipped)
-- ✅ #1 Dynamic Type support (Larger Text)
-- ✅ #2 Reduce Motion support
-- ✅ #3 Differentiate without color alone (step indicator)
-- ✅ #4 iPad support (640pt max-width centered layout)
-- ✅ #15 Competitor analysis (kept in private notes, not in this public repo)
-- ✅ #20 App Store screenshots prepared and uploaded
-- ✅ #24 Sentry launch diagnostic removed
-- ✅ #26 Pristine HEIC replace failure — solved via hybrid in-place + batched copy-delete fallback (commits 7d19e98, 9771388). Zero errors in Sentry over 2 post-fix test runs.
+### Shipped — notable decisions worth knowing
+Full list: `gh issue list --state closed`. These are the ones that shaped the code:
+
+- ✅ **#26** Pristine HEIC replace failure — hybrid in-place + batched copy-delete fallback (commits 7d19e98, 9771388). See *Photo replacement architecture* below.
+- ✅ **#30** Format picker removed — it had no effect on output, since in-place replace always keeps the original format.
+- ✅ **#22** Target-size mode (1.1) · **#16** Localization (1.2) · **#21** Unit tests (1.2)
+- ✅ **#23** Share Extension — closed as **won't do**: a share extension cannot do in-place replacement, which is the whole point of the app.
+- ✅ **#28/#29** Sentry hardening — crash screenshots and view hierarchy disabled; auth token kept out of the binary.
+- ✅ **#1–#4** Accessibility (Dynamic Type, Reduce Motion, non-color differentiation) and iPad support.
 
 ### Photo replacement architecture
 In-place replacement via `PHContentEditingOutput` is attempted first. For photos Photos rejects with `PHPhotosErrorInvalidResource` (3302) — typically pristine HEIC with HDR gain map / spatial stereo on iOS 26 — the replacement falls back to creating a new asset from the compressed bytes (preserving creation date, location, and favorite) and deleting the original. All fallback photos within a batch are committed in a single `performChanges` transaction so the user sees exactly one iOS deletion confirmation sheet regardless of how many photos take the fallback path. See `replaceInPhotosLibrary` and `commitPendingFallbacks` in `ImageOptimizationViewModel`.
 
-### Open issues (as of April 2026)
+### Open issues — **always verify with `gh issue list`**
+This list drifts. Snapshot as of **2026-09** (11 open):
 
-**Testing (manual, needs device):**
-- #5 Test all output formats (JPEG, PNG, HEIC, WebP)
-- #6 Test large batch compression (10+ photos)
-- #7 Verify Dark Mode colors across all screens
-- #8 Test iCloud photos compression (download + save back)
-- #17 Verify accessibility features on device (VoiceOver, Dynamic Type, Reduce Motion)
-- #18 Test iPad layout and functionality
+**Highest impact:**
+- **#53 Deployment target is iOS 26.2 and nothing requires it.** Verified: builds clean at iOS 17.0, fails at 16.0 only on `@Observable`. Likely an eligibility problem masquerading as a discovery problem — the product page tells most visitors their phone cannot run the app. Needs testing on an older OS before lowering.
 
-**Testing (automation):**
-- #21 Add unit tests for core services
+**Version-locked App Store metadata — these can only change with a version submission, so batch them into one release:**
+- #51 Subtitles untranslated in da/de/fr (keywords *are* translated; subtitle is one of only three indexed fields)
+- #52 App name uses 8 of 30 chars in every locale
+- Not yet an issue, recorded in the strategy hub's `app-store-copy.md`: the live description still describes Target size as presets-only (1.3 added custom), and the screenshots still show the format picker removed in 1.1.
 
-**Bugs / enhancements (not blocking launch):**
-- #25 Lazy-load photo data (reduces RAM upfront; current autoreleasepool fix handles typical batches)
+**Technical debt:**
+- #50 Design system pinned to v0.1.4; current is v1.2.1 (check `MIGRATION.md` — the `lineHeights` rename is breaking)
+- #17 Verify accessibility on device (VoiceOver, Dynamic Type, Reduce Motion)
 
-**Marketing (launch + post-launch):**
-- #9 Record demo video and embed on website
-- #10 Activate App Store links and Smart App Banner at launch
-- #11 Set up Google Search Console and analytics
-- #12 Product Hunt launch
-- #13 Community outreach: Reddit, Hacker News, Indie Hackers
-- #14 Contact iOS blogs for reviews
-- #16 App Store localization (DA, DE, FR, JA)
-- #19 Update App Store Connect accessibility declarations at launch
-
-**Future features (v1.1+, surfaced by competitor analysis):**
-- ✅ #22 Target-size mode — shipped in 1.1 (`CompressionMode.targetSize`, `encodeToTarget`)
-- #23 Share Extension (compress from Photos share sheet)
+**Marketing:** #9 demo video · #13 Reddit/HN/Indie Hackers · #14 iOS blog pitches · #44 Indie Hackers updates · #48 llms.txt developer story · #49 localized site (low priority)
 
 ## Marketing site
 
@@ -180,12 +172,15 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 - Video section prepared as comment (activate with YouTube embed URL)
 - All App Store download links are `href="#"` — update with real URL when live
 
-### App Store Connect (prepared)
-- **Subtitle:** "Compress Photos In Place" — leads with the in-place differentiator (24 chars, under 30 limit).
-- **Keywords:** `in-place photo compressor,no duplicates,compress photos,reduce photo size,target size,free up space,photo compressor no ads,HEIC compress,strip metadata,WebP compressor,replace originals` (note: App Store keywords field is 100 chars — trim to the highest-value subset when entering)
-- **Primary Category:** Photo & Video
-- **Secondary Category:** Utilities
-- **Copyright:** 2026 IAMJARL
+### App Store Connect
+- **Primary Category:** Photo & Video · **Secondary:** Utilities · **Copyright:** 2026 IAMJARL
+- **Listing copy (name, subtitle, keywords, description, promo, What's New) lives in the private
+  strategy hub**, not here: `iamjarl-strategy/TrimrPix-iOS/app-store-copy.md`. That file mirrors
+  what is actually live and is the only place to trust for current values.
+- ⚠️ **Do not reuse the old "prepared" copy that used to sit here.** It listed the subtitle as
+  "Compress Photos In Place", which was a pre-launch draft that never shipped — the live subtitle
+  read from ASC is "Shrink photos, keep quality" (see #51). Pre-launch drafts and live values had
+  drifted apart unnoticed, which is exactly why the listing copy now has one owner.
 
 ## Common tasks
 
