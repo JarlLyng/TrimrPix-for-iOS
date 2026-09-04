@@ -449,7 +449,9 @@ private struct ConfigureStep: View {
                                 Text(option.label)
                                     .dynamicFont(size: DesignTokens.Typography.Size.base)
                                     .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
-                                Text(isKept ? option.description : "Will be removed")
+                                // Localize at source: the ternary's type is String, so a bare
+                                // literal here would hit Text(String) and skip the catalog.
+                                Text(isKept ? option.description : String(localized: "Will be removed"))
                                     .dynamicFont(size: DesignTokens.Typography.Size.xs, relativeTo: .caption)
                                     .foregroundStyle(isKept
                                         ? DesignTokens.Common.Text.tertiary(scheme)
