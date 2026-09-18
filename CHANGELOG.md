@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 - The "will be removed" note under each metadata toggle showed in English on Danish, German, French and Japanese devices. The translations existed but were never looked up.
 
-## [1.3] — 2026-09
+## [1.3] — 2026-08
 
 ### Added
 - **Custom target size** — in Target size mode you can now enter any size instead of only the 500 KB / 1 MB / 2 MB / 5 MB presets, so you can hit an exact upload limit.
