@@ -3,7 +3,7 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.4] — 2026-09
 
 ### Changed
 - **Now runs on iOS 17 and later**, down from iOS 26.2. The old requirement was an Xcode default that nothing in the code needed, and it excluded most iPhones from installing the app at all. Verified end-to-end on iOS 18.2.
