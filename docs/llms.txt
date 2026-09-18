@@ -18,11 +18,11 @@
 - The marketing website uses Umami, a cookieless privacy-friendly analytics tool.
 
 ## Facts
-- Platform: iPhone and iPad, iOS 26.2 or later.
+- Platform: iPhone and iPad, iOS 17 or later.
 - Price: $1.99 USD, one-time purchase. No in-app purchases or subscription.
 - Languages: English, Danish, German, French, Japanese.
 - Open source under AGPL-3.0: https://github.com/JarlLyng/TrimrPix-for-iOS
-- Developer: Jarl Lyng / IAMJARL (https://iamjarl.com)
+- Developer: IAMJARL (Jarl): https://iamjarl.com
 - There is a separate macOS version, TrimrPix, with extra features (drag-and-drop, watch folder, AVIF/GIF): https://trimrpix.iamjarl.com
 
 ## Links
