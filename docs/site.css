@@ -1,6 +1,6 @@
 /* TrimrPix for iOS — shared site styles.
    Colour, type and spacing resolve from the IAMJARL design tokens
-   (iamjarl-design v1.9.1), so light and dark both come from the design system.
+   (iamjarl-design v1.11.0), so light and dark both come from the design system.
    Page-specific layout stays in each page's own <style> block. */
 
 :root {

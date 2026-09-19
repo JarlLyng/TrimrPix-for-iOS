@@ -634,7 +634,7 @@
 			repositoryURL = "https://github.com/JarlLyng/iamjarl-design.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.3;
+				minimumVersion = 1.11.0;
 			};
 		};
 		BB000003BBBB000300000003 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {

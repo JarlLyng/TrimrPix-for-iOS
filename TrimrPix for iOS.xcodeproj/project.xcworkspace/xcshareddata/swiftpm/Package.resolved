@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JarlLyng/iamjarl-design.git",
       "state" : {
-        "revision" : "041f48048d9f66b66909e41222503591bf15ef96",
-        "version" : "0.1.4"
+        "revision" : "accf2fb7286214a8942d4200012131966ad2e0eb",
+        "version" : "1.11.0"
       }
     },
     {
