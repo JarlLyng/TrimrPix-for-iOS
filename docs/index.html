@@ -9,30 +9,31 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0B0B0C" media="(prefers-color-scheme: dark)">
-    <title>TrimrPix — Compress Photos on iPhone. No Duplicates.</title>
-    <meta name="description" content="TrimrPix replaces your photos with smaller versions, right inside your Photos library. No 'Compressed' album to clean up. Fully offline. $1.99 once — no subscription, no ads.">
+    <title>TrimrPix: Compress Photos on iPhone. No Duplicates.</title>
+    <meta name="description" content="TrimrPix replaces your photos with smaller versions, right inside your Photos library. No 'Compressed' album to clean up. Fully offline. $1.99 once, no subscription, no ads.">
     <meta name="keywords" content="in-place photo compressor iPhone, compress photos no duplicates, compress photos iPhone, reduce photo size iPhone, compress photo to target size, compress photo to specific size, free up space iPhone, photo compressor no ads, HEIC compressor, strip EXIF data iOS, replace original photos iPhone, WebP compressor iPhone">
     <link rel="canonical" href="https://trimrpixforios.iamjarl.com/">
     <!-- Open Graph -->
-    <meta property="og:title" content="TrimrPix — Compress Photos on iPhone. No Duplicates.">
-    <meta property="og:description" content="The only iPhone compressor that replaces the original. No duplicate album. Fully offline. $1.99 once — no subscription, no ads, no personal tracking.">
+    <meta property="og:title" content="TrimrPix: Compress Photos on iPhone. No Duplicates.">
+    <meta property="og:description" content="The only iPhone compressor that replaces the original. No duplicate album. Fully offline. $1.99 once, no subscription, no ads, no personal tracking.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://trimrpixforios.iamjarl.com/">
     <meta property="og:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TrimrPix — Compress Photos on iPhone. No Duplicates.">
-    <meta name="twitter:description" content="The only iPhone compressor that replaces the original. No duplicate album. Fully offline. $1.99 once — no subscription, no ads, no personal tracking.">
+    <meta name="twitter:title" content="TrimrPix: Compress Photos on iPhone. No Duplicates.">
+    <meta name="twitter:description" content="The only iPhone compressor that replaces the original. No duplicate album. Fully offline. $1.99 once, no subscription, no ads, no personal tracking.">
     <meta name="twitter:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
-    <!-- Apple Smart App Banner — shows native install prompt to iPhone visitors -->
+    <!-- Apple Smart App Banner: shows native install prompt to iPhone visitors -->
     <meta name="apple-itunes-app" content="app-id=6761081919">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- IAMJARL design tokens (light + dark) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.9.1/dist/css/tokens.css">
+    <link rel="stylesheet" href="/site.css">
 
-    <!-- Umami — privacy-friendly, cookieless analytics (no personal data, no cookies) -->
+    <!-- Umami: privacy-friendly, cookieless analytics (no personal data, no cookies) -->
     <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="9fb3149f-01da-4ce8-ae94-2da5b59fe3e8"></script>
 
     <!-- Schema.org: SoftwareApplication -->
@@ -43,7 +44,7 @@
         "name": "TrimrPix for iOS",
         "operatingSystem": "iOS 17.0+",
         "applicationCategory": "PhotographyApplication",
-        "description": "Compress photos on iPhone in place. TrimrPix replaces the original photo with the compressed version — no duplicate album, no cloud, no accounts. Supports JPEG, PNG, WebP, and HEIC with granular metadata control.",
+        "description": "Compress photos on iPhone in place. TrimrPix replaces the original photo with the compressed version, so there is no duplicate album, no cloud and no accounts. Supports JPEG, PNG, WebP, and HEIC with granular metadata control.",
         "downloadUrl": "https://apps.apple.com/app/id6761081919",
         "offers": {
             "@type": "Offer",
@@ -125,66 +126,7 @@
     </script>
 
     <style>
-        /* App palette layered on the IAMJARL tokens. Everything resolves from
-           --ij-*, so light and dark both come from the design system. */
-        :root {
-            --bg:        var(--ij-color-bg-app, #ffffff);
-            --bg-alt:    color-mix(in srgb, var(--ij-color-text-primary, #000) 3%, transparent);
-            --bg-card:   var(--ij-color-bg-card, rgba(0,0,0,.04));
-            --text:      var(--ij-color-text-primary, #111);
-            --text-2:    var(--ij-color-text-secondary, #555);
-            --text-3:    color-mix(in srgb, var(--ij-color-text-primary, #000) 55%, transparent);
-            --brand:     var(--ij-color-primary, #A435D2);
-            --brand-hov: var(--ij-color-primary-hover, #8E2BB8);
-            --brand-sub: var(--ij-color-primary-subtle, rgba(164,53,210,.12));
-            --on-brand:  var(--ij-color-on-primary, #ffffff);
-            --border:    var(--ij-color-border-subtle, rgba(0,0,0,.10));
-            --radius:    18px;
-            --maxw:      1080px;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            *, *::before, *::after { animation: none !important; transition: none !important; }
-        }
-
-        body {
-            margin: 0;
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
-        a { color: inherit; }
-        img { max-width: 100%; display: block; height: auto; }
-        :focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 6px; }
-
-        /* nav */
-        .nav {
-            position: sticky; top: 0; z-index: 50;
-            background: color-mix(in srgb, var(--bg) 88%, transparent);
-            backdrop-filter: saturate(180%) blur(14px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-inner { display: flex; align-items: center; gap: 24px; height: 62px; }
-        .logo { font-weight: 800; font-size: 1.12rem; letter-spacing: -.02em; text-decoration: none; }
-        .logo span { color: var(--brand); }
-        .nav-links { margin-left: auto; display: flex; align-items: center; gap: 22px; }
-        .nav-links a { color: var(--text-2); text-decoration: none; font-size: .93rem; font-weight: 500; }
-        .nav-links a:hover { color: var(--text); }
-        .nav-cta {
-            background: var(--brand); color: var(--on-brand) !important; text-decoration: none;
-            padding: 9px 16px; border-radius: 999px; font-size: .9rem; font-weight: 600;
-        }
-        .nav-cta:hover { background: var(--brand-hov); }
-        @media (max-width: 640px) { .nav-links a:not(.nav-cta) { display: none; } }
-
-        /* hero */
+        /* index-only layout. Shared base lives in /site.css */
         .hero { padding: 72px 0 0; }
         .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
         .eyebrow {
@@ -199,15 +141,6 @@
         }
         .hero h1 em { font-style: normal; color: var(--brand); }
         .hero-sub { font-size: 1.12rem; color: var(--text-2); margin: 0 0 28px; max-width: 34ch; }
-        .btn {
-            display: inline-flex; align-items: center; gap: 9px;
-            background: var(--brand); color: var(--on-brand); text-decoration: none;
-            padding: 14px 24px; border-radius: 999px; font-weight: 600; font-size: 1rem;
-            transition: background .15s ease, transform .15s ease;
-        }
-        .btn:hover { background: var(--brand-hov); transform: translateY(-1px); }
-        .btn svg { width: 18px; height: 18px; flex: none; }
-        .price-note { font-size: .9rem; color: var(--text-3); margin-top: 18px; }
         .phone {
             justify-self: center; width: min(300px, 78vw);
             border-radius: 38px; border: 1px solid var(--border);
@@ -221,22 +154,11 @@
             .hero-sub { max-width: none; }
         }
 
-        /* trust strip */
         .strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 64px; }
         .strip-inner { display: flex; gap: 18px; justify-content: space-between; padding: 22px 0; flex-wrap: wrap; }
         .strip-item { display: flex; align-items: center; gap: 11px; font-weight: 500; font-size: .95rem; }
         .strip-item svg { width: 21px; height: 21px; color: var(--brand); flex: none; }
 
-        /* sections */
-        section { padding: 84px 0; }
-        .sec-label {
-            font-size: .76rem; font-weight: 700; letter-spacing: .13em;
-            text-transform: uppercase; color: var(--brand); margin: 0 0 12px;
-        }
-        h2 { font-size: clamp(1.75rem, 3.4vw, 2.35rem); letter-spacing: -.028em; font-weight: 800; margin: 0 0 14px; line-height: 1.15; }
-        .lede { color: var(--text-2); font-size: 1.05rem; max-width: 56ch; margin: 0 0 48px; }
-
-        /* features */
         .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 18px; }
         .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
         .card-icon {
@@ -248,7 +170,6 @@
         .card h3 { font-size: 1.04rem; font-weight: 700; margin: 0 0 7px; letter-spacing: -.01em; }
         .card p { margin: 0; color: var(--text-2); font-size: .95rem; }
 
-        /* steps */
         .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
         .step-shot { border-radius: 20px; border: 1px solid var(--border); background: var(--bg); padding: 7px; margin-bottom: 18px; }
         .step-shot img { border-radius: 14px; }
@@ -262,21 +183,22 @@
         @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); gap: 34px; } }
         @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
 
-        /* cta */
         .cta-box { background: var(--brand); border-radius: 26px; padding: 60px 40px; text-align: center; color: var(--on-brand); }
         .cta-box h2 { color: var(--on-brand); margin-bottom: 12px; }
         .cta-box p { color: color-mix(in srgb, var(--on-brand) 88%, transparent); max-width: 46ch; margin: 0 auto 30px; }
         .cta-box .btn { background: var(--on-brand); color: var(--brand); }
         .cta-box .btn:hover { background: color-mix(in srgb, var(--on-brand) 90%, transparent); }
 
-        /* faq */
-        .faq { max-width: 760px; }
-        .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
-        .faq-item:first-of-type { border-top: 1px solid var(--border); }
-        .faq-item h3 { font-size: 1.04rem; font-weight: 700; margin: 0 0 9px; letter-spacing: -.01em; }
-        .faq-item p { margin: 0; color: var(--text-2); font-size: .97rem; }
-
-        .alt { background: var(--bg-alt); }
+        .usecases { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+        .uc {
+            display: block; text-decoration: none;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 26px;
+            transition: border-color .15s ease, transform .15s ease;
+        }
+        .uc:hover { border-color: var(--brand); transform: translateY(-2px); }
+        .uc h3 { font-size: 1.04rem; font-weight: 700; margin: 0 0 7px; letter-spacing: -.01em; color: var(--brand); }
+        .uc p { margin: 0; color: var(--text-2); font-size: .95rem; }
     </style>
 </head>
 <body>
@@ -425,6 +347,28 @@
     </div>
 </section>
 
+<section>
+    <div class="wrap">
+        <p class="sec-label">Guides</p>
+        <h2>Answers to the reason you're here</h2>
+        <p class="lede">Short, honest write-ups for the three things people are usually trying to do, including what the iPhone can already manage on its own.</p>
+        <div class="usecases">
+            <a class="uc" href="/compress-photo-to-specific-size-iphone.html">
+                <h3>Compress to a specific size</h3>
+                <p>When a form demands under 500 KB or 2 MB, and cropping is not the answer.</p>
+            </a>
+            <a class="uc" href="/compress-photos-for-email-iphone.html">
+                <h3>Compress photos for email</h3>
+                <p>Why attachments bounce even when each photo looked small enough.</p>
+            </a>
+            <a class="uc" href="/free-up-iphone-storage-without-deleting-photos.html">
+                <h3>Free up storage without deleting</h3>
+                <p>What Optimise iPhone Storage does, what it does not, and what is left.</p>
+            </a>
+        </div>
+    </div>
+</section>
+
 <section id="faq" class="alt">
     <div class="wrap">
         <p class="sec-label">FAQ</p>
@@ -432,11 +376,11 @@
         <div class="faq">
             <div class="faq-item">
                 <h3>What image formats does TrimrPix support?</h3>
-                <p>JPEG, PNG, WebP, and HEIC. TrimrPix compresses each photo and keeps it in its original format &mdash; a HEIC stays HEIC, a PNG stays PNG &mdash; so it slots straight back into your library in place.</p>
+                <p>JPEG, PNG, WebP, and HEIC. TrimrPix compresses each photo and keeps it in its original format (a HEIC stays HEIC, a PNG stays PNG), so it slots straight back into your library in place.</p>
             </div>
             <div class="faq-item">
                 <h3>Can I compress to a specific file size?</h3>
-                <p>Yes. Switch to Target size mode and pick 500&nbsp;KB, 1&nbsp;MB, 2&nbsp;MB, 5&nbsp;MB, or type an exact size of your own &mdash; TrimrPix finds the highest quality that keeps each photo under it. Photos already smaller than your target are left untouched.</p>
+                <p>Yes. Switch to Target size mode and pick 500&nbsp;KB, 1&nbsp;MB, 2&nbsp;MB, 5&nbsp;MB, or type an exact size of your own. TrimrPix finds the highest quality that keeps each photo under it. Photos already smaller than your target are left untouched.</p>
             </div>
             <div class="faq-item">
                 <h3>How much space can I actually save?</h3>
@@ -444,7 +388,7 @@
             </div>
             <div class="faq-item">
                 <h3>Does TrimrPix work without internet?</h3>
-                <p>Yes, 100% offline. Every bit of compression happens on your iPhone. No servers, no cloud, no data leaves your device. That's the whole point &mdash; I built it this way because your photos are nobody else's business.</p>
+                <p>Yes, 100% offline. Every bit of compression happens on your iPhone. No servers, no cloud, no data leaves your device. That's the whole point. I built it this way because your photos are nobody else's business.</p>
             </div>
             <div class="faq-item">
                 <h3>What happens to my original photos?</h3>
@@ -469,7 +413,7 @@
     <a slot="links" href="support.html">Support</a>
     <a slot="links" href="privacy.html">Privacy</a>
     <a slot="links" href="https://github.com/JarlLyng/TrimrPix-for-iOS">Source</a>
-    <!-- IAMJARL cross-links — generated by iamjarl-design, do not hand-edit -->
+    <!-- IAMJARL cross-links: generated by iamjarl-design, do not hand-edit -->
     <a slot="cross-links" href="https://trimrpix.iamjarl.com">TrimrPix</a>
     <a slot="cross-links" href="https://botlens.iamjarl.com">BotLens</a>
     <a slot="cross-links" href="https://pagelens.iamjarl.com">PageLens</a>

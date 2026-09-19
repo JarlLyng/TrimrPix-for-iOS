@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0B0B0C" media="(prefers-color-scheme: dark)">
+    <title>How to Compress a Photo to a Specific Size on iPhone</title>
+    <meta name="description" content="Need a photo under 500 KB, 1 MB or an exact size an upload form demands? Here is how to hit a specific file size on iPhone, what the built-in tools can and cannot do, and how TrimrPix gets there in one pass.">
+    <link rel="canonical" href="https://trimrpixforios.iamjarl.com/compress-photo-to-specific-size-iphone.html">
+    <meta property="og:title" content="How to Compress a Photo to a Specific Size on iPhone">
+    <meta property="og:description" content="Hitting an exact file size on iPhone, without guessing. What the built-in tools can do, and where they run out.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://trimrpixforios.iamjarl.com/compress-photo-to-specific-size-iphone.html">
+    <meta property="og:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Compress a Photo to a Specific Size on iPhone">
+    <meta name="twitter:description" content="Hitting an exact file size on iPhone, without guessing. What the built-in tools can do, and where they run out.">
+    <meta name="twitter:image" content="https://trimrpixforios.iamjarl.com/screenshot-2-configure.png">
+    <meta name="apple-itunes-app" content="app-id=6761081919">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.9.1/dist/css/tokens.css">
+    <link rel="stylesheet" href="/site.css">
+    <!-- Umami: privacy-friendly, cookieless analytics (no personal data, no cookies) -->
+    <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="9fb3149f-01da-4ce8-ae94-2da5b59fe3e8"></script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How to Compress a Photo to a Specific Size on iPhone",
+        "description": "How to hit an exact file size on iPhone, what the built-in tools can and cannot do, and how TrimrPix searches the encoder settings to land under a target.",
+        "author": { "@type": "Organization", "name": "IAMJARL", "url": "https://iamjarl.com" },
+        "publisher": { "@type": "Organization", "name": "IAMJARL", "url": "https://iamjarl.com" },
+        "mainEntityOfPage": "https://trimrpixforios.iamjarl.com/compress-photo-to-specific-size-iphone.html",
+        "datePublished": "2026-09-19",
+        "dateModified": "2026-09-19"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "TrimrPix for iOS", "item": "https://trimrpixforios.iamjarl.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Compress a photo to a specific size on iPhone", "item": "https://trimrpixforios.iamjarl.com/compress-photo-to-specific-size-iphone.html" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Can the iPhone Photos app compress a photo to a specific size?",
+                "acceptedAnswer": { "@type": "Answer", "text": "No. The Photos app has no file size control and no export quality setting. Cropping and resizing change the pixel dimensions, which affects file size indirectly and unpredictably." }
+            },
+            {
+                "@type": "Question",
+                "name": "Why does a photo end up larger than the size I asked for?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Usually because metadata was kept, or because the image is already near its floor for that format. A photo at maximum compression can still exceed a very small target, in which case the result is as small as that format allows." }
+            },
+            {
+                "@type": "Question",
+                "name": "Does compressing to a target size change the file format?",
+                "acceptedAnswer": { "@type": "Answer", "text": "In TrimrPix, no. Each photo keeps its original format, so a HEIC stays HEIC and a PNG stays PNG. Converting would force a copy rather than an in-place replacement." }
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+
+<header class="nav">
+    <div class="wrap nav-inner">
+        <a class="logo" href="/">Trimr<span>Pix</span></a>
+        <nav class="nav-links">
+            <a href="/#features">Features</a>
+            <a href="/#faq">FAQ</a>
+            <a href="/support.html">Support</a>
+            <a class="nav-cta" href="https://apps.apple.com/app/id6761081919">Get on iPhone</a>
+        </nav>
+    </div>
+</header>
+
+<main class="article">
+    <p class="crumb"><a href="/">TrimrPix for iOS</a> &rsaquo; Compress to a specific size</p>
+
+    <h1>How to compress a photo to a specific size on iPhone</h1>
+    <p class="standfirst">Some uploads do not care how good your photo looks. They care that it is under 500 KB, or under 2 MB, or under whatever number the form decided on. Here is what actually works on an iPhone, and where the built-in tools stop being useful.</p>
+
+    <h2>The iPhone cannot do this on its own</h2>
+    <p>This is worth saying plainly, because a lot of advice pretends otherwise. The Photos app has no file size field and no export quality slider. You can crop, and you can change the dimensions, but neither of those lets you say "make this 800 KB". You change the pixels and hope the bytes follow.</p>
+    <p>The usual workarounds are indirect in the same way. Sending a photo to yourself in Messages or Mail and saving the received copy does shrink it, but you do not control the result and you get a second copy in your library. Screenshotting a photo re-encodes it at screen resolution, which throws away real detail and still gives you no number to aim at.</p>
+    <p>So the honest answer is that hitting a specific size on iPhone needs something built for it.</p>
+
+    <h2>What "a specific size" really means</h2>
+    <p>File size is the output of an encoder, not a setting you dial in. When you ask for a JPEG under 1 MB, something has to try a quality level, look at the resulting bytes, and try again. That search is the whole job, and it is why a slider labelled "quality" never quite answers the question you are asking.</p>
+    <p>Two things change the answer besides quality. Metadata takes up real space, especially on photos carrying location, camera data and Apple's own extras, so stripping what you do not need can move a file several hundred kilobytes on its own. And every format has a floor. A detailed photo at maximum compression will still be larger than 50 KB, and no tool can change that without shrinking the dimensions too.</p>
+
+    <h2>How TrimrPix does it</h2>
+    <p>I built TrimrPix to make this one step. You pick the photos, switch to Target size, and either take one of the presets at 500 KB, 1 MB, 2 MB and 5 MB, or type the exact number you need. The app then binary-searches the encoder settings for each photo separately until it lands under your target, and it shows you the estimated saving before anything changes.</p>
+    <p>Each photo is judged on its own, so a batch where one image is already small and another is enormous does the right thing for both. Photos that are already under the target are left completely alone rather than being re-encoded for no reason.</p>
+
+    <figure class="shot">
+        <img src="screenshot-2-configure.png" width="480" height="1043" loading="lazy" alt="TrimrPix Target size mode with presets for 500 KB, 1 MB, 2 MB, 5 MB and a Custom option, above the metadata switches">
+        <figcaption>Target size mode, with the Custom field for an exact number.</figcaption>
+    </figure>
+
+    <p>The part that matters for a form upload is what happens next. TrimrPix replaces the original in your library instead of saving a smaller copy beside it. There is no "Compressed" album to sort out afterwards, and the photo you attach is the photo you already had, at the size you asked for.</p>
+
+    <div class="callout">
+        <p><strong>TrimrPix for iOS</strong> compresses photos in place, on your iPhone, with no cloud and no accounts. One-time purchase.</p>
+        <a class="btn" href="https://apps.apple.com/app/id6761081919">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.61-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.75-.78-2.87-.76-1.48.02-2.84.86-3.6 2.18-1.53 2.66-.39 6.6 1.1 8.76.73 1.06 1.6 2.25 2.74 2.2 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.3-3.53zM14.9 5.6c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.69.97.07 1.96-.49 2.58-1.22z"/></svg>
+            Download on the App Store
+        </a>
+        <p class="price-note">$1.99 &middot; Pay once &middot; Requires iOS 17 or later</p>
+    </div>
+
+    <h2>Picking a target that will actually work</h2>
+    <p>If the form states a limit, aim under it rather than at it. A form that says 2 MB is usually measuring the file after it arrives, and a target of 1.5 MB gives you room without any visible cost. If the limit is very small, say 200 KB for a passport-style photo, expect to lose visible quality, because that is a real constraint rather than a tool limitation.</p>
+    <p>If you do not know the limit, 1 MB is a sensible default for anything that will be looked at on a screen. It is small enough for almost every upload and large enough that a normal photo still looks like itself.</p>
+
+    <h2>Common questions</h2>
+    <div class="faq">
+        <div class="faq-item">
+            <h3>Can the iPhone Photos app compress a photo to a specific size?</h3>
+            <p>No. The Photos app has no file size control and no export quality setting. Cropping and resizing change the pixel dimensions, which affects file size indirectly and unpredictably.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Why does a photo end up larger than the size I asked for?</h3>
+            <p>Usually because metadata was kept, or because the image is already near its floor for that format. A photo at maximum compression can still exceed a very small target, in which case the result is as small as that format allows.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Does compressing to a target size change the file format?</h3>
+            <p>In TrimrPix, no. Each photo keeps its original format, so a HEIC stays HEIC and a PNG stays PNG. Converting would force a copy rather than an in-place replacement.</p>
+        </div>
+    </div>
+
+    <div class="related">
+        <h2>Related</h2>
+        <p><a href="/compress-photos-for-email-iphone.html">Compressing iPhone photos for email</a>, where the limit is set by the mail provider rather than a form.</p>
+        <p><a href="/free-up-iphone-storage-without-deleting-photos.html">Freeing up iPhone storage without deleting photos</a>, if the goal is space rather than a single upload.</p>
+    </div>
+</main>
+
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.9.1/dist/components/ij-footer.js"></script>
+<ij-footer app="trimrpix-ios" tagline="Compress photos on iPhone. In place, no duplicates.">
+    <a slot="links" href="/">Home</a>
+    <a slot="links" href="/support.html">Support</a>
+    <a slot="links" href="/privacy.html">Privacy</a>
+    <a slot="links" href="https://github.com/JarlLyng/TrimrPix-for-iOS">Source</a>
+    <!-- IAMJARL cross-links: generated by iamjarl-design, do not hand-edit -->
+    <a slot="cross-links" href="https://trimrpix.iamjarl.com">TrimrPix</a>
+    <a slot="cross-links" href="https://botlens.iamjarl.com">BotLens</a>
+    <a slot="cross-links" href="https://pagelens.iamjarl.com">PageLens</a>
+    <a slot="cross-links" href="https://madebyhuman.iamjarl.com">Made by Human</a>
+    <a slot="cross-links" href="https://iamjarl.com">All projects</a>
+</ij-footer>
+
+</body>
+</html>
