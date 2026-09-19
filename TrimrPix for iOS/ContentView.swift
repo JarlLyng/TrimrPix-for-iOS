@@ -282,21 +282,21 @@ private struct ConfigureStep: View {
                     // Mode + its options (quality preset or per-photo target size)
                     settingsSection(title: String(localized: "Compression")) {
                         VStack(spacing: DesignTokens.Spacing.md) {
-                            Picker("Mode", selection: $viewModel.modeKind) {
-                                ForEach(CompressionModeKind.allCases) { kind in
-                                    Text(kind.displayName).tag(kind)
-                                }
-                            }
-                            .pickerStyle(.segmented)
+                            SegmentedSelector(
+                                title: String(localized: "Compression"),
+                                options: CompressionModeKind.allCases,
+                                selection: $viewModel.modeKind,
+                                label: \.displayName
+                            )
 
                             switch viewModel.modeKind {
                             case .quality:
-                                Picker("Quality", selection: $viewModel.quality) {
-                                    ForEach(CompressionQuality.allCases) { level in
-                                        Text(level.displayName).tag(level)
-                                    }
-                                }
-                                .pickerStyle(.segmented)
+                                SegmentedSelector(
+                                    title: String(localized: "Quality"),
+                                    options: CompressionQuality.allCases,
+                                    selection: $viewModel.quality,
+                                    label: \.displayName
+                                )
 
                                 Text(viewModel.quality.description)
                                     .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
@@ -304,12 +304,12 @@ private struct ConfigureStep: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
                             case .targetSize:
-                                Picker("Target size", selection: $viewModel.targetSizeOption) {
-                                    ForEach(TargetSizeOption.allCases) { option in
-                                        Text(option.label).tag(option)
-                                    }
-                                }
-                                .pickerStyle(.segmented)
+                                SegmentedSelector(
+                                    title: String(localized: "Target size"),
+                                    options: TargetSizeOption.allCases,
+                                    selection: $viewModel.targetSizeOption,
+                                    label: \.label
+                                )
 
                                 if viewModel.useCustomTarget {
                                     HStack(spacing: DesignTokens.Spacing.sm) {

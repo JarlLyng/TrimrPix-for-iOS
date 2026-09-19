@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 - **Large text sizes no longer cut off what the app is telling you.** At the biggest accessibility text sizes the confirm screen could not scroll, so it truncated instead, and the line saying compression cannot be undone was among the first things to disappear. The savings figure also lost its percent sign, and summary rows cut off both the label and the value. Text now reflows rather than truncating, and the confirm screen scrolls.
 - The "Slide to compress" label no longer disappears behind the slider knob at large text sizes.
+- **The compression mode and target size controls now scale with your text size.** They used the system segmented control, which ignores Dynamic Type, so at large text sizes they were the smallest thing on the screen: you could read every word explaining a setting and not the setting itself. They now grow with everything else, and stack vertically when the text gets large.
 
 ## [1.4] — 2026-09
 
