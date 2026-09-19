@@ -3,6 +3,12 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Fixed
+- **Large text sizes no longer cut off what the app is telling you.** At the biggest accessibility text sizes the confirm screen could not scroll, so it truncated instead, and the line saying compression cannot be undone was among the first things to disappear. The savings figure also lost its percent sign, and summary rows cut off both the label and the value. Text now reflows rather than truncating, and the confirm screen scrolls.
+- The "Slide to compress" label no longer disappears behind the slider knob at large text sizes.
+
 ## [1.4] — 2026-09
 
 ### Changed

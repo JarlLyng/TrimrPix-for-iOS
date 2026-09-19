@@ -39,6 +39,12 @@ struct SlideToConfirmView: View {
                 Text("Slide to compress")
                     .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
                     .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                    .multilineTextAlignment(.center)
+                    // Centre in the track minus the thumb's resting footprint.
+                    // Centred across the whole track, large text slides under
+                    // the thumb and reads as "lide to compress".
+                    .padding(.leading, thumbSize + trackPadding * 2)
+                    .padding(.trailing, trackPadding)
                     .frame(maxWidth: .infinity)
                     .opacity(1 - progress)
 
@@ -71,7 +77,7 @@ struct SlideToConfirmView: View {
                             }
                     )
             }
-            .frame(height: trackHeight)
+            .frame(minHeight: trackHeight)
             // VoiceOver: users cannot perform the drag gesture, so expose the
             // whole control as a single activatable button. Double-tap triggers
             // the same confirm flow as sliding to the end.

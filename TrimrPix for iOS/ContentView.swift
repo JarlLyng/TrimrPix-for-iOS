@@ -54,22 +54,38 @@ struct ContentView: View {
 
     // MARK: - Header
 
+    private var titleText: some View {
+        Text("TrimrPix")
+            .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
+            .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+    }
+
+    @ViewBuilder
+    private var startOverButton: some View {
+        if viewModel.currentStep != .selectPhotos && viewModel.currentStep != .compressing {
+            Button("Start over") {
+                withAnimation(AccessibilityAnimation.default) { viewModel.reset() }
+            }
+            .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+            .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+        }
+    }
+
     private var header: some View {
         VStack(spacing: DesignTokens.Spacing.sm) {
-            HStack {
-                Text("TrimrPix")
-                    .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
-                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
-
-                Spacer()
-
-                if viewModel.currentStep != .selectPhotos && viewModel.currentStep != .compressing {
-                    Button("Start over") {
-                        withAnimation(AccessibilityAnimation.default) { viewModel.reset() }
-                    }
-                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+            // Title and Start over sit on one line until the text is large
+            // enough that they would touch, then they stack.
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    titleText
+                    Spacer(minLength: DesignTokens.Spacing.md)
+                    startOverButton
                 }
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    titleText
+                    startOverButton
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             // Step indicator
@@ -480,6 +496,22 @@ private struct ConfigureStep: View {
         }
     }
 
+    private var savingsPercentText: some View {
+        Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
+            .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
+            .foregroundStyle(DesignTokens.ColorToken.State.success)
+    }
+
+    // Absolute size, because people think in megabytes rather than percent.
+    @ViewBuilder
+    private var savingsBytesText: some View {
+        if viewModel.estimatedTotalSavingsBytes > 0 {
+            Text("~\(viewModel.estimatedTotalSavingsBytes.formattedSize)")
+                .dynamicFont(size: DesignTokens.Typography.Size.base)
+                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+        }
+    }
+
     private var estimationCard: some View {
         HStack {
             if viewModel.isEstimating {
@@ -498,15 +530,17 @@ private struct ConfigureStep: View {
                     Text("Estimated savings")
                         .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
                         .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-                    HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
-                        Text("~\(viewModel.estimatedTotalSavingsPercentage)%")
-                            .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
-                            .foregroundStyle(DesignTokens.ColorToken.State.success)
-                        // Absolute size — people think in megabytes, not percent.
-                        if viewModel.estimatedTotalSavingsBytes > 0 {
-                            Text("~\(viewModel.estimatedTotalSavingsBytes.formattedSize)")
-                                .dynamicFont(size: DesignTokens.Typography.Size.base)
-                                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                    // Side by side while it fits. At accessibility sizes the
+                    // two figures stack, because squeezed into one line the
+                    // percentage truncates and "~46%" renders as "~46".
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
+                            savingsPercentText
+                            savingsBytesText
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            savingsPercentText
+                            savingsBytesText
                         }
                     }
                 }
@@ -542,75 +576,84 @@ private struct ConfirmStep: View {
     }
 
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.xl) {
-            Spacer()
+        // The content scrolls. Without this it cannot overflow, so at
+        // accessibility text sizes SwiftUI truncates instead, and the line
+        // that says this cannot be undone was the first thing to go.
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(spacing: DesignTokens.Spacing.xl) {
+                    Spacer(minLength: 0)
 
-            // Icon — informational, not alarming
-            Image(systemName: "info.circle.fill")
-                .dynamicFont(size: 56, relativeTo: .largeTitle)
-                .foregroundStyle(DesignTokens.Common.primary(scheme))
-                .accessibilityHidden(true)
+                    // Icon — informational, not alarming
+                    Image(systemName: "info.circle.fill")
+                    .dynamicFont(size: 56, relativeTo: .largeTitle)
+                    .foregroundStyle(DesignTokens.Common.primary(scheme))
+                    .accessibilityHidden(true)
 
-            // Title and description
-            VStack(spacing: DesignTokens.Spacing.md) {
-                Text("Ready to compress")
-                    .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
-                    .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+                // Title and description
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    Text("Ready to compress")
+                        .dynamicFont(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold, relativeTo: .title2)
+                        .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
 
-                Text("The original photos will be replaced with compressed versions. This cannot be undone.")
-                    .dynamicFont(size: DesignTokens.Typography.Size.base)
-                    .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
-            }
+                    Text("The original photos will be replaced with compressed versions. This cannot be undone.")
+                        .dynamicFont(size: DesignTokens.Typography.Size.base)
+                        .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                }
 
-            // Summary
-            VStack(spacing: DesignTokens.Spacing.md) {
-                summaryRow(label: String(localized: "Photos"), value: "\(viewModel.images.count)")
-                switch viewModel.modeKind {
-                case .quality:
-                    summaryRow(label: String(localized: "Quality"), value: viewModel.quality.displayName)
-                case .targetSize:
+                // Summary
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    summaryRow(label: String(localized: "Photos"), value: "\(viewModel.images.count)")
+                    switch viewModel.modeKind {
+                    case .quality:
+                        summaryRow(label: String(localized: "Quality"), value: viewModel.quality.displayName)
+                    case .targetSize:
+                        summaryRow(
+                            label: String(localized: "Target size"),
+                            value: viewModel.useCustomTarget ? viewModel.customTargetBytes.formattedSize : viewModel.targetSize.label
+                        )
+                    }
+                    summaryRow(label: String(localized: "Metadata"), value: metadataStrippedCount == 0 ? String(localized: "Keep all") : String(localized: "\(metadataStrippedCount) removed"))
                     summaryRow(
-                        label: String(localized: "Target size"),
-                        value: viewModel.useCustomTarget ? viewModel.customTargetBytes.formattedSize : viewModel.targetSize.label
+                        label: String(localized: "Est. savings"),
+                        value: viewModel.estimatedTotalSavingsBytes > 0
+                            ? "~\(viewModel.estimatedTotalSavingsPercentage)% (~\(viewModel.estimatedTotalSavingsBytes.formattedSize))"
+                            : "~\(viewModel.estimatedTotalSavingsPercentage)%"
                     )
                 }
-                summaryRow(label: String(localized: "Metadata"), value: metadataStrippedCount == 0 ? String(localized: "Keep all") : String(localized: "\(metadataStrippedCount) removed"))
-                summaryRow(
-                    label: String(localized: "Est. savings"),
-                    value: viewModel.estimatedTotalSavingsBytes > 0
-                        ? "~\(viewModel.estimatedTotalSavingsPercentage)% (~\(viewModel.estimatedTotalSavingsBytes.formattedSize))"
-                        : "~\(viewModel.estimatedTotalSavingsPercentage)%"
+                .padding(DesignTokens.Spacing.xl)
+                .background(
+                    DesignTokens.Common.Background.card(scheme),
+                    in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
                 )
-            }
-            .padding(DesignTokens.Spacing.xl)
-            .background(
-                DesignTokens.Common.Background.card(scheme),
-                in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                    .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
-            )
-            .padding(.horizontal, DesignTokens.Spacing.lg)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                        .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
+                )
+                .padding(.horizontal, DesignTokens.Spacing.lg)
 
-            Spacer()
+                Spacer(minLength: 0)
 
-            // Slide to confirm
-            VStack(spacing: DesignTokens.Spacing.md) {
-                SlideToConfirmView {
-                    Task { await viewModel.compress() }
+                // Slide to confirm
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    SlideToConfirmView {
+                        Task { await viewModel.compress() }
+                    }
+
+                    Button("Cancel") {
+                        withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .configure }
+                    }
+                    .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                    .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
                 }
-
-                Button("Cancel") {
-                    withAnimation(AccessibilityAnimation.default) { viewModel.currentStep = .configure }
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.bottom, DesignTokens.Spacing.xxl)
                 }
-                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                .frame(minHeight: proxy.size.height)
             }
-            .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.bottom, DesignTokens.Spacing.xxl)
+            .scrollBounceBehavior(.basedOnSize)
         }
         .alert("Photo access required", isPresented: $viewModel.showPhotosAccessAlert) {
             Button("Open Settings") {
@@ -625,14 +668,27 @@ private struct ConfirmStep: View {
     }
 
     private func summaryRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
-                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-            Spacer()
-            Text(value)
-                .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
-                .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+        let labelText = Text(label)
+            .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+            .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+        let valueText = Text(value)
+            .dynamicFont(size: DesignTokens.Typography.Size.sm, weight: DesignTokens.Typography.Weight.semibold, relativeTo: .subheadline)
+            .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
+
+        // Side by side while it fits, stacked once the text is too large.
+        // Without this the label and the value both truncate at accessibility
+        // sizes, and "Est. savings" loses the number it exists to show.
+        return ViewThatFits(in: .horizontal) {
+            HStack {
+                labelText
+                Spacer()
+                valueText
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                labelText
+                valueText
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
@@ -869,14 +925,24 @@ private struct ResultStep: View {
     }
 
     private func statRow(label: String, value: String, color: Color? = nil) -> some View {
-        HStack {
-            Text(label)
-                .dynamicFont(size: DesignTokens.Typography.Size.base)
-                .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-            Spacer()
-            Text(value)
-                .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
-                .foregroundStyle(color ?? DesignTokens.Common.Text.primary(scheme))
+        let labelText = Text(label)
+            .dynamicFont(size: DesignTokens.Typography.Size.base)
+            .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+        let valueText = Text(value)
+            .dynamicFont(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.bold)
+            .foregroundStyle(color ?? DesignTokens.Common.Text.primary(scheme))
+
+        return ViewThatFits(in: .horizontal) {
+            HStack {
+                labelText
+                Spacer()
+                valueText
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                labelText
+                valueText
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
