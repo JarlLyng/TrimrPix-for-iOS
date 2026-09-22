@@ -26,7 +26,7 @@ Strengthens the wedge:
 - Clearer single-task UI
 
 Weakens the wedge (likely declined):
-- A user-facing **format picker** (forces every photo through create-and-delete, defeating in-place — see CLAUDE.md)
+- A user-facing **format picker** (forces every photo through create-and-delete, defeating in-place — see AGENTS.md)
 - "Compress my whole library" / background automation
 - A Share Extension (it can't do true in-place — gets copies; deliberately not built)
 - Accounts, sign-in, cloud sync, subscriptions, IAP, or ads

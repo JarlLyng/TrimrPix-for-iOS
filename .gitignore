@@ -36,3 +36,20 @@ build/
 .env
 .env.*
 !.env.example
+
+# AI tooling: the repo is indifferent to which assistant is used and keeps one
+# vendor-neutral AGENTS.md. Anything a specific editor or agent writes stays local.
+# List from the hub's _template/.gitignore (PROJECT_STANDARDS §8).
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.cursor/
+.cursorrules
+.windsurfrules
+.clinerules
+.aider*
+.continue/
+.codex/
+.mcp.json
+GEMINI.md
+.github/copilot-instructions.md

@@ -41,7 +41,7 @@ Swift · SwiftUI · PhotosUI · Photos · ImageIO · StoreKit · [Sentry](https:
 
 ## Documentation
 
-- [`CLAUDE.md`](CLAUDE.md) — project context for developers and AI assistants
+- [`AGENTS.md`](AGENTS.md) — project context for developers and AI assistants
 - [`docs/spec.md`](docs/spec.md) — product specification
 - [`docs/architecture.md`](docs/architecture.md) — technical architecture
 
