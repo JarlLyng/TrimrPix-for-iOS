@@ -57,4 +57,4 @@ Issues and pull requests are welcome. This is a small, focused app — if you're
 
 Open source under the [GNU AGPL-3.0](LICENSE). You're welcome to read, learn from, and build on the code; under the AGPL, any distributed derivative must also be released under the AGPL. If you'd rather just use the app, the polished build is on the [App Store](https://apps.apple.com/app/id6761081919) for $1.99.
 
-Copyright © 2026 Jarl Lyng / [IAMJARL](https://iamjarl.com).
+Copyright © 2026 [IAMJARL](https://iamjarl.com).

@@ -18,7 +18,7 @@ Quick-start context for developers and AI assistants. Detailed specs in `docs/`.
 
 iOS app that compresses photos from the user's Photos library **in-place** (originals are replaced, no duplicates created). One job: make files smaller. No cloud, no accounts, no internet required.
 
-- **Developer:** Jarl Lyng / [IAMJARL](https://iamjarl.com)
+- **Developer:** [IAMJARL](https://iamjarl.com) (Jarl)
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
