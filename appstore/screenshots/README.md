@@ -1,7 +1,35 @@
 # App Store screenshots
 
-Captured from the shipping build in the simulator. These are the files to upload in App Store
-Connect; the site's copies in `docs/` are resized from the same captures.
+Two stages. `raw/` holds the plain simulator captures; `6.9-inch/` holds the composed posters,
+and those are what gets uploaded.
+
+Composition uses the hub's `tools/appstore_screenshots.py`, which puts the screen on the brand
+ground with a caption and reads the accent from the design system. An uncaptioned UI shot asks
+the shopper to work out what they are looking at, which is the standard in `DESIGN.md`.
+
+```
+tools/appstore_screenshots.py compose raw/4-result.png "Smaller photos, *no duplicate album*" \
+  6.9-inch/1.png --slot iphone-6.9 --mode light
+```
+
+`*phrase*` renders in the accent colour. Mode follows the app, which is light.
+
+## Order, and why
+
+`DESIGN.md`: order by proof, not by feature tour, and the first frame carries most of the
+decision.
+
+1. **Result**, "Smaller photos, *no duplicate album*". The claim that is uniquely true here.
+2. **Configure**, "Hit an *exact file size*". The differentiator against every other compressor.
+3. **Confirm**, "*Nothing changes* until you confirm". Removes the biggest objection, that this
+   is irreversible.
+4. **Select**, "Pay once. *No subscription.*" Position four is for the minority still looking.
+
+**Keep the set telling one story.** Frames 2 and 3 are from the same run: three photos, 4 MB,
+1 MB target, ~43% / ~1.7 MB. A first pass had 500 KB in one frame and 1 MB in the next, which a
+shopper comparing them would notice.
+
+The site's copies in `docs/` are resized from the same raw captures, not from the posters.
 
 | | |
 |---|---|
