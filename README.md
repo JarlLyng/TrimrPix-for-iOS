@@ -49,6 +49,14 @@ Swift · SwiftUI · PhotosUI · Photos · ImageIO · StoreKit · [Sentry](https:
 
 All planned work is tracked as [GitHub Issues](../../issues). Check `gh issue list` for current tasks.
 
+## Support
+
+Write to **support@iamjarl.com** for bug reports, feature requests or anything else. The app has a
+**Send feedback** link on its result screen that opens the same address with your app and iOS
+version already filled in. There is also a [support page](https://trimrpixforios.iamjarl.com/support.html).
+
+GitHub issues are a second route, not the only one.
+
 ## Contributing
 
 Issues and pull requests are welcome. This is a small, focused app — if you're proposing a feature, opening an issue first to discuss fit is appreciated.

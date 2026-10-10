@@ -570,6 +570,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真を選択" } }
       }
     },
+    "Send feedback" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Send feedback" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback senden" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer un commentaire" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
+      }
+    },
     "Slide to compress" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Skub for at komprimere" } },

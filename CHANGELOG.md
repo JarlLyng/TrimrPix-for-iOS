@@ -5,6 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **Send feedback.** The result screen now has a Send feedback link that opens a mail to support@iamjarl.com with your app and iOS version already written in the body, so you can see everything before it leaves your phone. The app asked for a public review and offered no private way to say something was wrong.
+
 ### Fixed
 - **Large text sizes no longer cut off what the app is telling you.** At the biggest accessibility text sizes the confirm screen could not scroll, so it truncated instead, and the line saying compression cannot be undone was among the first things to disappear. The savings figure also lost its percent sign, and summary rows cut off both the label and the value. Text now reflows rather than truncating, and the confirm screen scrolls.
 - The "Slide to compress" label no longer disappears behind the slider knob at large text sizes.

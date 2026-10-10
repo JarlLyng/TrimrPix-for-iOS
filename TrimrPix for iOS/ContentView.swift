@@ -912,8 +912,19 @@ private struct ResultStep: View {
                     .background(DesignTokens.Common.primary(scheme), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.bottom, DesignTokens.Spacing.xxl)
+
+            // A private route out, next to the review prompt. Without one, the
+            // only place an unhappy user can say something is the review (#58).
+            if let feedback = SupportContact.feedbackURL {
+                Link(destination: feedback) {
+                    Text("Send feedback")
+                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                        .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                }
+                .padding(.top, DesignTokens.Spacing.md)
+            }
         }
+        .padding(.bottom, DesignTokens.Spacing.xxl)
         .onAppear {
             // Ask for a review only after a fully successful compression AND
             // once the user has had a few successful runs (see
