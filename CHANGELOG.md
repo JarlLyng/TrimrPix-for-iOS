@@ -3,7 +3,7 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.5] — 2026-10
 
 ### Added
 - **Send feedback.** The result screen now has a Send feedback link that opens a mail to support@iamjarl.com with your app and iOS version already written in the body, so you can see everything before it leaves your phone. The app asked for a public review and offered no private way to say something was wrong.

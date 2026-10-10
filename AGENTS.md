@@ -22,7 +22,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
-- **Status:** Live on the App Store (app-id 6761081919). Current version **1.3** (released 2026-09)
+- **Status:** Live on the App Store (app-id 6761081919). Current version **1.4** (released 2026-09-19); **1.5** submitted 2026-10
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
 ## App features (be precise — do not invent features that don't exist)
@@ -139,21 +139,25 @@ Full list: `gh issue list --state closed`. These are the ones that shaped the co
 In-place replacement via `PHContentEditingOutput` is attempted first. For photos Photos rejects with `PHPhotosErrorInvalidResource` (3302) — typically pristine HEIC with HDR gain map / spatial stereo on iOS 26 — the replacement falls back to creating a new asset from the compressed bytes (preserving creation date, location, and favorite) and deleting the original. All fallback photos within a batch are committed in a single `performChanges` transaction so the user sees exactly one iOS deletion confirmation sheet regardless of how many photos take the fallback path. See `replaceInPhotosLibrary` and `commitPendingFallbacks` in `ImageOptimizationViewModel`.
 
 ### Open issues — **always verify with `gh issue list`**
-This list drifts. Snapshot as of **2026-09** (11 open):
+This list drifts, and has done so twice already. Snapshot as of **2026-10-11**:
 
-**Highest impact:**
-- ~~#53 Deployment target~~ **lowered to iOS 17.0** (unreleased; ships in the next version). At release, update the marketing site — `docs/index.html` (hero line + `operatingSystem` in the JSON-LD) and `docs/llms.txt` still say "iOS 26.2 or later", which stays true until the new build is live.
+**Waiting on a measurement, deliberately:** the use-case pages (#55) went live 2026-09-19 with a
+Search Console baseline recorded in the hub's `analytics-readout.md`. Read it around 2026-10-19
+before adding more. Note that store-click tracking was broken for that whole window (#64), so a
+zero there means nobody measured, not nobody clicked.
 
-**Version-locked App Store metadata — these can only change with a version submission, so batch them into one release:**
-- #51 Subtitles untranslated in da/de/fr (keywords *are* translated; subtitle is one of only three indexed fields)
-- #52 App name uses 8 of 30 chars in every locale
-- Not yet an issue, recorded in the strategy hub's `app-store-copy.md`: the live description still describes Target size as presets-only (1.3 added custom), and the screenshots still show the format picker removed in 1.1.
+**Version-locked, rides the next submission:** #51, the en-AU subtitle and all five keyword
+fields. 1.4 applied the names but not the keywords, so each locale currently pays for the same
+term twice. Strings are ready to paste in the hub's `app-store-copy.md`.
 
-**Technical debt:**
-- #50 Design system pinned to v0.1.4; current is v1.2.1 (check `MIGRATION.md` — the `lineHeights` rename is breaking)
-- #17 Verify accessibility on device (VoiceOver, Dynamic Type, Reduce Motion)
+**Open technical:** #60 and #61 (adopt the design system's `.ijFont` and Outfit headings; worth
+doing together, and after 1.5 ships so there is a baseline), #65 (supply-chain hardening),
+#62 (iPhone Duo, deadline April 2027).
 
-**Marketing:** #9 demo video · #13 Reddit/HN/Indie Hackers · #14 iOS blog pitches · #44 Indie Hackers updates · #48 llms.txt developer story · #49 localized site (low priority)
+**Open marketing:** #9 demo video · #13 Reddit/HN · #14 blog pitches · #44 Indie Hackers ·
+#48 llms.txt developer story (contradicts the hub's settled "llms.txt is not a lever"; worth
+closing or reframing onto the site) · #49 localized site (low priority) · #58 one box left,
+a community thread to link if one ever exists.
 
 ## Marketing site
 
