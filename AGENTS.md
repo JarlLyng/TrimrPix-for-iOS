@@ -22,7 +22,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
-- **Status:** Live on the App Store (app-id 6761081919). Current version **1.4** (released 2026-09-19); **1.5** submitted 2026-10
+- **Status:** Live on the App Store (app-id 6761081919). Current version **1.5.0** (released 2026-10-12)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
 ## App features (be precise — do not invent features that don't exist)
@@ -146,9 +146,10 @@ Search Console baseline recorded in the hub's `analytics-readout.md`. Read it ar
 before adding more. Note that store-click tracking was broken for that whole window (#64), so a
 zero there means nobody measured, not nobody clicked.
 
-**Version-locked, rides the next submission:** #51, the en-AU subtitle and all five keyword
-fields. 1.4 applied the names but not the keywords, so each locale currently pays for the same
-term twice. Strings are ready to paste in the hub's `app-store-copy.md`.
+**Version-locked, rides 1.6:** the App Store **screenshots**. The live set is still the April
+upload and shows the format picker removed in 1.1, four releases ago. Composed posters are ready
+at `appstore/screenshots/6.9-inch/`. Upload them first at the next submission, not last: text
+fields nearly slipped twice and then landed, images are what keeps being left to the end.
 
 **Open technical:** #60 and #61 (adopt the design system's `.ijFont` and Outfit headings; worth
 doing together, and after 1.5 ships so there is a baseline), #65 (supply-chain hardening),
