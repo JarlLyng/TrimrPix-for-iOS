@@ -11,8 +11,9 @@ import Foundation
 /// How the compressor decides how hard to compress each photo.
 /// - `.quality`: encode at a fixed quality preset (the original behavior).
 /// - `.targetSize`: search the encoder settings to bring each photo to at most
-///   the given number of bytes (binary-searches lossy quality for JPEG/HEIC/
-///   WebP, reduces the palette for PNG).
+///   the given number of bytes (binary-searches lossy quality for JPEG/HEIC,
+///   reduces the palette for PNG). Photos already at or under the target are
+///   skipped (see `CompressionService.skipReason`).
 nonisolated enum CompressionMode: Sendable {
     case quality(CompressionQuality)
     case targetSize(Int64)

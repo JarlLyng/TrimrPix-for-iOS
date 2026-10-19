@@ -29,10 +29,11 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 
 - **Select & compress** — pick photos via PhotosPicker, choose quality, slide to confirm
 - **In-place replacement** — originals are replaced directly in Photos library, no duplicates
-- **4 formats supported** — JPEG, PNG, WebP, HEIC. Each photo keeps its **original format** — there is NO user-facing format picker. Format conversion would force every photo through the create-and-delete fallback (Photos rejects in-place format changes, 3302), defeating in-place replacement; it's a macOS-only feature.
+- **3 formats compressed**: JPEG, PNG, HEIC. Each photo keeps its **original format**, and there is NO user-facing format picker. Format conversion would force every photo through the create-and-delete fallback (Photos rejects in-place format changes, 3302), defeating in-place replacement; it's a macOS-only feature.
+- **WebP is read, never written**: ImageIO decodes WebP but has no WebP encoder on iOS, so a WebP photo is skipped: left untouched, listed as Skipped on the result screen, not counted as a failure. `CompressionService.canEncode` asks `CGImageDestinationCopyTypeIdentifiers()` at runtime, so a future iOS with a WebP encoder would just work. Don't claim WebP support anywhere (#71).
 - **2 compression modes** — Quality (3 levels) or Target size (per-photo byte budget). NOT a total-batch budget.
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
-- **Target-size mode** — pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB, or a **custom** value the user types in MB); the service binary-searches lossy quality (JPEG/HEIC/WebP) or palette size (PNG) to fit. Photos already smaller are left unchanged. See `CompressionMode` / `TargetSizeOption` / `encodeToTarget`. Custom bytes are clamped 50 KB–50 MB (`customTargetBytes`).
+- **Target-size mode**: pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB, or a **custom** value the user types in MB); the service binary-searches lossy quality (JPEG/HEIC) or palette size (PNG) to fit. Photos already at or under the target are skipped and left untouched, with no re-encode and no Photos edit (`CompressionService.skipReason`). See `CompressionMode` / `TargetSizeOption` / `encodeToTarget`. Custom bytes are clamped 50 KB–50 MB (`customTargetBytes`).
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
 - **Savings estimate** — see how much space you'll save before compressing (percentage + absolute size)
 - **Lifetime savings counter** — total bytes saved across all runs, shown on the result screen. Stored locally in UserDefaults, never transmitted (disclosed in privacy policy)
@@ -42,6 +43,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Localized** — EN (base) + DA, DE, FR, JA, in-app via `TrimrPix for iOS/Localizable.xcstrings` (String Catalog). DA is native-quality; DE/FR/JA are first-pass and should get a native review. Add UI strings as `Text("literal")` or `String(localized:)`; model/error display strings localize at their source (e.g. `CompressionQuality.displayName`, `TrimrPixError`). App Store *metadata* localization (DA/DE/FR/JA listings) is separate — done in App Store Connect at release.
 
 ### Features that do NOT exist (common hallucination targets)
+- No WebP output: WebP photos are skipped, never compressed (see above)
 - No batch "entire library" mode — user selects specific photos
 - No import/export of compression presets
 - No background processing while app is closed
@@ -86,10 +88,11 @@ Views (SwiftUI)  →  ImageOptimizationViewModel (@Observable, @MainActor)  → 
 | `TrimrPix_for_iOSApp.swift` | Entry point, Sentry init |
 | `ContentView.swift` | All 5 step views + Photos access alert |
 | `ViewModels/ImageOptimizationViewModel.swift` | All state, compression orchestration, Photos library replacement |
-| `Services/CompressionService.swift` | JPEG/PNG/WebP/HEIC compression via ImageIO |
+| `Services/CompressionService.swift` | JPEG/PNG/HEIC compression via ImageIO, plus the skip check (`skipReason`, `canEncode`) |
 | `Services/ColorQuantizer.swift` | Median-cut color quantization for lossy PNG |
 | `Models/MetadataStrippingOptions.swift` | Granular metadata control (keep/strip per category) |
 | `Models/ImageItem.swift` | Per-image state |
+| `Models/SkipReason.swift` | Why a photo is left untouched: format not writable (WebP), or already under the target |
 | `Views/SlideToConfirmView.swift` | Drag gesture confirmation (85% threshold) |
 
 ## Photos permission model
@@ -203,7 +206,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 
 **Add a metadata category**: Add property to `MetadataStrippingOptions`, update `processedProperties(from:)`, add entry to `labels` array.
 
-**Change compression behavior**: Edit `CompressionService.compress(data:mode:format:)`. `mode` is `.quality` or `.targetSize`. Quality path: `encode()` → `compressWithDestination(lossyQuality:)` (JPEG/WebP/HEIC) or `compressPNG`. Target path: `encodeToTarget` (binary-searches lossy quality, or `compressPNGToTarget` for PNG).
+**Change compression behavior**: Edit `CompressionService.compress(data:mode:format:)`. `mode` is `.quality` or `.targetSize`. Quality path: `encode()` → `compressWithDestination(lossyQuality:)` (JPEG/HEIC) or `compressPNG`. Target path: `encodeToTarget` (binary-searches lossy quality, or `compressPNGToTarget` for PNG). Whether a photo is compressed at all is decided first, by `skipReason(for:mode:)` at the top of `replaceInPhotosLibrary`.
 
 **Add a new step**: Add case to `AppStep`, add view in `ContentView.swift`, update step indicator.
 

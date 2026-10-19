@@ -3,6 +3,12 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Fixed
+- **WebP photos are now skipped instead of failing.** iOS can open WebP but has no way to save it, so every WebP photo used to fail with a compression error. They are now left as they are, listed as Skipped on the result screen with the reason, and the savings estimate no longer counts them. WebP was also listed as a supported format; it no longer is.
+- **Target size now really leaves smaller photos alone.** The configure screen said photos already under the target are left unchanged, but they were re-encoded and written back anyway. They are now skipped: no re-encode, no edit in Photos, and no delete-and-recreate confirmation for HEIC photos that Photos won't edit in place.
+
 ## [1.5] — 2026-10
 
 ### Added

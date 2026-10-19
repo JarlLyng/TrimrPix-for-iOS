@@ -772,6 +772,19 @@ private struct ResultStep: View {
         viewModel.images.filter { $0.error != nil }.count
     }
 
+    /// Photos left as they are on purpose (#71): a format iOS can't write,
+    /// or already under the target size. Not failures.
+    private var skippedCount: Int {
+        viewModel.images.filter { $0.skipReason != nil }.count
+    }
+
+    /// Each distinct skip reason once, in the order first seen, so ten
+    /// photos already under the target make one line rather than ten.
+    private var skipReasons: [SkipReason] {
+        var seen = Set<SkipReason>()
+        return viewModel.images.compactMap(\.skipReason).filter { seen.insert($0).inserted }
+    }
+
     private var totalSaved: Int64 {
         viewModel.images.reduce(0) { acc, item in
             guard let compressed = item.compressedSize else { return acc }
@@ -787,7 +800,9 @@ private struct ResultStep: View {
     }
 
     private var hasErrors: Bool { failCount > 0 }
-    private var allFailed: Bool { successCount == 0 }
+    /// Nothing compressed and nothing skipped. A run where every photo was
+    /// skipped changed nothing, but nothing went wrong either.
+    private var allFailed: Bool { successCount == 0 && skippedCount == 0 }
     private var wasCancelled: Bool { viewModel.wasCancelled }
 
     /// Localized result headline. A `LocalizedStringKey` (not a String ternary)
@@ -796,6 +811,7 @@ private struct ResultStep: View {
         if allFailed { return "Compression failed" }
         if wasCancelled { return "Cancelled" }
         if hasErrors { return "Partially complete" }
+        if successCount == 0 { return "Nothing to compress" }
         return "Done!"
     }
 
@@ -825,7 +841,7 @@ private struct ResultStep: View {
                 statRow(
                     label: String(localized: "Compressed"),
                     value: String(localized: "\(successCount) of \(viewModel.images.count)"),
-                    color: successCount > 0 ? DesignTokens.Common.Text.primary(scheme) : DesignTokens.ColorToken.State.error
+                    color: allFailed ? DesignTokens.ColorToken.State.error : DesignTokens.Common.Text.primary(scheme)
                 )
 
                 if hasErrors {
@@ -833,6 +849,13 @@ private struct ResultStep: View {
                         label: String(localized: "Failed"),
                         value: "\(failCount)",
                         color: DesignTokens.ColorToken.State.error
+                    )
+                }
+
+                if skippedCount > 0 {
+                    statRow(
+                        label: String(localized: "Skipped"),
+                        value: "\(skippedCount)"
                     )
                 }
 
@@ -893,6 +916,35 @@ private struct ResultStep: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
                                 .stroke(DesignTokens.ColorToken.State.error.opacity(0.3), lineWidth: 1)
+                        )
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                    }
+
+                    // Why photos were skipped, once per reason
+                    if !skipReasons.isEmpty {
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                            ForEach(skipReasons, id: \.self) { reason in
+                                HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
+                                    Image(systemName: "info.circle.fill")
+                                        .foregroundStyle(DesignTokens.Common.Text.tertiary(scheme))
+                                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                        .accessibilityHidden(true)
+
+                                    Text(reason.message)
+                                        .dynamicFont(size: DesignTokens.Typography.Size.sm, relativeTo: .subheadline)
+                                        .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
+                                }
+                            }
+                        }
+                        .padding(DesignTokens.Spacing.lg)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            DesignTokens.Common.Background.card(scheme),
+                            in: RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                                .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
                         )
                         .padding(.horizontal, DesignTokens.Spacing.lg)
                     }

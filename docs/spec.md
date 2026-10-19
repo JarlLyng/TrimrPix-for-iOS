@@ -8,11 +8,11 @@ TrimrPix for iOS komprimerer billeder fra brugerens fotobibliotek. Én opgave: g
 
 ## Brugerflow
 
-1. **Vælg billeder** — multi-select via PhotosPicker (kræver ingen rettigheder). Antal og samlet størrelse vises.
-2. **Konfigurer** — vælg kvalitet og metadata-indstillinger. Estimeret besparelse beregnes løbende.
-3. **Bekræft** — oversigt over valg + advarsel om at originaler erstattes permanent. Bekræftes med slide-to-confirm. Hvis fotoadgang mangler, vises alert med "Open Settings".
-4. **Komprimering** — progressvisning med cirkulær indikator (billede X af Y). Kan annulleres.
-5. **Resultat** — antal komprimerede, samlet besparelse, gennemsnitlig besparelse. Ved fejl vises fejl pr. billede. Ved fuld succes kan App Store-anmeldelse foreslås.
+1. **Vælg billeder**: multi-select via PhotosPicker (kræver ingen rettigheder). Antal og samlet størrelse vises.
+2. **Konfigurer**: vælg kvalitet og metadata-indstillinger. Estimeret besparelse beregnes løbende.
+3. **Bekræft**: oversigt over valg + advarsel om at originaler erstattes permanent. Bekræftes med slide-to-confirm. Hvis fotoadgang mangler, vises alert med "Open Settings".
+4. **Komprimering**: progressvisning med cirkulær indikator (billede X af Y). Kan annulleres.
+5. **Resultat**: antal komprimerede, samlet besparelse, gennemsnitlig besparelse. Ved fejl vises fejl pr. billede. Billeder, der er sprunget over, vises som *Skipped* med én forklaring pr. årsag og tæller ikke som fejl (se [Billeder der springes over](#billeder-der-springes-over)). Ved fuld succes kan App Store-anmeldelse foreslås.
 
 Brugergrænsefladen er på **engelsk**.
 
@@ -20,8 +20,8 @@ Brugergrænsefladen er på **engelsk**.
 
 Brugeren vælger mellem to tilstande i Konfigurer-trinnet:
 
-- **Quality** — fast kvalitetsniveau (se nedenfor).
-- **Target size** — en mål-filstørrelse **pr. billede** (500 KB / 1 MB / 2 MB / 5 MB). Tjenesten binær-søger lossy-kvaliteten (JPEG/HEIC/WebP) — eller reducerer paletten (PNG) — for at ramme målet. Billeder der allerede er mindre end målet røres ikke. Rammes målet ikke selv ved laveste kvalitet, bruges det mindst mulige resultat (faktisk størrelse vises altid i resultatet). Det er et **pr.-billede**-budget, ikke et samlet batch-budget.
+- **Quality**: fast kvalitetsniveau (se nedenfor).
+- **Target size**: en mål-filstørrelse **pr. billede** (500 KB / 1 MB / 2 MB / 5 MB eller en selvvalgt størrelse). Tjenesten binær-søger lossy-kvaliteten (JPEG/HEIC) eller reducerer paletten (PNG) for at ramme målet. Billeder, der allerede er på eller under målet, springes over og røres ikke: ingen genkodning og ingen redigering i Photos. Rammes målet ikke selv ved laveste kvalitet, bruges det mindst mulige resultat (faktisk størrelse vises altid i resultatet). Det er et **pr.-billede**-budget, ikke et samlet batch-budget.
 
 ## Kvalitetsniveauer
 
@@ -33,9 +33,22 @@ Brugeren vælger mellem to tilstande i Konfigurer-trinnet:
 
 ## Outputformat
 
-TrimrPix understøtter **JPEG**, **PNG**, **WebP** og **HEIC**. Hvert billede komprimeres og **bevarer sit oprindelige format** — formatet vælges ikke af brugeren. Det er en bevidst konsekvens af in-place-erstatning: Photos afviser commits hvor det renderede billedes format ikke matcher assetets oprindelige resource-UTI (`PHPhotosErrorInvalidResource`, 3302). Formatkonvertering hører til macOS-søsterappen.
+TrimrPix komprimerer **JPEG**, **PNG** og **HEIC**. Hvert billede **bevarer sit oprindelige format**, og formatet vælges ikke af brugeren. Det er en bevidst konsekvens af in-place-erstatning: Photos afviser commits hvor det renderede billedes format ikke matcher assetets oprindelige resource-UTI (`PHPhotosErrorInvalidResource`, 3302). Formatkonvertering hører til macOS-søsterappen.
 
 PNG bruger median-cut farve-kvantisering ved Good/Smaller for at reducere filstørrelse.
+
+**WebP** kan læses, men ikke skrives: ImageIO har ingen WebP-encoder på iOS (`CGImageDestinationCopyTypeIdentifiers()` har ingen WebP-post). Et WebP-billede springes derfor over. Tjekket sker ved kørsel (`CompressionService.canEncode`), så en iOS-version med WebP-encoder vil komprimere WebP uden kodeændring.
+
+### Billeder der springes over
+
+Før der røres ved Photos, afgør `CompressionService.skipReason` om et billede skal lades være (#71):
+
+| Årsag | Hvornår | Besked på resultatskærmen |
+|-------|---------|---------------------------|
+| `formatNotWritable` | Formatet kan læses, men ikke skrives på enheden (i dag WebP) | *iOS can open WebP photos but can't save them, so they were left as they are.* |
+| `alreadyUnderTarget` | Target size, og billedet er allerede på eller under målet | *Photos already under the target size were left as they are.* |
+
+Et billede, der springes over, ændres ikke i biblioteket. Det tæller hverken som komprimeret eller som fejl og rapporteres ikke til Sentry. Estimatet regner det som uændret.
 
 ## Metadata
 
@@ -70,5 +83,6 @@ Brugeren vælger hvilke metadata-kategorier der **bevares** (toggle ON = behold,
 - Manglende fotoadgang → alert med "Open Settings" (blokerer komprimering)
 - Billede ikke fundet i bibliotek → pr-billede fejl, øvrige fortsætter
 - Komprimeringsfejl → pr-billede fejl med formatspecifik besked
+- Format der ikke kan skrives (WebP), eller billede allerede under målet: springes over, ikke en fejl
 - Erstatning fejlet → brugervenlig besked med recovery-forslag
 - Annullering → delvis resultat vises

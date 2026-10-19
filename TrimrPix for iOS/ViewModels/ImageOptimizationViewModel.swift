@@ -21,9 +21,12 @@ import Sentry
 /// compressed bytes with other fallbacks for a single create-new-and-delete
 /// transaction at the end of the batch — keeping user-facing deletion
 /// confirmation prompts down to one per run rather than one per photo.
+/// `skipped` means the photo was left as it is on purpose (see `SkipReason`)
+/// and nothing was written.
 nonisolated enum ReplaceOutcome: Sendable {
     case inPlace(size: Int64)
     case needsFallback(compressedData: Data, tempURL: URL, size: Int64)
+    case skipped(SkipReason)
 }
 
 /// State accumulated during the compression loop for photos that need the
@@ -350,9 +353,13 @@ final class ImageOptimizationViewModel {
 
         // Target-size mode: each photo ends up at roughly the target (or stays
         // as-is if already smaller), so we can estimate from byte counts alone
-        // — no need to load or encode anything.
+        // — no need to load or encode anything. A photo in a format we can't
+        // write is skipped, so it counts at its full size (#71).
         if case .targetSize(let target) = compressionMode {
-            let totalEstimated = images.reduce(Int64(0)) { $0 + min(target, $1.originalSize) }
+            let totalEstimated = images.reduce(Int64(0)) { acc, item in
+                let writable = item.sourceFormat.map(CompressionService.canEncode) ?? true
+                return acc + (writable ? min(target, item.originalSize) : item.originalSize)
+            }
             applyEstimate(totalOriginal: totalOriginalSize, totalEstimated: totalEstimated)
             isEstimating = false
             return
@@ -463,6 +470,8 @@ final class ImageOptimizationViewModel {
                         images[i].compressedSize = size
                         images[i].wasReplaced = false
                         images[i].isCompressed = true
+                    case .skipped(let reason):
+                        images[i].skipReason = reason
                     case .needsFallback(_, let tempURL, let size):
                         // Defer marking compressed until the batch fallback
                         // transaction commits at end of loop. Photos requires
@@ -558,6 +567,13 @@ final class ImageOptimizationViewModel {
             "userFormat": "\(userFormat)",
             "mode": "\(mode)"
         ])
+
+        // Leave the photo alone when compressing can't or shouldn't change it
+        // (#71). Checked before any Photos work, so nothing is edited.
+        if let reason = service.skipReason(for: originalData, mode: mode) {
+            Self.breadcrumb("replace.skipped", data: ["reason": "\(reason)"])
+            return .skipped(reason)
+        }
 
         // Fetch asset off the main actor to avoid blocking UI
         let asset: PHAsset = try await Task.detached {
@@ -655,6 +671,13 @@ final class ImageOptimizationViewModel {
             "resolvedFormat": "\(resolvedFormat)",
             "overridden": resolvedFormat != userFormat
         ])
+
+        // The asset's own UTI can name a format the bytes didn't (the picker
+        // may hand over a transcoded copy), so check again before encoding.
+        guard CompressionService.canEncode(resolvedFormat) else {
+            Self.breadcrumb("replace.skipped", data: ["reason": "formatNotWritable(\(resolvedFormat))"])
+            return .skipped(.formatNotWritable(resolvedFormat))
+        }
 
         // Compress to the format Photos expects. autoreleasepool keeps
         // Core Graphics / ImageIO transient objects from accumulating.
