@@ -26,7 +26,16 @@ struct ImageItem: Identifiable {
     let assetIdentifier: String
     /// Source token used to lazily reload the original bytes on demand.
     let pickerItem: PhotosPickerItem
+    /// Byte count of the picker's copy, read at selection time. Can differ
+    /// from the library's file (the picker may re-encode), so the configure
+    /// screen's total and estimate are approximate. Savings after compressing
+    /// count from `librarySize` instead.
     let originalSize: Int64
+    /// The photo's current version in the library, measured at compress time
+    /// just before it was edited. Nil before that, or if Photos couldn't give
+    /// a size. Not read at selection: the picker needs no Photos access, and
+    /// reading the library does, which is only asked for at compress time.
+    var librarySize: Int64?
     /// Format of the original bytes, read from the data at selection time.
     /// Lets the target-size estimate count a photo this device can't write
     /// (WebP) as unchanged without reloading it (#71).
@@ -60,11 +69,10 @@ struct ImageItem: Identifiable {
         self.thumbnail = ImageItem.generateThumbnail(from: data)
     }
 
-    /// Estimated savings as a percentage (0-100)
-    var savingsPercentage: Int {
-        guard let compressedSize, originalSize > 0 else { return 0 }
-        let savings = Double(originalSize - compressedSize) / Double(originalSize) * 100
-        return max(0, Int(savings.rounded()))
+    /// Size before and after, once the photo is compressed; nil otherwise.
+    var sizeChange: SizeChange? {
+        guard isCompressed, let compressedSize else { return nil }
+        return SizeChange(librarySize: librarySize, pickerSize: originalSize, after: compressedSize)
     }
 
     private static func generateThumbnail(from data: Data) -> UIImage? {

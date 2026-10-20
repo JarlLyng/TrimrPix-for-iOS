@@ -22,10 +22,12 @@ import Sentry
 /// transaction at the end of the batch — keeping user-facing deletion
 /// confirmation prompts down to one per run rather than one per photo.
 /// `skipped` means the photo was left as it is on purpose (see `SkipReason`)
-/// and nothing was written.
+/// and nothing was written. `librarySize` is the photo's size in the library
+/// just before the edit, which savings are counted from (nil if Photos
+/// couldn't give it).
 nonisolated enum ReplaceOutcome: Sendable {
-    case inPlace(size: Int64)
-    case needsFallback(compressedData: Data, tempURL: URL, size: Int64)
+    case inPlace(size: Int64, librarySize: Int64?)
+    case needsFallback(compressedData: Data, tempURL: URL, size: Int64, librarySize: Int64?)
     case skipped(SkipReason)
 }
 
@@ -263,8 +265,17 @@ final class ImageOptimizationViewModel {
 
     // MARK: - Computed
 
+    /// Total of the picker's byte counts, shown on the configure screen. The
+    /// library's sizes aren't known until compress time (see
+    /// `ImageItem.originalSize`), so this can differ from the files in Photos.
     var totalOriginalSize: Int64 {
         images.reduce(0) { $0 + $1.originalSize }
+    }
+
+    /// Before and after sizes of every photo compressed this run, measured on
+    /// the library's file. The result screen and lifetime counter read these.
+    var sizeChanges: [SizeChange] {
+        images.compactMap(\.sizeChange)
     }
 
     var hasImages: Bool {
@@ -355,6 +366,12 @@ final class ImageOptimizationViewModel {
         // as-is if already smaller), so we can estimate from byte counts alone
         // — no need to load or encode anything. A photo in a format we can't
         // write is skipped, so it counts at its full size (#71).
+        //
+        // Both modes estimate from the picker's bytes, not the library's file:
+        // this runs before any Photos permission is asked (the picker needs
+        // none), and reading library sizes needs it. So the estimate can be
+        // off where the picker hands over a re-encoded copy; the result screen
+        // counts from the library's file.
         if case .targetSize(let target) = compressionMode {
             let totalEstimated = images.reduce(Int64(0)) { acc, item in
                 let writable = item.sourceFormat.map(CompressionService.canEncode) ?? true
@@ -466,13 +483,15 @@ final class ImageOptimizationViewModel {
                     if Task.isCancelled { break }
 
                     switch outcome {
-                    case .inPlace(let size):
+                    case .inPlace(let size, let librarySize):
+                        images[i].librarySize = librarySize
                         images[i].compressedSize = size
                         images[i].wasReplaced = false
                         images[i].isCompressed = true
                     case .skipped(let reason):
                         images[i].skipReason = reason
-                    case .needsFallback(_, let tempURL, let size):
+                    case .needsFallback(_, let tempURL, let size, let librarySize):
+                        images[i].librarySize = librarySize
                         // Defer marking compressed until the batch fallback
                         // transaction commits at end of loop. Photos requires
                         // the PHAsset for the final performChanges, so fetch
@@ -516,10 +535,7 @@ final class ImageOptimizationViewModel {
             // Add this run's savings to the lifetime counter. Done after the
             // fallback commit so every successful photo has its compressedSize
             // set. Local stat only, never transmitted.
-            let batchSaved = images.reduce(Int64(0)) { acc, item in
-                guard item.isCompressed, let compressed = item.compressedSize else { return acc }
-                return acc + max(0, item.originalSize - compressed)
-            }
+            let batchSaved = SizeChange.totalSaved(sizeChanges)
             if batchSaved > 0 {
                 lifetimeBytesSaved += batchSaved
                 Preferences.lifetimeBytesSaved = lifetimeBytesSaved
@@ -609,20 +625,21 @@ final class ImageOptimizationViewModel {
             "resourceCount": resources.count
         ])
 
-        // Measure "already under the target" on the photo as it is in the
-        // library now, not on the picker's bytes, which can be a re-encoded
-        // copy of a different size (#71). Nothing has been edited yet, so a
-        // skipped photo is untouched.
-        if case .targetSize = mode {
-            let librarySize = await Self.currentLibrarySize(of: asset) ?? Int64(originalData.count)
-            if let reason = CompressionService.targetSkipReason(librarySize: librarySize, mode: mode) {
-                Self.breadcrumb("replace.skipped", data: [
-                    "reason": "\(reason)",
-                    "librarySize": librarySize,
-                    "pickerBytes": originalData.count
-                ])
-                return .skipped(reason)
-            }
+        // The photo as it is in the library now, before anything is edited.
+        // "Already under the target" is measured on it (#71), and so are the
+        // savings on the result screen. The picker's bytes can be a
+        // re-encoded copy of a different size, so they are only the fallback.
+        let librarySize = await Self.currentLibrarySize(of: asset)
+        Self.breadcrumb("replace.library_size", data: [
+            "librarySize": librarySize.map { "\($0)" } ?? "nil",
+            "pickerBytes": originalData.count
+        ])
+
+        // A skipped photo is untouched: nothing has been edited yet.
+        let sizeForSkipCheck = librarySize ?? Int64(originalData.count)
+        if let reason = CompressionService.targetSkipReason(librarySize: sizeForSkipCheck, mode: mode) {
+            Self.breadcrumb("replace.skipped", data: ["reason": "\(reason)"])
+            return .skipped(reason)
         }
 
         // Allow iCloud downloads so we can edit photos not stored locally
@@ -733,7 +750,7 @@ final class ImageOptimizationViewModel {
                 request.contentEditingOutput = output
             }
             Self.breadcrumb("replace.done", data: ["compressedBytes": compressedData.count])
-            return .inPlace(size: Int64(compressedData.count))
+            return .inPlace(size: Int64(compressedData.count), librarySize: librarySize)
         } catch {
             let nsError = error as NSError
             var userInfoDump: [String: String] = [:]
@@ -781,7 +798,8 @@ final class ImageOptimizationViewModel {
             return .needsFallback(
                 compressedData: compressedData,
                 tempURL: tempURL,
-                size: Int64(compressedData.count)
+                size: Int64(compressedData.count),
+                librarySize: librarySize
             )
         }
     }

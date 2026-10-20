@@ -15,6 +15,8 @@ import Foundation
 import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
+import PhotosUI
+import SwiftUI
 @testable import TrimrPix_for_iOS
 
 // MARK: - Image fixtures
@@ -319,5 +321,70 @@ private func uniqueColorCount(of image: CGImage) -> Int {
         #expect(TargetSize.mb1.bytes == 1_000_000)
         #expect(TargetSize.mb5.bytes == 5_000_000)
         #expect(TargetSize.mb1.label == "1 MB")
+    }
+}
+
+// MARK: - Savings
+
+/// Savings are counted from the photo's size in the library before the edit,
+/// not the picker's bytes, which can be a re-encoded copy of another size.
+@Suite struct SavingsTests {
+
+    // The stock waterfall JPEG: 1,268,382 bytes in the library, handed over
+    // by the picker as 993 KB, written back at 956,583 bytes.
+    private let library: Int64 = 1_268_382
+    private let picker: Int64 = 993_000
+    private let compressed: Int64 = 956_583
+
+    @Test func countsFromLibrarySizeWhenKnown() {
+        let change = SizeChange(librarySize: library, pickerSize: picker, after: compressed)
+        #expect(change.before == library)
+        #expect(change.savedBytes == library - compressed)
+        #expect(change.savedPercentage == 25)
+    }
+
+    @Test func fallsBackToPickerSizeWithoutLibrarySize() {
+        let change = SizeChange(librarySize: nil, pickerSize: picker, after: compressed)
+        #expect(change.before == picker)
+        #expect(change.savedBytes == picker - compressed)
+    }
+
+    @Test func largerOutputSavesNothing() {
+        let change = SizeChange(librarySize: 500_000, pickerSize: 400_000, after: 520_000)
+        #expect(change.savedBytes == 0)
+        #expect(change.savedPercentage == 0)
+    }
+
+    @Test func zeroSizeHasNoPercentage() {
+        #expect(SizeChange(librarySize: 0, pickerSize: 0, after: 0).savedPercentage == 0)
+    }
+
+    @Test func totalAndAverageOverPhotos() {
+        let changes = [
+            SizeChange(librarySize: 1_000_000, pickerSize: 900_000, after: 500_000),  // 500 KB, 50%
+            SizeChange(librarySize: 2_000_000, pickerSize: 2_000_000, after: 1_500_000),  // 500 KB, 25%
+            SizeChange(librarySize: 100_000, pickerSize: 100_000, after: 120_000),  // grew: 0, 0%
+        ]
+        #expect(SizeChange.totalSaved(changes) == 1_000_000)
+        #expect(SizeChange.averagePercentage(changes) == 25)
+        #expect(SizeChange.totalSaved([]) == 0)
+        #expect(SizeChange.averagePercentage([]) == 0)
+    }
+
+    @MainActor @Test func imageItemUsesLibrarySizeOnceCompressed() {
+        let data = makeImageData(width: 64, height: 64, utType: .jpeg)
+        var item = ImageItem(pickerItem: PhotosPickerItem(itemIdentifier: "test"), assetIdentifier: "test", data: data)
+        let pickerSize = Int64(data.count)
+
+        // Nothing to report until the photo is compressed.
+        #expect(item.sizeChange == nil)
+        item.compressedSize = 100
+        #expect(item.sizeChange == nil)
+
+        item.isCompressed = true
+        #expect(item.sizeChange?.before == pickerSize)
+
+        item.librarySize = pickerSize * 2
+        #expect(item.sizeChange == SizeChange(librarySize: pickerSize * 2, pickerSize: pickerSize, after: 100))
     }
 }

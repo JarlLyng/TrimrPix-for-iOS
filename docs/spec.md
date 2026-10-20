@@ -50,6 +50,12 @@ Før der skrives noget, afgør to tjek, om et billede skal lades være (#71): `C
 
 Et billede, der springes over, ændres ikke i biblioteket. Det tæller hverken som komprimeret eller som fejl og rapporteres ikke til Sentry. Estimatet regner det som uændret.
 
+### Hvor besparelsen måles fra
+
+Resultatskærmens *Space saved* og *Avg. savings* og den samlede besparelse over tid regnes fra billedets aktuelle version i biblioteket, målt lige før redigeringen (`SizeChange`, `ImageItem.librarySize`). Pickerens bytetal bruges kun, hvis Photos ikke kan give en størrelse. Et billede, der bliver større, tæller som 0 sparet.
+
+Estimatet og den samlede størrelse i Konfigurer-trinnet regnes stadig fra pickerens bytes. De vises, før appen har bedt om fotoadgang (pickeren kræver ingen), og bibliotekets størrelser kan ikke læses uden. Estimatet kan derfor afvige, hvor pickeren leverer en genkodet kopi.
+
 ## Metadata
 
 Brugeren vælger hvilke metadata-kategorier der **bevares** (toggle ON = behold, OFF = fjern permanent). Forklarende tekst over toggles: *"Choose which metadata to keep. Disabled items will be permanently removed."*
