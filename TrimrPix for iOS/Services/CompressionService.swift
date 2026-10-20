@@ -62,6 +62,19 @@ nonisolated final class CompressionService: Sendable {
         return nil
     }
 
+    /// `.wouldNotShrink` when the compressed bytes are not smaller than the
+    /// photo as the library holds it, so writing them would save nothing or
+    /// make the photo bigger; nil otherwise (#71).
+    ///
+    /// `compress` already keeps the original when its output grows, but it
+    /// can only compare with the picker's bytes, and those can be a larger
+    /// re-encoded copy: a 2.8 MB HEIC arrived as 4.1 MB, compressed to 3.0 MB,
+    /// and was written back bigger than it was. `librarySize` must be the
+    /// photo's current version in the library.
+    static func shrinkSkipReason(compressedSize: Int64, librarySize: Int64) -> SkipReason? {
+        compressedSize >= librarySize ? .wouldNotShrink : nil
+    }
+
     /// Compresses image data using the given mode (fixed quality or a per-photo
     /// target size) and format.
     func compress(
@@ -92,7 +105,9 @@ nonisolated final class CompressionService: Sendable {
             compressedData = try encodeToTarget(cgImage: cgImage, format: format, target: target, properties: processedProps)
         }
 
-        // If compression made the file larger, return original with metadata processed
+        // If compression made the file larger, return original with metadata
+        // processed. This compares with the picker's bytes; the caller also
+        // checks the result against the library's file (`shrinkSkipReason`).
         if compressedData.count >= data.count {
             return reencodeWithProperties(from: data, properties: processedProps) ?? data
         }

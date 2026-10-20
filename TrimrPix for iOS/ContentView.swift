@@ -773,7 +773,8 @@ private struct ResultStep: View {
     }
 
     /// Photos left as they are on purpose (#71): a format iOS can't write,
-    /// or already under the target size. Not failures.
+    /// already under the target size, or wouldn't get any smaller. Not
+    /// failures.
     private var skippedCount: Int {
         viewModel.images.filter { $0.skipReason != nil }.count
     }

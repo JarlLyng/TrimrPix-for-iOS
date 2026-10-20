@@ -41,18 +41,21 @@ PNG bruger median-cut farve-kvantisering ved Good/Smaller for at reducere filst�
 
 ### Billeder der springes over
 
-Før der skrives noget, afgør to tjek, om et billede skal lades være (#71): `CompressionService.formatSkipReason` på pickerens bytes, før der røres ved Photos, og `CompressionService.targetSkipReason` på størrelsen af billedets aktuelle version i biblioteket (`PHImageManager`, `version = .current`). Ikke `PHContentEditingInput.fullSizeImageURL`: appen accepterer alle tidligere justeringer, så den URL peger på den uredigerede original. Pickerens bytes kan være en genkodet kopi med en anden størrelse (en JPEG på 1,27 MB kom som 993 KB), så de bruges ikke til at måle målstørrelsen.
+Før der skrives noget, afgør tre tjek, om et billede skal lades være (#71): `CompressionService.formatSkipReason` på pickerens bytes, før der røres ved Photos, `CompressionService.targetSkipReason` på størrelsen af billedets aktuelle version i biblioteket (`PHImageManager`, `version = .current`), og efter komprimeringen `CompressionService.shrinkSkipReason`, som sammenligner det komprimerede resultat med samme biblioteksstørrelse. Ikke `PHContentEditingInput.fullSizeImageURL`: appen accepterer alle tidligere justeringer, så den URL peger på den uredigerede original. Pickerens bytes kan være en genkodet kopi med en anden størrelse (en JPEG på 1,27 MB kom som 993 KB, en HEIC på 2,8 MB som 4,1 MB), så de bruges ikke til at måle med.
+
+`compress` beholder selv originalen, hvis resultatet bliver større, men det sammenligner med pickerens kopi. Er den kopi større end bibliotekets fil, kan resultatet være mindre end kopien og stadig større end billedet i biblioteket. Uden det tredje tjek gik HEIC'en ovenfor gennem fallback og kom tilbage som 3,0 MB.
 
 | Årsag | Hvornår | Besked på resultatskærmen |
 |-------|---------|---------------------------|
 | `formatNotWritable` | Formatet kan læses, men ikke skrives på enheden (i dag WebP) | *iOS can open WebP photos but can't save them, so they were left as they are.* |
 | `alreadyUnderTarget` | Target size, og billedet er allerede på eller under målet | *Photos already under the target size were left as they are.* |
+| `wouldNotShrink` | Det komprimerede resultat er ikke mindre end billedet i biblioteket | *Photos that wouldn't get any smaller were left as they are.* |
 
-Et billede, der springes over, ændres ikke i biblioteket. Det tæller hverken som komprimeret eller som fejl og rapporteres ikke til Sentry. Estimatet regner det som uændret.
+Et billede, der springes over, ændres ikke i biblioteket. Det tæller hverken som komprimeret eller som fejl og rapporteres ikke til Sentry. Estimatet regner det som uændret. Da intet skrives, beholder et billede, der springes over, også sine metadata, selv om brugeren har slået en kategori fra.
 
 ### Hvor besparelsen måles fra
 
-Resultatskærmens *Space saved* og *Avg. savings* og den samlede besparelse over tid regnes fra billedets aktuelle version i biblioteket, målt lige før redigeringen (`SizeChange`, `ImageItem.librarySize`). Pickerens bytetal bruges kun, hvis Photos ikke kan give en størrelse. Et billede, der bliver større, tæller som 0 sparet.
+Resultatskærmens *Space saved* og *Avg. savings* og den samlede besparelse over tid regnes fra billedets aktuelle version i biblioteket, målt lige før redigeringen (`SizeChange`, `ImageItem.librarySize`). Pickerens bytetal bruges kun, hvis Photos ikke kan give en størrelse. Et billede, der ikke ville blive mindre, springes over (`wouldNotShrink`) og tæller ikke med. `SizeChange` regner desuden et større resultat som 0 sparet.
 
 Estimatet og den samlede størrelse i Konfigurer-trinnet regnes stadig fra pickerens bytes. De vises, før appen har bedt om fotoadgang (pickeren kræver ingen), og bibliotekets størrelser kan ikke læses uden. Estimatet kan derfor afvige, hvor pickeren leverer en genkodet kopi.
 

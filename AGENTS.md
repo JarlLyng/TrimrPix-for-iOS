@@ -34,6 +34,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **2 compression modes** — Quality (3 levels) or Target size (per-photo byte budget). NOT a total-batch budget.
 - **3 quality levels** — Same (minimal loss), Good (balanced), Smaller (aggressive). NOT "High/Medium/Low"
 - **Target-size mode**: pick a per-photo target (500 KB / 1 MB / 2 MB / 5 MB, or a **custom** value the user types in MB); the service binary-searches lossy quality (JPEG/HEIC) or palette size (PNG) to fit. Photos already at or under the target are skipped and left untouched, with no re-encode and no Photos edit (`CompressionService.targetSkipReason`). The size is the photo's current version in the library (`currentLibrarySize`, `PHImageManager` with `version = .current`), never the picker's bytes, which can be a re-encoded copy of a different size. Not `PHContentEditingInput.fullSizeImageURL` either: since the app accepts any prior adjustment data, that is the unedited original. See `CompressionMode` / `TargetSizeOption` / `encodeToTarget`. Custom bytes are clamped 50 KB–50 MB (`customTargetBytes`).
+- **Never writes a bigger photo**: after compressing, the result is compared with the photo's current size in the library (`currentLibrarySize`). If it isn't smaller, the photo is skipped: no Photos edit, no fallback, listed as Skipped (`CompressionService.shrinkSkipReason`, `SkipReason.wouldNotShrink`). `compress`'s own "output larger than input" guard isn't enough, because its input is the picker's copy, which can be larger than the library's file: a 2.8 MB HEIC arrived as 4.1 MB, compressed to 3.0 MB and went back through the fallback bigger than before. Since nothing is written, a skipped photo also keeps its metadata.
 - **Metadata control** — granular: keep or strip date/time, GPS, camera settings, IPTC, Apple data
 - **Savings estimate** — see how much space you'll save before compressing (percentage + absolute size). Counted from the picker's bytes, since it runs before any Photos permission is asked, so it can be off where the picker hands over a re-encoded copy.
 - **Lifetime savings counter** — total bytes saved across all runs, shown on the result screen. Stored locally in UserDefaults, never transmitted (disclosed in privacy policy)
@@ -89,11 +90,11 @@ Views (SwiftUI)  →  ImageOptimizationViewModel (@Observable, @MainActor)  → 
 | `TrimrPix_for_iOSApp.swift` | Entry point, Sentry init |
 | `ContentView.swift` | All 5 step views + Photos access alert |
 | `ViewModels/ImageOptimizationViewModel.swift` | All state, compression orchestration, Photos library replacement |
-| `Services/CompressionService.swift` | JPEG/PNG/HEIC compression via ImageIO, plus the skip checks (`formatSkipReason`, `targetSkipReason`, `canEncode`) |
+| `Services/CompressionService.swift` | JPEG/PNG/HEIC compression via ImageIO, plus the skip checks (`formatSkipReason`, `targetSkipReason`, `shrinkSkipReason`, `canEncode`) |
 | `Services/ColorQuantizer.swift` | Median-cut color quantization for lossy PNG |
 | `Models/MetadataStrippingOptions.swift` | Granular metadata control (keep/strip per category) |
 | `Models/ImageItem.swift` | Per-image state |
-| `Models/SkipReason.swift` | Why a photo is left untouched: format not writable (WebP), or already under the target |
+| `Models/SkipReason.swift` | Why a photo is left untouched: format not writable (WebP), already under the target, or wouldn't get smaller |
 | `Views/SlideToConfirmView.swift` | Drag gesture confirmation (85% threshold) |
 
 ## Photos permission model
@@ -207,7 +208,7 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 
 **Add a metadata category**: Add property to `MetadataStrippingOptions`, update `processedProperties(from:)`, add entry to `labels` array.
 
-**Change compression behavior**: Edit `CompressionService.compress(data:mode:format:)`. `mode` is `.quality` or `.targetSize`. Quality path: `encode()` → `compressWithDestination(lossyQuality:)` (JPEG/HEIC) or `compressPNG`. Target path: `encodeToTarget` (binary-searches lossy quality, or `compressPNGToTarget` for PNG). Whether a photo is compressed at all is decided in `replaceInPhotosLibrary` before anything is written: `formatSkipReason(for:)` at the top, on the picker's bytes, then `targetSkipReason(librarySize:mode:)` on the photo's current version, before any content editing input is requested.
+**Change compression behavior**: Edit `CompressionService.compress(data:mode:format:)`. `mode` is `.quality` or `.targetSize`. Quality path: `encode()` → `compressWithDestination(lossyQuality:)` (JPEG/HEIC) or `compressPNG`. Target path: `encodeToTarget` (binary-searches lossy quality, or `compressPNGToTarget` for PNG). Whether a photo is compressed at all is decided in `replaceInPhotosLibrary` before anything is written: `formatSkipReason(for:)` at the top, on the picker's bytes, then `targetSkipReason(librarySize:mode:)` on the photo's current version, before any content editing input is requested, and last `shrinkSkipReason(compressedSize:librarySize:)` once the compressed bytes exist, before they are written.
 
 **Add a new step**: Add case to `AppStep`, add view in `ContentView.swift`, update step indicator.
 

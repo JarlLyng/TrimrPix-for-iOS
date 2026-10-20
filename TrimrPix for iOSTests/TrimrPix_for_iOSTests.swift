@@ -78,6 +78,17 @@ private func makeImageData(
     return output as Data
 }
 
+/// Decodes `data` and encodes it again at a fixed lossy quality.
+private func reencoded(_ data: Data, as utType: UTType, quality: Double) -> Data? {
+    guard let image = decodedImage(from: data) else { return nil }
+    let output = NSMutableData()
+    guard let destination = CGImageDestinationCreateWithData(output, utType.identifier as CFString, 1, nil) else { return nil }
+    let options = [kCGImageDestinationLossyCompressionQuality: quality] as CFDictionary
+    CGImageDestinationAddImage(destination, image, options)
+    guard CGImageDestinationFinalize(destination) else { return nil }
+    return output as Data
+}
+
 private func decodedImage(from data: Data) -> CGImage? {
     CGImageSourceCreateWithData(data as CFData, nil)
         .flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }
@@ -221,6 +232,40 @@ private func uniqueColorCount(of image: CGImage) -> Int {
         #expect(CompressionService.targetSkipReason(librarySize: target + 1, mode: .targetSize(target)) == nil)
         // Quality mode never skips on size.
         #expect(CompressionService.targetSkipReason(librarySize: 1, mode: .quality(.good)) == nil)
+    }
+
+    @Test func photoThatWouldNotShrinkIsSkipped() {
+        let librarySize: Int64 = 2_808_983
+
+        // Bigger than the library's file, like the HEIC whose picker copy was larger.
+        #expect(CompressionService.shrinkSkipReason(compressedSize: 3_008_024, librarySize: librarySize) == .wouldNotShrink)
+        // The same size saves nothing, so it isn't worth an edit either.
+        #expect(CompressionService.shrinkSkipReason(compressedSize: librarySize, librarySize: librarySize) == .wouldNotShrink)
+        #expect(CompressionService.shrinkSkipReason(compressedSize: librarySize - 1, librarySize: librarySize) == nil)
+    }
+
+    @Test func largerPickerCopyDoesNotHideAGrowingPhoto() throws {
+        // The library holds a small JPEG; the picker hands over a bigger
+        // re-encode of it, as Photos did with a HEIC.
+        let library = try #require(reencoded(makeImageData(utType: .jpeg, noisy: true), as: .jpeg, quality: 0.3))
+        let picker = try #require(reencoded(library, as: .jpeg, quality: 1.0))
+        #expect(picker.count > library.count)
+
+        let service = CompressionService()
+        let output = try service.compress(data: picker, mode: .quality(.good), format: .jpeg)
+
+        // Against the picker's copy it looks like a saving...
+        #expect(output.count < picker.count)
+        #expect(CompressionService.shrinkSkipReason(compressedSize: Int64(output.count), librarySize: Int64(picker.count)) == nil)
+        // ...but it isn't smaller than the photo in the library, so it is skipped.
+        #expect(CompressionService.shrinkSkipReason(compressedSize: Int64(output.count), librarySize: Int64(library.count)) == .wouldNotShrink)
+    }
+
+    @Test func eachSkipReasonHasItsOwnMessage() {
+        let reasons: [SkipReason] = [.formatNotWritable(.webp), .alreadyUnderTarget, .wouldNotShrink]
+        let messages = reasons.map(\.message)
+        #expect(messages.allSatisfy { !$0.isEmpty })
+        #expect(Set(messages).count == reasons.count)
     }
 
     @Test func writablePhotoHasNoFormatSkipReason() {

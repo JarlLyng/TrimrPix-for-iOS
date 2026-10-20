@@ -626,9 +626,10 @@ final class ImageOptimizationViewModel {
         ])
 
         // The photo as it is in the library now, before anything is edited.
-        // "Already under the target" is measured on it (#71), and so are the
-        // savings on the result screen. The picker's bytes can be a
-        // re-encoded copy of a different size, so they are only the fallback.
+        // "Already under the target" and "wouldn't get smaller" are measured
+        // on it (#71), and so are the savings on the result screen. The
+        // picker's bytes can be a re-encoded copy of a different size, so
+        // they are only the fallback.
         let librarySize = await Self.currentLibrarySize(of: asset)
         Self.breadcrumb("replace.library_size", data: [
             "librarySize": librarySize.map { "\($0)" } ?? "nil",
@@ -725,6 +726,22 @@ final class ImageOptimizationViewModel {
                 )
             }
         }.value
+
+        // Leave the photo alone if the result isn't smaller than the library's
+        // file (#71). The picker's copy can be larger than that file, so
+        // `compress` keeping the smaller of the two isn't enough: a HEIC would
+        // otherwise go through the fallback and come back bigger. Nothing has
+        // been written yet, so a skipped photo is untouched.
+        if let reason = CompressionService.shrinkSkipReason(
+            compressedSize: Int64(compressedData.count),
+            librarySize: sizeForSkipCheck
+        ) {
+            Self.breadcrumb("replace.skipped", data: [
+                "reason": "\(reason)",
+                "compressedBytes": compressedData.count
+            ])
+            return .skipped(reason)
+        }
 
         do {
             try compressedData.write(to: output.renderedContentURL)
