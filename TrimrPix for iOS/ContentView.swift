@@ -785,18 +785,14 @@ private struct ResultStep: View {
         return viewModel.images.compactMap(\.skipReason).filter { seen.insert($0).inserted }
     }
 
+    /// Counted from each photo's size in the library before the edit, not
+    /// the picker's bytes (see `SizeChange`).
     private var totalSaved: Int64 {
-        viewModel.images.reduce(0) { acc, item in
-            guard let compressed = item.compressedSize else { return acc }
-            return acc + (item.originalSize - compressed)
-        }
+        SizeChange.totalSaved(viewModel.sizeChanges)
     }
 
     private var averageSavings: Int {
-        let compressed = viewModel.images.filter(\.isCompressed)
-        guard !compressed.isEmpty else { return 0 }
-        let sum = compressed.reduce(0) { $0 + $1.savingsPercentage }
-        return sum / compressed.count
+        SizeChange.averagePercentage(viewModel.sizeChanges)
     }
 
     private var hasErrors: Bool { failCount > 0 }
