@@ -161,6 +161,68 @@ private func uniqueColorCount(of image: CGImage) -> Int {
         #expect(estimate > 0)
         #expect(estimate <= Int64(source.count))
     }
+
+    // MARK: Skipping (#71)
+
+    /// A 16x16 lossy WebP made with `cwebp`. Inlined because ImageIO can read
+    /// WebP but has no WebP encoder on iOS, so the suite can't generate one.
+    private static let webpFixture = Data(base64Encoded:
+        "UklGRlAAAABXRUJQVlA4IEQAAADwAQCdASoQABAAAgA0JbACdAEPC/vL1QAA/vxrUVaE1U+Ecy6/cFnZ//BZZvJta7pDdcdXZBV/+AYL//88f/P0MgAAAA=="
+    )!
+
+    @Test func canEncodeAsksImageIOAtRuntime() {
+        let writable = Set((CGImageDestinationCopyTypeIdentifiers() as? [String]) ?? [])
+        for format in OutputFormat.allCases {
+            #expect(CompressionService.canEncode(format) == writable.contains(format.utType.identifier))
+        }
+        #expect(CompressionService.canEncode(.jpeg))
+        #expect(CompressionService.canEncode(.png))
+    }
+
+    @Test func webpOriginalIsSkippedWhenItCannotBeWritten() throws {
+        let service = CompressionService()
+        let source = Self.webpFixture
+
+        // ImageIO reads it, and it resolves to WebP like a real WebP asset.
+        #expect(decodedImage(from: source)?.width == 16)
+        let uti = CGImageSourceCreateWithData(source as CFData, nil).flatMap { CGImageSourceGetType($0) as String? }
+        #expect(OutputFormat.from(uti: uti ?? "") == .webp)
+
+        // If iOS ever ships a WebP encoder, WebP photos compress like any other.
+        guard !CompressionService.canEncode(.webp) else {
+            #expect(service.skipReason(for: source, mode: .quality(.good)) == nil)
+            return
+        }
+
+        // Skipped in both modes, and the format reason wins over the size one.
+        #expect(service.skipReason(for: source, mode: .quality(.good)) == .formatNotWritable(.webp))
+        #expect(service.skipReason(for: source, mode: .targetSize(1_000_000)) == .formatNotWritable(.webp))
+
+        // The estimate counts it as unchanged.
+        #expect(service.estimateCompressedSize(data: source, quality: .smaller, format: .jpeg) == Int64(source.count))
+
+        // Calling the encoder anyway names the format instead of a generic failure.
+        do {
+            _ = try service.compress(data: source, mode: .quality(.good), format: .webp)
+            Issue.record("Expected WebP compression to throw")
+        } catch TrimrPixError.formatNotSupported(let name) {
+            #expect(name == "WebP")
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+    }
+
+    @Test func photoAlreadyUnderTargetIsSkipped() {
+        let service = CompressionService()
+        let source = makeImageData(width: 64, height: 64, utType: .jpeg)
+        let size = Int64(source.count)
+
+        #expect(service.skipReason(for: source, mode: .targetSize(size)) == .alreadyUnderTarget)
+        #expect(service.skipReason(for: source, mode: .targetSize(size + 1)) == .alreadyUnderTarget)
+        #expect(service.skipReason(for: source, mode: .targetSize(size - 1)) == nil)
+        // Quality mode never skips a writable photo.
+        #expect(service.skipReason(for: source, mode: .quality(.good)) == nil)
+    }
 }
 
 // MARK: - ColorQuantizer

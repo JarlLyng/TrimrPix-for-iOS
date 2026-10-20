@@ -22,6 +22,37 @@ nonisolated final class CompressionService: Sendable {
 
     private let colorQuantizer = ColorQuantizer()
 
+    /// The UTIs ImageIO can write on this device, read once at runtime.
+    /// ImageIO decodes WebP but has no WebP encoder on iOS (#71). Asking
+    /// instead of hardcoding means a future iOS that adds one just works.
+    private static let writableTypeIdentifiers: Set<String> =
+        Set((CGImageDestinationCopyTypeIdentifiers() as? [String]) ?? [])
+
+    /// Whether this device can encode `format`, and so write it back in place.
+    static func canEncode(_ format: OutputFormat) -> Bool {
+        writableTypeIdentifiers.contains(format.utType.identifier)
+    }
+
+    /// Why `data` should be left as it is rather than compressed with `mode`,
+    /// or nil to go ahead (#71). The caller checks this before any Photos work,
+    /// so a skipped photo is never edited:
+    /// - a format this device can read but not write (WebP), which would
+    ///   otherwise fail every time;
+    /// - in target-size mode, a photo already at or under the target, which
+    ///   the configure screen promises to leave unchanged.
+    func skipReason(for data: Data, mode: CompressionMode) -> SkipReason? {
+        if let source = CGImageSourceCreateWithData(data as CFData, nil),
+           let uti = CGImageSourceGetType(source) as String?,
+           let format = OutputFormat.from(uti: uti),
+           !Self.canEncode(format) {
+            return .formatNotWritable(format)
+        }
+        if case .targetSize(let target) = mode, Int64(data.count) <= target {
+            return .alreadyUnderTarget
+        }
+        return nil
+    }
+
     /// Compresses image data using the given mode (fixed quality or a per-photo
     /// target size) and format.
     func compress(
@@ -30,6 +61,13 @@ nonisolated final class CompressionService: Sendable {
         format: OutputFormat,
         metadataOptions: MetadataStrippingOptions = MetadataStrippingOptions()
     ) throws -> Data {
+        // Fail with a clear reason rather than a generic compressionFailed
+        // from a nil CGImageDestination. The view model skips these photos
+        // before getting here; this guards any other caller.
+        guard Self.canEncode(format) else {
+            throw TrimrPixError.formatNotSupported(format.rawValue)
+        }
+
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
               let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
             throw TrimrPixError.invalidImageData
@@ -72,6 +110,11 @@ nonisolated final class CompressionService: Sendable {
         }
 
         let resolvedFormat = OutputFormat.from(uti: (CGImageSourceGetType(source) as String?) ?? "") ?? format
+
+        // A format we can't write is skipped at compress time, so it saves nothing.
+        guard Self.canEncode(resolvedFormat) else {
+            return Int64(data.count)
+        }
 
         // Decode a reduced-size thumbnail (caps the larger side at 1024px;
         // never upscales). Far cheaper to encode than the full-res image.
@@ -116,6 +159,7 @@ nonisolated final class CompressionService: Sendable {
         case .jpeg:
             return try compressWithDestination(cgImage: cgImage, type: .jpeg, lossyQuality: quality.quality, properties: properties)
         case .webp:
+            // Only reached where `canEncode(.webp)` is true; no iOS today (#71).
             return try compressWithDestination(cgImage: cgImage, type: .webP, lossyQuality: quality.quality, properties: properties)
         case .heic:
             return try compressWithDestination(cgImage: cgImage, type: .heic, lossyQuality: quality.quality, properties: properties)
@@ -123,7 +167,7 @@ nonisolated final class CompressionService: Sendable {
     }
 
     /// Encodes a CGImage so the result is at most `target` bytes. For lossy
-    /// formats (JPEG/HEIC/WebP) it binary-searches the quality parameter for
+    /// formats (JPEG/HEIC) it binary-searches the quality parameter for
     /// the highest quality that fits; for PNG it reduces the color palette.
     /// If even the most aggressive setting exceeds the target, returns the
     /// smallest result it could produce (the UI still reports the actual size).
@@ -161,8 +205,8 @@ nonisolated final class CompressionService: Sendable {
 
     // MARK: - Private
 
-    /// Compresses using CGImageDestination (JPEG, WebP, HEIC) at an explicit
-    /// lossy quality (0.0–1.0).
+    /// Compresses using CGImageDestination (JPEG, HEIC, and WebP where the
+    /// device can encode it) at an explicit lossy quality (0.0–1.0).
     private func compressWithDestination(
         cgImage: CGImage,
         type: UTType,

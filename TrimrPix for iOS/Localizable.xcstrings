@@ -338,6 +338,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "無効な画像データ" } }
       }
     },
+    "iOS can open %@ photos but can't save them, so they were left as they are." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "iOS kan åbne %@-billeder, men ikke gemme dem, så de er ikke blevet ændret." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "iOS kann %@-Fotos öffnen, aber nicht speichern. Sie wurden daher nicht verändert." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "iOS peut ouvrir les photos %@ mais pas les enregistrer. Elles n'ont donc pas été modifiées." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "iOSは%@の写真を開けますが保存できないため、変更していません。" } }
+      }
+    },
     "Keep all" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Behold alle" } },
@@ -434,6 +442,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "目に見える画質低下なし" } }
       }
     },
+    "Nothing to compress" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Intet at komprimere" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nichts zu komprimieren" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rien à compresser" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮するものはありません" } }
+      }
+    },
     "Open Settings" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Åbn Indstillinger" } },
@@ -496,6 +512,14 @@
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos" } },
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Photos" } },
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真" } }
+      }
+    },
+    "Photos already under the target size were left as they are." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Billeder, der allerede var under målstørrelsen, er ikke blevet ændret." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos, die bereits unter der Zielgröße lagen, wurden nicht verändert." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les photos déjà sous la taille cible n'ont pas été modifiées." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "すでに目標サイズ以下の写真は変更していません。" } }
       }
     },
     "Photos access denied" : {
@@ -576,6 +600,14 @@
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Feedback senden" } },
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Envoyer un commentaire" } },
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "フィードバックを送る" } }
+      }
+    },
+    "Skipped" : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Sprunget over" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Übersprungen" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ignorées" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "スキップ" } }
       }
     },
     "Slide to compress" : {

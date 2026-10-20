@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ImageIO
 import SwiftUI
 import UIKit
 import Photos
@@ -26,6 +27,10 @@ struct ImageItem: Identifiable {
     /// Source token used to lazily reload the original bytes on demand.
     let pickerItem: PhotosPickerItem
     let originalSize: Int64
+    /// Format of the original bytes, read from the data at selection time.
+    /// Lets the target-size estimate count a photo this device can't write
+    /// (WebP) as unchanged without reloading it (#71).
+    let sourceFormat: OutputFormat?
     var compressedSize: Int64?
     var thumbnail: UIImage?
     var isCompressing: Bool = false
@@ -38,6 +43,8 @@ struct ImageItem: Identifiable {
     /// from the compressed data and delete the original, preserving creation
     /// date, location, and favorite status.
     var wasReplaced: Bool = false
+    /// Set when the photo was deliberately left as it is (#71). Not an error.
+    var skipReason: SkipReason?
     var error: TrimrPixError?
 
     /// Builds an item from data loaded once at selection time. The `data` is
@@ -47,6 +54,9 @@ struct ImageItem: Identifiable {
         self.pickerItem = pickerItem
         self.assetIdentifier = assetIdentifier
         self.originalSize = Int64(data.count)
+        self.sourceFormat = CGImageSourceCreateWithData(data as CFData, nil)
+            .flatMap { CGImageSourceGetType($0) as String? }
+            .flatMap(OutputFormat.from(uti:))
         self.thumbnail = ImageItem.generateThumbnail(from: data)
     }
 
