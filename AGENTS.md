@@ -151,10 +151,11 @@ Search Console baseline recorded in the hub's `analytics-readout.md`. Read it ar
 before adding more. Note that store-click tracking was broken for that whole window (#64), so a
 zero there means nobody measured, not nobody clicked.
 
-**Version-locked, rides 1.6:** the App Store **screenshots**. The live set is still the April
-upload and shows the format picker removed in 1.1, four releases ago. Composed posters are ready
-at `appstore/screenshots/6.9-inch/`. Upload them first at the next submission, not last: text
-fields nearly slipped twice and then landed, images are what keeps being left to the end.
+**Rides 1.5.1:** the App Store **screenshots**. The live set is still the April upload and shows
+the format picker removed in 1.1. New posters were captured from the 1.5.1 build for iPhone
+(`appstore/screenshots/6.9-inch/`) and iPad (`appstore/screenshots/13-inch-ipad/`), and the
+listing text is in `appstore/1.5.1/listing.md`. Place the images first at the submission, not
+last: text fields nearly slipped twice and then landed, images are what keeps being left to the end.
 
 **Open technical:** #60 and #61 (adopt the design system's `.ijFont` and Outfit headings; worth
 doing together, and after 1.5 ships so there is a baseline), #65 (supply-chain hardening),

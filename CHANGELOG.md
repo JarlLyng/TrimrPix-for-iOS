@@ -3,11 +3,12 @@
 All notable changes to TrimrPix for iOS are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.5.1] - 2026-10
 
 ### Fixed
 - **WebP photos are now skipped instead of failing.** iOS can open WebP but has no way to save it, so every WebP photo used to fail with a compression error. They are now left as they are, listed as Skipped on the result screen with the reason, and the savings estimate no longer counts them. WebP was also listed as a supported format; it no longer is.
 - **Target size now really leaves smaller photos alone.** The configure screen said photos already under the target are left unchanged, but they were re-encoded and written back anyway. They are now skipped: no re-encode, no edit in Photos, and no delete-and-recreate confirmation for HEIC photos that Photos won't edit in place.
+- **Savings are counted from the photo in your library.** Space saved, Avg. savings and the running total on the result screen were worked out from the copy the photo picker hands over, which can be smaller or larger than the photo in your library. They now count from the photo in your library, measured just before it is compressed. The estimate before you compress still uses the picker's copy, because reading the library needs Photos access, which the app only asks for when you compress.
 - **A photo is never replaced with a bigger one.** TrimrPix checked that its output was smaller than the copy the photo picker handed over, but that copy can be larger than the file in your library. A HEIC could then come back bigger than before, through the delete-and-recreate path and its confirmation. The output is now compared with the photo in your library, and a photo that wouldn't get any smaller is left as it is and listed as Skipped.
 
 ## [1.5] — 2026-10
