@@ -190,13 +190,12 @@ private func uniqueColorCount(of image: CGImage) -> Int {
 
         // If iOS ever ships a WebP encoder, WebP photos compress like any other.
         guard !CompressionService.canEncode(.webp) else {
-            #expect(service.skipReason(for: source, mode: .quality(.good)) == nil)
+            #expect(service.formatSkipReason(for: source) == nil)
             return
         }
 
-        // Skipped in both modes, and the format reason wins over the size one.
-        #expect(service.skipReason(for: source, mode: .quality(.good)) == .formatNotWritable(.webp))
-        #expect(service.skipReason(for: source, mode: .targetSize(1_000_000)) == .formatNotWritable(.webp))
+        // Skipped in either mode: the format check doesn't depend on it.
+        #expect(service.formatSkipReason(for: source) == .formatNotWritable(.webp))
 
         // The estimate counts it as unchanged.
         #expect(service.estimateCompressedSize(data: source, quality: .smaller, format: .jpeg) == Int64(source.count))
@@ -213,15 +212,19 @@ private func uniqueColorCount(of image: CGImage) -> Int {
     }
 
     @Test func photoAlreadyUnderTargetIsSkipped() {
-        let service = CompressionService()
-        let source = makeImageData(width: 64, height: 64, utType: .jpeg)
-        let size = Int64(source.count)
+        let target: Int64 = 1_000_000
 
-        #expect(service.skipReason(for: source, mode: .targetSize(size)) == .alreadyUnderTarget)
-        #expect(service.skipReason(for: source, mode: .targetSize(size + 1)) == .alreadyUnderTarget)
-        #expect(service.skipReason(for: source, mode: .targetSize(size - 1)) == nil)
-        // Quality mode never skips a writable photo.
-        #expect(service.skipReason(for: source, mode: .quality(.good)) == nil)
+        #expect(CompressionService.targetSkipReason(librarySize: target, mode: .targetSize(target)) == .alreadyUnderTarget)
+        #expect(CompressionService.targetSkipReason(librarySize: target - 1, mode: .targetSize(target)) == .alreadyUnderTarget)
+        #expect(CompressionService.targetSkipReason(librarySize: target + 1, mode: .targetSize(target)) == nil)
+        // Quality mode never skips on size.
+        #expect(CompressionService.targetSkipReason(librarySize: 1, mode: .quality(.good)) == nil)
+    }
+
+    @Test func writablePhotoHasNoFormatSkipReason() {
+        let service = CompressionService()
+        #expect(service.formatSkipReason(for: makeImageData(width: 64, height: 64, utType: .jpeg)) == nil)
+        #expect(service.formatSkipReason(for: makeImageData(width: 64, height: 64, utType: .png)) == nil)
     }
 }
 

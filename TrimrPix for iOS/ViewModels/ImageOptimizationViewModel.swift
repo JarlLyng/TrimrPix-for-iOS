@@ -568,9 +568,10 @@ final class ImageOptimizationViewModel {
             "mode": "\(mode)"
         ])
 
-        // Leave the photo alone when compressing can't or shouldn't change it
-        // (#71). Checked before any Photos work, so nothing is edited.
-        if let reason = service.skipReason(for: originalData, mode: mode) {
+        // Leave a photo we can't write alone (#71). Checked before any Photos
+        // work, so nothing is edited. Whether it is already under the target
+        // is checked further down, once the library's own file is known.
+        if let reason = service.formatSkipReason(for: originalData) {
             Self.breadcrumb("replace.skipped", data: ["reason": "\(reason)"])
             return .skipped(reason)
         }
@@ -607,6 +608,22 @@ final class ImageOptimizationViewModel {
             "resources": resourceSummary,
             "resourceCount": resources.count
         ])
+
+        // Measure "already under the target" on the photo as it is in the
+        // library now, not on the picker's bytes, which can be a re-encoded
+        // copy of a different size (#71). Nothing has been edited yet, so a
+        // skipped photo is untouched.
+        if case .targetSize = mode {
+            let librarySize = await Self.currentLibrarySize(of: asset) ?? Int64(originalData.count)
+            if let reason = CompressionService.targetSkipReason(librarySize: librarySize, mode: mode) {
+                Self.breadcrumb("replace.skipped", data: [
+                    "reason": "\(reason)",
+                    "librarySize": librarySize,
+                    "pickerBytes": originalData.count
+                ])
+                return .skipped(reason)
+            }
+        }
 
         // Allow iCloud downloads so we can edit photos not stored locally
         let editOptions = PHContentEditingInputRequestOptions()
@@ -841,6 +858,25 @@ final class ImageOptimizationViewModel {
 
             throw TrimrPixError.assetNotFound(identifier)
         }.value
+    }
+
+    /// Size in bytes of the photo as the library holds it now: the current
+    /// version, so a photo edited before (by TrimrPix or anything else) is
+    /// measured as edited. Nil if Photos can't provide it.
+    ///
+    /// Not `PHContentEditingInput.fullSizeImageURL`: because we accept any
+    /// prior adjustment data, Photos hands us the unedited original there,
+    /// which for a photo compressed before is the larger, older file.
+    private static func currentLibrarySize(of asset: PHAsset) async -> Int64? {
+        let options = PHImageRequestOptions()
+        options.version = .current
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        return await withCheckedContinuation { continuation in
+            PHImageManager.default().requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
+                continuation.resume(returning: data.map { Int64($0.count) })
+            }
+        }
     }
 
     // MARK: - Sentry helpers

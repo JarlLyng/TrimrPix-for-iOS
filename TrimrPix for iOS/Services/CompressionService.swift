@@ -33,21 +33,30 @@ nonisolated final class CompressionService: Sendable {
         writableTypeIdentifiers.contains(format.utType.identifier)
     }
 
-    /// Why `data` should be left as it is rather than compressed with `mode`,
-    /// or nil to go ahead (#71). The caller checks this before any Photos work,
-    /// so a skipped photo is never edited:
-    /// - a format this device can read but not write (WebP), which would
-    ///   otherwise fail every time;
-    /// - in target-size mode, a photo already at or under the target, which
-    ///   the configure screen promises to leave unchanged.
-    func skipReason(for data: Data, mode: CompressionMode) -> SkipReason? {
+    /// `.formatNotWritable` when `data` is in a format this device can read but
+    /// not write (WebP), which would otherwise fail every time; nil otherwise
+    /// (#71). The caller checks this before any Photos work, so a skipped
+    /// photo is never edited.
+    func formatSkipReason(for data: Data) -> SkipReason? {
         if let source = CGImageSourceCreateWithData(data as CFData, nil),
            let uti = CGImageSourceGetType(source) as String?,
            let format = OutputFormat.from(uti: uti),
            !Self.canEncode(format) {
             return .formatNotWritable(format)
         }
-        if case .targetSize(let target) = mode, Int64(data.count) <= target {
+        return nil
+    }
+
+    /// `.alreadyUnderTarget` in target-size mode when the photo is already at
+    /// or under the target, which the configure screen promises to leave
+    /// unchanged; nil otherwise (#71).
+    ///
+    /// `librarySize` must be the photo's current version in the library, not
+    /// the picker's bytes. The picker can hand over a re-encoded copy of a
+    /// different size: a 1.27 MB JPEG arrived as 993 KB, so measuring the
+    /// picker's bytes skipped a photo that was still over a 1 MB target.
+    static func targetSkipReason(librarySize: Int64, mode: CompressionMode) -> SkipReason? {
+        if case .targetSize(let target) = mode, librarySize <= target {
             return .alreadyUnderTarget
         }
         return nil
