@@ -522,6 +522,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "すでに目標サイズ以下の写真は変更していません。" } }
       }
     },
+    "Photos that wouldn't get any smaller were left as they are." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Billeder, der ikke ville blive mindre, er ikke blevet ændret." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos, die nicht kleiner geworden wären, wurden nicht verändert." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les photos qui ne seraient pas devenues plus légères n'ont pas été modifiées." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "圧縮しても小さくならない写真は変更していません。" } }
+      }
+    },
     "Photos access denied" : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Adgang til Fotos nægtet" } },
