@@ -12,7 +12,7 @@ Counted, in characters:
 
 | Field (limit) | en-AU | da | de-DE | fr-FR | ja |
 |---|---|---|---|---|---|
-| Description (4,000) | 1,283 | 1,358 | 1,450 | 1,486 | 660 |
+| Description (4,000) | 1,372 | 1,422 | 1,508 | 1,552 | 687 |
 | Keywords (100) | 98 | 95 | 97 | 92 | 69 |
 | What's New (4,000) | 458 | 495 | 547 | 586 | 226 |
 
@@ -84,7 +84,7 @@ in that locale's name or subtitle:
 - **upload** (en-AU, da, de-DE): Target size exists to fit a photo under an upload or attachment
   limit, which is how the 1.3 release notes put it.
 - **poids** (fr-FR): the everyday French word for a file's size ("réduire le poids d'une photo").
-- **GPS** (fr-FR): the app strips GPS location; en-AU and da already carry it.
+- **GPS** (fr-FR): the app can strip GPS from the compressed photo; en-AU and da already carry it.
 - **画質** (ja): image quality, the app's own label for the quality levels. Japanese is a first
   pass, so this is the only addition there.
 
@@ -121,7 +121,7 @@ réduire,taille,fichier,image,lot,qualité,JPEG,PNG,HEIC,EXIF,métadonnées,hors
 
 ## Description
 
-Two changes from the live text, in all five locales:
+Four changes from the live text, in all five locales:
 
 - **Formats:** "JPEG, PNG, WebP, and HEIC" becomes "JPEG, PNG, and HEIC". A WebP photo is left
   as it is; the app doesn't claim it anywhere now.
@@ -130,6 +130,17 @@ Two changes from the live text, in all five locales:
   April, the same reason the site dropped "Other compressors can't do this." (`a21c90c`). The
   first paragraph already says there is no duplicate album, so the paragraph keeps only the
   three steps.
+- **Metadata control** says what the setting does: it chooses what the compressed photo keeps.
+  "Strip GPS location" and "You decide what stays and what goes" are gone. Photos keeps its own
+  record of where a photo was taken, and the delete-and-recreate path copies that location onto
+  the new photo on purpose, so turning GPS off doesn't remove the location from the library. A
+  new line says so.
+- **The closing paragraph** loses "cannot be undone". Photos keeps the original of an in-place
+  edit and offers Revert to Original, and the delete-and-recreate path leaves the original in
+  Recently Deleted for 30 days (Apple documents both). It now says only that compressing
+  replaces the photo in your library, which is why the app asks you to confirm. The app's own
+  confirm screen still says "This cannot be undone" until the next build; that over-warns
+  rather than under-warns.
 
 Everything else is the live text, word for word.
 
@@ -150,10 +161,8 @@ FORMATS
 • Each photo keeps its original format
 
 METADATA CONTROL
-• Keep or remove date and time
-• Strip GPS location
-• Remove camera settings, copyright info, or Apple data
-• You decide what stays and what goes
+• Choose what the compressed photo keeps: date and time, GPS location, camera settings, copyright info, and Apple data
+• Photos keeps its own record of where each photo was taken, so turning GPS off doesn't remove the location from your library
 
 PRIVATE BY DEFAULT
 • Everything happens on your device
@@ -164,7 +173,7 @@ PRIVATE BY DEFAULT
 WORKS WITH ICLOUD
 • iCloud photos are downloaded, compressed, and saved back
 
-Compressing replaces your originals and cannot be undone, so TrimrPix shows the estimated saving first and asks you to slide to confirm before anything changes.
+Compressing replaces the photo in your library, so TrimrPix shows the estimated saving first and asks you to slide to confirm before anything changes.
 
 TrimrPix is open source. There is also a Mac version with a few extra features.
 ```
@@ -186,10 +195,8 @@ FORMATER
 • Hvert billede beholder sit oprindelige format
 
 METADATA-KONTROL
-• Behold eller fjern dato og tid
-• Fjern GPS-placering
-• Fjern kameraindstillinger, ophavsret eller Apple-data
-• Du bestemmer, hvad der bliver, og hvad der fjernes
+• Vælg, hvad det komprimerede billede beholder: dato og tid, GPS-placering, kameraindstillinger, ophavsret og Apple-data
+• Fotos gemmer selv, hvor hvert billede er taget, så placeringen forsvinder ikke fra dit bibliotek, når du slår GPS fra
 
 PRIVAT SOM STANDARD
 • Alt sker på din enhed
@@ -200,7 +207,7 @@ PRIVAT SOM STANDARD
 VIRKER MED ICLOUD
 • iCloud-billeder downloades, komprimeres og gemmes tilbage
 
-Komprimering erstatter dine originaler og kan ikke fortrydes, så TrimrPix viser den anslåede besparelse først og beder dig skubbe for at bekræfte, før noget ændres.
+Komprimering erstatter billedet i dit bibliotek, så TrimrPix viser den anslåede besparelse først og beder dig skubbe for at bekræfte, før noget ændres.
 
 TrimrPix er open source. Der findes også en Mac-version med et par ekstra funktioner.
 ```
@@ -222,10 +229,8 @@ FORMATE
 • Jedes Foto behält sein ursprüngliches Format
 
 METADATEN-KONTROLLE
-• Datum und Uhrzeit behalten oder entfernen
-• GPS-Standort entfernen
-• Kameraeinstellungen, Copyright oder Apple-Daten entfernen
-• Du entscheidest, was bleibt und was verschwindet
+• Wähle, was das komprimierte Foto behält: Datum und Uhrzeit, GPS-Standort, Kameraeinstellungen, Copyright und Apple-Daten
+• Fotos speichert selbst, wo jedes Foto aufgenommen wurde. Wenn du GPS ausschaltest, verschwindet der Standort also nicht aus deiner Mediathek
 
 STANDARDMÄSSIG PRIVAT
 • Alles passiert auf deinem Gerät
@@ -236,7 +241,7 @@ STANDARDMÄSSIG PRIVAT
 FUNKTIONIERT MIT ICLOUD
 • iCloud-Fotos werden heruntergeladen, komprimiert und zurückgespeichert
 
-Komprimieren ersetzt deine Originale und kann nicht rückgängig gemacht werden. Deshalb zeigt TrimrPix zuerst die geschätzte Ersparnis und bittet dich, zum Bestätigen zu wischen, bevor sich etwas ändert.
+Komprimieren ersetzt das Foto in deiner Mediathek. Deshalb zeigt TrimrPix zuerst die geschätzte Ersparnis und bittet dich, zum Bestätigen zu wischen, bevor sich etwas ändert.
 
 TrimrPix ist Open Source. Es gibt auch eine Mac-Version mit ein paar zusätzlichen Funktionen.
 ```
@@ -258,10 +263,8 @@ FORMATS
 • Chaque photo conserve son format d'origine
 
 CONTRÔLE DES MÉTADONNÉES
-• Conserver ou supprimer la date et l'heure
-• Supprimer la position GPS
-• Supprimer les réglages de l'appareil, les droits d'auteur ou les données Apple
-• Vous décidez ce qui reste et ce qui part
+• Choisissez ce que la photo compressée conserve : date et heure, position GPS, réglages de l'appareil, droits d'auteur et données Apple
+• Photos garde sa propre trace du lieu de chaque photo : désactiver le GPS ne retire donc pas la position de votre photothèque
 
 PRIVÉ PAR DÉFAUT
 • Tout se passe sur votre appareil
@@ -272,7 +275,7 @@ PRIVÉ PAR DÉFAUT
 FONCTIONNE AVEC ICLOUD
 • Les photos iCloud sont téléchargées, compressées et réenregistrées
 
-La compression remplace vos originaux et est irréversible ; TrimrPix affiche donc l'économie estimée d'abord et vous demande de glisser pour confirmer avant tout changement.
+La compression remplace la photo dans votre photothèque ; TrimrPix affiche donc l'économie estimée d'abord et vous demande de glisser pour confirmer avant tout changement.
 
 TrimrPix est open source. Il existe aussi une version Mac avec quelques fonctions supplémentaires.
 ```
@@ -294,10 +297,8 @@ TrimrPixは、ひとつのことをうまくこなすために作りました。
 • 各写真は元のフォーマットのまま
 
 メタデータの管理
-• 日時を残す／削除する
-• GPS位置情報を削除する
-• カメラ設定、著作権情報、Appleのデータを削除する
-• 何を残し何を削除するかはあなた次第
+• 圧縮後の写真に残す情報を選べます：日時、GPS位置情報、カメラ設定、著作権情報、Appleのデータ
+• 写真アプリは撮影場所を独自に記録しているため、GPSをオフにしてもライブラリから位置情報は消えません
 
 プライバシー重視
 • すべて端末上で処理
@@ -308,7 +309,7 @@ TrimrPixは、ひとつのことをうまくこなすために作りました。
 iCloudに対応
 • iCloudの写真はダウンロードして圧縮し、元に戻して保存します
 
-圧縮すると元の写真が置き換えられ、取り消せません。そのためTrimrPixはまず推定の削減量を表示し、変更前にスライドでの確定を求めます。
+圧縮するとライブラリ内の写真が置き換えられます。そのためTrimrPixはまず推定の削減量を表示し、変更前にスライドでの確定を求めます。
 
 TrimrPixはオープンソースです。macOS版もあり、いくつか追加機能があります。
 ```
@@ -397,8 +398,10 @@ Not changed in this draft, because each one is a decision rather than a correcti
 - **"$1.99" in the en-AU description.** en-AU is the primary language, so this text also serves
   storefronts where the price isn't US$1.99, Australia's included. The other four locales already
   say "one-time purchase" without a price.
-- **"cannot be undone"** in the description's closing paragraph. In the simulator, Photos keeps
-  the original of an in-place edit (it can be reverted in Photos), and the fallback path puts the
-  original in Recently Deleted for 30 days. The app's confirm screen says the same words, so
-  changing the listing alone would contradict the app.
+- **The space claims, pending a test on a device.** The da, de-DE and fr-FR subtitles ("frigør
+  plads", "spart Platz", "libère l'espace"), the ja name (容量節約) and the en-AU keyword "space"
+  say the app frees space. In the simulator, compressing in place made the library larger,
+  because Photos keeps each original. Check that on a device with the 1.5.1 TestFlight build
+  before the hub fills these fields. If it holds, name, subtitle and keywords get a new set from
+  the hub, designed as one set as always.
 - **"resize"** in the en-AU keywords. The app never changes a photo's pixel dimensions.
