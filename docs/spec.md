@@ -41,7 +41,7 @@ PNG bruger median-cut farve-kvantisering ved Good/Smaller for at reducere filst�
 
 ### Billeder der springes over
 
-Før der røres ved Photos, afgør `CompressionService.skipReason` om et billede skal lades være (#71):
+Før der skrives noget, afgør to tjek, om et billede skal lades være (#71): `CompressionService.formatSkipReason` på pickerens bytes, før der røres ved Photos, og `CompressionService.targetSkipReason` på størrelsen af billedets aktuelle version i biblioteket (`PHImageManager`, `version = .current`). Ikke `PHContentEditingInput.fullSizeImageURL`: appen accepterer alle tidligere justeringer, så den URL peger på den uredigerede original. Pickerens bytes kan være en genkodet kopi med en anden størrelse (en JPEG på 1,27 MB kom som 993 KB), så de bruges ikke til at måle målstørrelsen.
 
 | Årsag | Hvornår | Besked på resultatskærmen |
 |-------|---------|---------------------------|
