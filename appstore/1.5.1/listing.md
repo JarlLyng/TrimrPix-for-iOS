@@ -14,7 +14,7 @@ Counted, in characters:
 |---|---|---|---|---|---|
 | Description (4,000) | 1,283 | 1,358 | 1,450 | 1,486 | 660 |
 | Keywords (100) | 98 | 95 | 97 | 92 | 69 |
-| What's New (4,000) | 260 | 278 | 320 | 337 | 130 |
+| What's New (4,000) | 458 | 495 | 547 | 586 | 226 |
 
 ## What 1.5.1 carries
 
@@ -24,6 +24,12 @@ Counted, in characters:
 - **Target size really leaves smaller photos alone** (#73, #74). Photos already at or under
   the target are skipped: no re-encode, no edit in Photos. The size is measured on the photo as
   the library holds it now, not on the picker's copy, which can be a different size.
+- **Savings are counted from the photo in the library** (#76). Space saved, Avg. savings and the
+  running total used the picker's copy, which can be smaller or larger than the library's file.
+  The estimate before compressing still uses the picker's copy: reading the library needs Photos
+  access, which the app only asks for when you compress.
+- **A photo is never replaced with a bigger one** (#77). The output is compared with the photo in
+  the library, and a photo that wouldn't get smaller is left as it is and listed as Skipped.
 - **New screenshots** for iPhone and iPad, in place of the April set that still shows the format
   picker removed in 1.1. See [Screenshots](#screenshots).
 
@@ -316,38 +322,48 @@ TrimrPixはオープンソースです。macOS版もあり、いくつか追加�
 WebP photos are now left as they are and listed as Skipped. iOS can open WebP but can't save it, so they used to fail.
 
 In Target size mode, photos already under your target are now left alone, as the settings screen says. Before, they were saved again anyway.
+
+The saving shown after compressing is now worked out from the photo in your library. A photo is also never replaced with a bigger file: if compressing wouldn't make it smaller, it's left as it is.
 ```
 **da**
 ```
 WebP-billeder bliver nu ladt i fred og vist som Sprunget over. iOS kan åbne WebP, men ikke gemme det, så før fejlede de.
 
 I Målstørrelse-tilstand bliver billeder, der allerede er under din målstørrelse, nu ladt i fred, som indstillingerne siger. Før blev de gemt igen alligevel.
+
+Besparelsen, der vises efter komprimering, regnes nu ud fra billedet i dit bibliotek. Et billede bliver heller aldrig erstattet af en større fil: hvis komprimering ikke ville gøre det mindre, bliver det ladt i fred.
 ```
 **de-DE**
 ```
 WebP-Fotos bleiben jetzt unverändert und erscheinen als „Übersprungen“. iOS kann WebP öffnen, aber nicht speichern, deshalb schlugen sie bisher fehl.
 
 Im Modus „Zielgröße“ bleiben Fotos, die schon unter deiner Zielgröße liegen, jetzt unberührt, wie es die Einstellungen sagen. Bisher wurden sie trotzdem neu gespeichert.
+
+Die Ersparnis nach dem Komprimieren wird jetzt anhand des Fotos in deiner Mediathek berechnet. Außerdem wird ein Foto nie durch eine größere Datei ersetzt: Würde es durch das Komprimieren nicht kleiner, bleibt es unverändert.
 ```
 **fr-FR**
 ```
 Les photos WebP restent désormais telles quelles et apparaissent comme « Ignorées ». iOS sait ouvrir le WebP mais pas l'enregistrer, elles échouaient donc jusqu'ici.
 
 En mode Taille cible, les photos déjà sous votre taille cible ne sont plus touchées, comme l'indiquent les réglages. Jusqu'ici, elles étaient tout de même réenregistrées.
+
+L'économie affichée après la compression est désormais calculée à partir de la photo de votre photothèque. De plus, une photo n'est jamais remplacée par un fichier plus lourd : si la compression ne la rend pas plus légère, elle reste telle quelle.
 ```
 **ja**
 ```
 WebPの写真はそのまま残し、「スキップ」と表示するようになりました。iOSはWebPを開けますが保存できないため、これまでは失敗していました。
 
 目標サイズモードでは、すでに目標サイズ以下の写真に手を加えないようになりました。設定画面の説明どおりの動作です。
+
+圧縮後に表示する削減量は、ライブラリ内の写真をもとに計算するようになりました。また、写真をより大きなファイルで置き換えることはありません。圧縮しても小さくならない場合は、そのまま残します。
 ```
 
 ---
 
 ## Screenshots
 
-English only, shared by all five locales, as now. Captured on 2026-10-20 from the 1.5.1 build
-(build 2, with #73 and #74) in the iOS 26.5 simulator: light mode, status bar at 9:41. One run
+English only, shared by all five locales, as now. Captured on 2026-10-21 from the final 1.5.1
+build (build 2, with #73, #74, #76 and #77) in the iOS 26.5 simulator: light mode, status bar at 9:41. One run
 per device, the same three photos at Target size 1 MB, so the frames agree with each other.
 Composed with the hub's `tools/appstore_screenshots.py`, with the captions and order from
 `appstore/screenshots/README.md`.

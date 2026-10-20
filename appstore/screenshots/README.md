@@ -30,7 +30,7 @@ decision.
 4. **Select**, "Pay once. *No subscription.*" Position four is for the minority still looking.
 
 **Keep the set telling one story.** All four frames are one run: three photos, 5.9 MB, 1 MB
-target, an estimate of ~50% / ~2.9 MB, and 3.1 MB saved. The iPad set is the same run on the
+target, an estimate of ~50% / ~2.9 MB, and 3.5 MB saved. The iPad set is the same run on the
 iPad. A first pass for 1.5 had 500 KB in one frame and 1 MB in the next, which a shopper
 comparing them would notice.
 
@@ -40,7 +40,7 @@ The site's copies in `docs/` are resized from the same raw captures, not from th
 |---|---|
 | Device | iPhone 17 Pro Max, 1320 × 2868; iPad Pro 13-inch (M5), 2064 × 2752 |
 | Slot | iPhone 6.9 inch (Apple scales it down for the smaller iPhone slots, so it is the only iPhone size needed) and iPad 13 inch |
-| Captured | 2026-10-20, from the 1.5.1 build, iOS 26.5 simulator |
+| Captured | 2026-10-21, from the final 1.5.1 build, iOS 26.5 simulator |
 | Appearance | Light, English, status bar overridden to 9:41 with full battery and signal |
 
 ## Recapturing
