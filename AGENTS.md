@@ -22,7 +22,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 - **Website:** [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com)
 - **License:** [AGPL-3.0](LICENSE) — open source. Source-available; the polished build ships on the App Store. Derivatives must stay AGPL.
 - **Price:** $1.99 USD one-time (no in-app purchases, no subscription, no ads)
-- **Status:** Live on the App Store (app-id 6761081919). Current version **1.5.0** (released 2026-10-12)
+- **Status:** Live on the App Store (app-id 6761081919). Current version **1.5.1** (released 2026-10-21)
 - **Sister app:** [TrimrPix for macOS](https://trimrpix.iamjarl.com) — separate app with extra features (drag-and-drop, Watch Folder, AVIF/GIF). iOS and macOS have separate websites, support pages, and privacy policies, but link to each other.
 
 ## App features (be precise — do not invent features that don't exist)
@@ -139,27 +139,36 @@ Full list: `gh issue list --state closed`. These are the ones that shaped the co
 - ✅ **#23** Share Extension — closed as **won't do**: a share extension cannot do in-place replacement, which is the whole point of the app.
 - ✅ **#28/#29** Sentry hardening — crash screenshots and view hierarchy disabled; auth token kept out of the binary.
 - ✅ **#1–#4** Accessibility (Dynamic Type, Reduce Motion, non-color differentiation) and iPad support.
+- ✅ **#71, #73, #74, #76, #77** (1.5.1) A photo is skipped, not failed or rewritten, when its format can't be written (WebP), when it is already under the target, or when it wouldn't get smaller. Sizes and savings are measured on the library's photo, not the picker's copy.
 
 ### Photo replacement architecture
 In-place replacement via `PHContentEditingOutput` is attempted first. For photos Photos rejects with `PHPhotosErrorInvalidResource` (3302) — typically pristine HEIC with HDR gain map / spatial stereo on iOS 26 — the replacement falls back to creating a new asset from the compressed bytes (preserving creation date, location, and favorite) and deleting the original. All fallback photos within a batch are committed in a single `performChanges` transaction so the user sees exactly one iOS deletion confirmation sheet regardless of how many photos take the fallback path. See `replaceInPhotosLibrary` and `commitPendingFallbacks` in `ImageOptimizationViewModel`.
 
 ### Open issues — **always verify with `gh issue list`**
-This list drifts, and has done so twice already. Snapshot as of **2026-10-11**:
+This list drifts, and has done so twice already. Snapshot as of **2026-10-23**:
 
-**Waiting on a measurement, deliberately:** the use-case pages (#55) went live 2026-09-19 with a
-Search Console baseline recorded in the hub's `analytics-readout.md`. Read it around 2026-10-19
-before adding more. Note that store-click tracking was broken for that whole window (#64), so a
-zero there means nobody measured, not nobody clicked.
+**1.5.1 is live (2026-10-21)**, and with it the first new App Store posters since April:
+6.9", 6.3" and iPad 13", all composed from the same raw captures (`appstore/screenshots/`). App
+Store Connect now requires the 6.3" set as well as 6.9" (#80). The listing text is in
+`appstore/1.5.1/listing.md`. At the next submission, place the images first, not last: text
+fields nearly slipped twice and then landed, images are what keeps being left to the end.
 
-**Rides 1.5.1:** the App Store **screenshots**. The live set is still the April upload and shows
-the format picker removed in 1.1. New posters were captured from the 1.5.1 build for iPhone
-(`appstore/screenshots/6.9-inch/`) and iPad (`appstore/screenshots/13-inch-ipad/`), and the
-listing text is in `appstore/1.5.1/listing.md`. Place the images first at the submission, not
-last: text fields nearly slipped twice and then landed, images are what keeps being left to the end.
+**Next version:** #79 decides 1.6's direction: space comes back only once Recently Deleted is
+emptied, and in-place edits never free it, because Photos keeps the original. The posters move to
+the site's light identity, recorded in `appstore/screenshots/README.md`.
+
+**Use-case pages (#55):** the 2026-10-19 readout is done (hub `analytics-readout.md`). Google has
+discovered the three guides but never crawled them, so no more content pages until they are
+indexed. The owner requests them in Search Console; the sitemap's `lastmod` is now true (#70).
+
+**Site:** #67 (redesign on the design system's kit, one look with the Mac site; the readout
+cleared it to deploy whenever it's ready) · #66 (the design system's store button) · #70 (two
+points left: the Google Fonts request, which rides #61, and the guides' crawl).
 
 **Open technical:** #60 and #61 (adopt the design system's `.ijFont` and Outfit headings; worth
-doing together, and after 1.5 ships so there is a baseline), #65 (supply-chain hardening),
-#62 (iPhone Duo, deadline April 2027).
+doing together, now that 1.5 has shipped and there is a baseline), #65 (supply-chain hardening),
+#68 (VoiceOver: the listing declares it and nobody has verified it), #62 (iPhone Duo, deadline
+April 2027).
 
 **Open marketing:** #9 demo video · #13 Reddit/HN · #14 blog pitches · #44 Indie Hackers ·
 #48 llms.txt developer story (contradicts the hub's settled "llms.txt is not a lever"; worth
@@ -168,7 +177,13 @@ a community thread to link if one ever exists.
 
 ## Marketing site
 
-Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com). Sister app: [trimrpix.iamjarl.com](https://trimrpix.iamjarl.com) (macOS).
+Hosted on GitHub Pages at [trimrpixforios.iamjarl.com](https://trimrpixforios.iamjarl.com). Sister app: [trimrpix.iamjarl.com](https://trimrpix.iamjarl.com) (macOS).
+
+**Deploy:** `.github/workflows/deploy-pages.yml` deploys `docs/` on every push to `main` that
+touches it, or by hand (Pages source: GitHub Actions, since #70; it was the legacy branch build
+before). There is no Jekyll step, so files in `docs/` are served as they are. The deploy writes
+each sitemap `<lastmod>` from the last commit to that page (`tools/date_sitemap.py`): never
+hand-write one, and a sitemap URL without a file fails the deploy.
 
 ### Site structure
 | File | Purpose |
@@ -185,15 +200,15 @@ Hosted via GitHub Pages from `docs/` on `main` branch at [trimrpixforios.iamjarl
 - Canonical URLs, Open Graph, Twitter Cards on all pages
 - Schema.org `SoftwareApplication` + `FAQPage` structured data (JSON-LD)
 - BreadcrumbList JSON-LD on support.html and privacy.html
-- `sitemap.xml` and `robots.txt` in `docs/`
+- `sitemap.xml` (dated at deploy, see above) and `robots.txt` in `docs/`
 - Favicon set (`favicon-16/32.png`, `apple-touch-icon.png`), `site.webmanifest`, `theme-color` — generated from the app icon
 - `llms.txt` (GEO — structured app facts for AI answer engines)
 - AEO-optimized FAQ (answers under 60 words, direct answer first)
 - Developer personality in copy (E-E-A-T)
 - Cross-links to other IAMJARL projects (Made by Human, WODrounds, Wean Nicotine) in all footers
-- Apple Smart App Banner prepared as comment (activate with app-id when live)
-- Video section prepared as comment (activate with YouTube embed URL)
-- All App Store download links are `href="#"` — update with real URL when live
+- Apple Smart App Banner (`apple-itunes-app`) on the home page and the three guides
+- App Store links carry campaign parameters (`pt`, `ct=site`, `mt`) and a `store-click` event (#59, #64)
+- Hero served as AVIF at the size it is shown, with the PNG as fallback (#70)
 
 ### App Store Connect
 - **Primary Category:** Photo & Video · **Secondary:** Utilities · **Copyright:** 2026 IAMJARL
