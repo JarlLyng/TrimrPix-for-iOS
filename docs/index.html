@@ -244,8 +244,14 @@
             <p class="price-note">$1.99 &middot; Pay once &middot; Requires iOS 17 or later</p>
         </div>
         <div class="phone">
-            <img src="screenshot-hero.png" width="640" height="1391" fetchpriority="high"
-                 alt="TrimrPix configure screen showing quality and target size modes, metadata switches, and an estimated saving of 55 percent">
+            <!-- Shown at most 280px wide (.phone less its padding and border); the PNG is the fallback. -->
+            <picture>
+                <source type="image/avif"
+                        srcset="screenshot-hero-320.avif 320w, screenshot-hero-480.avif 480w, screenshot-hero-640.avif 640w"
+                        sizes="(max-width: 384px) calc(78vw - 20px), 280px">
+                <img src="screenshot-hero.png" width="640" height="1391" fetchpriority="high"
+                     alt="TrimrPix configure screen showing quality and target size modes, metadata switches, and an estimated saving of 55 percent">
+            </picture>
         </div>
     </div>
 </section>
