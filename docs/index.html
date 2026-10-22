@@ -11,7 +11,7 @@
     <meta name="theme-color" content="#0B0B0C" media="(prefers-color-scheme: dark)">
     <title>TrimrPix: Compress Photos on iPhone. No Duplicates.</title>
     <meta name="description" content="TrimrPix replaces your photos with smaller versions, right inside your Photos library. No 'Compressed' album to clean up. Fully offline. $1.99 once, no subscription, no ads.">
-    <meta name="keywords" content="in-place photo compressor iPhone, compress photos no duplicates, compress photos iPhone, reduce photo size iPhone, compress photo to target size, compress photo to specific size, free up space iPhone, photo compressor no ads, HEIC compressor, strip EXIF data iOS, replace original photos iPhone, WebP compressor iPhone">
+    <meta name="keywords" content="in-place photo compressor iPhone, compress photos no duplicates, compress photos iPhone, reduce photo size iPhone, compress photo to target size, compress photo to specific size, free up space iPhone, photo compressor no ads, HEIC compressor, strip EXIF data iOS, replace original photos iPhone">
     <link rel="canonical" href="https://trimrpixforios.iamjarl.com/">
     <!-- Open Graph -->
     <meta property="og:title" content="TrimrPix: Compress Photos on iPhone. No Duplicates.">
@@ -48,7 +48,7 @@
         "name": "TrimrPix for iOS",
         "operatingSystem": "iOS 17.0+",
         "applicationCategory": "PhotographyApplication",
-        "description": "Compress photos on iPhone in place. TrimrPix replaces the original photo with the compressed version, so there is no duplicate album, no cloud and no accounts. Supports JPEG, PNG, WebP, and HEIC with granular metadata control.",
+        "description": "Compress photos on iPhone in place. TrimrPix replaces the original photo with the compressed version, so there is no duplicate album, no cloud and no accounts. Supports JPEG, PNG, and HEIC with granular metadata control.",
         "downloadUrl": "https://apps.apple.com/app/id6761081919",
         "offers": {
             "@type": "Offer",
@@ -74,7 +74,7 @@
                 "name": "What image formats does TrimrPix support?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "JPEG, PNG, WebP, and HEIC. TrimrPix compresses each photo and keeps it in its original format, so a HEIC stays HEIC and a PNG stays PNG."
+                    "text": "JPEG, PNG, and HEIC. TrimrPix compresses each photo and keeps it in its original format, so a HEIC stays HEIC and a PNG stays PNG."
                 }
             },
             {
@@ -244,8 +244,14 @@
             <p class="price-note">$1.99 &middot; Pay once &middot; Requires iOS 17 or later</p>
         </div>
         <div class="phone">
-            <img src="screenshot-hero.png" width="640" height="1391" fetchpriority="high"
-                 alt="TrimrPix configure screen showing quality and target size modes, metadata switches, and an estimated saving of 55 percent">
+            <!-- Shown at most 280px wide (.phone less its padding and border); the PNG is the fallback. -->
+            <picture>
+                <source type="image/avif"
+                        srcset="screenshot-hero-320.avif 320w, screenshot-hero-480.avif 480w, screenshot-hero-640.avif 640w"
+                        sizes="(max-width: 384px) calc(78vw - 20px), 280px">
+                <img src="screenshot-hero.png" width="640" height="1391" fetchpriority="high"
+                     alt="TrimrPix configure screen showing quality and target size modes, metadata switches, and an estimated saving of 55 percent">
+            </picture>
         </div>
     </div>
 </section>
@@ -291,8 +297,8 @@
             </div>
             <div class="card">
                 <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.7"/><path d="m21 15-5-5L5 21"/></svg></div>
-                <h3>4 formats supported</h3>
-                <p>JPEG, PNG, WebP, and HEIC. Each photo is compressed in its original format and put right back in place.</p>
+                <h3>3 formats supported</h3>
+                <p>JPEG, PNG, and HEIC. Each photo is compressed in its original format and put right back in place.</p>
             </div>
             <div class="card">
                 <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-8.5"/><path d="M12.5 17H4"/><circle cx="16" cy="17" r="3"/><circle cx="8" cy="7" r="3"/></svg></div>
@@ -386,7 +392,7 @@
         <div class="faq">
             <div class="faq-item">
                 <h3>What image formats does TrimrPix support?</h3>
-                <p>JPEG, PNG, WebP, and HEIC. TrimrPix compresses each photo and keeps it in its original format (a HEIC stays HEIC, a PNG stays PNG), so it slots straight back into your library in place.</p>
+                <p>JPEG, PNG, and HEIC. TrimrPix compresses each photo and keeps it in its original format (a HEIC stays HEIC, a PNG stays PNG), so it slots straight back into your library in place.</p>
             </div>
             <div class="faq-item">
                 <h3>Can I compress to a specific file size?</h3>
