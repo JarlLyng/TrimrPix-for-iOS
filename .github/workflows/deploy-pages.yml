@@ -1,0 +1,47 @@
+# Deploy the marketing site (docs/) to GitHub Pages.
+# Runs on a push to main that changes docs/ or this deploy, or by hand.
+# Needs Settings → Pages → Source: GitHub Actions (it was "Deploy from a branch" before #70).
+
+name: Deploy marketing site
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'tools/date_sitemap.py', '.github/workflows/deploy-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # Full history: the sitemap step dates each page by its last commit.
+          fetch-depth: 0
+
+      # Each page's <lastmod> is the date of the last commit to its file (#70). The
+      # committed sitemap has none, so a date is never hand-written or the build date.
+      - name: Date the sitemap from git
+        run: python3 tools/date_sitemap.py
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
