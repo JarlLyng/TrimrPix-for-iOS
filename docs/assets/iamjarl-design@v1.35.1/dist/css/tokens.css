@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v1.11.0 — generated, do not edit */
+/* IAMJARL Design Tokens v1.35.1: generated, do not edit */
 
 :root {
   /* Spacing */
@@ -16,8 +16,8 @@
   --ij-radius-lg: 16px;
 
   /* Typography */
-  --ij-font-ui: system-ui;
-  --ij-font-mono: ui-monospace;
+  --ij-font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ij-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   --ij-font-size-xs: 12px;
   --ij-font-size-sm: 14px;
@@ -25,6 +25,9 @@
   --ij-font-size-lg: 18px;
   --ij-font-size-xl: 24px;
   --ij-font-size-xxl: 36px;
+  --ij-font-size-numeral-sm: 32px;
+  --ij-font-size-numeral-md: 56px;
+  --ij-font-size-numeral-lg: 80px;
 
   --ij-line-height-xs: 16px;
   --ij-line-height-sm: 20px;
@@ -42,12 +45,12 @@
   --ij-shadow-md: 0px 4px 8px rgba(0, 0, 0, 0.08);
   --ij-shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.12);
 
-  /* Motion — duration */
+  /* Motion: duration */
   --ij-duration-fast: 150ms;
   --ij-duration-normal: 250ms;
   --ij-duration-slow: 400ms;
 
-  /* Motion — easing */
+  /* Motion: easing */
   --ij-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ij-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
 
@@ -64,6 +67,39 @@
   --ij-container-md: 900px;
   --ij-container-lg: 1080px;
   --ij-container-xl: 1400px;
+
+  /* Marketing scale (web only): fluid type and space for marketing pages */
+  --ij-mkt-display-size: clamp(3.25rem, 2.1105rem + 4.8619vw, 6rem);
+  --ij-mkt-display-leading: 1.02;
+  --ij-mkt-display-tracking: -0.02em;
+  --ij-mkt-headline-size: clamp(2.125rem, 1.5552rem + 2.4309vw, 3.5rem);
+  --ij-mkt-headline-leading: 1.08;
+  --ij-mkt-headline-tracking: -0.015em;
+  --ij-mkt-title-size: clamp(1.375rem, 1.2196rem + 0.663vw, 1.75rem);
+  --ij-mkt-title-leading: 1.25;
+  --ij-mkt-title-tracking: -0.005em;
+  --ij-mkt-lead-size: clamp(1.1875rem, 1.0839rem + 0.442vw, 1.4375rem);
+  --ij-mkt-lead-leading: 1.5;
+  --ij-mkt-lead-tracking: 0em;
+  --ij-mkt-body-size: clamp(1.125rem, 1.0991rem + 0.1105vw, 1.1875rem);
+  --ij-mkt-body-leading: 1.6;
+  --ij-mkt-body-tracking: 0em;
+  --ij-mkt-small-size: clamp(0.9375rem, 0.9116rem + 0.1105vw, 1rem);
+  --ij-mkt-small-leading: 1.5;
+  --ij-mkt-small-tracking: 0em;
+  --ij-mkt-numeral-size: clamp(4rem, 2.3425rem + 7.0718vw, 8rem);
+  --ij-mkt-numeral-leading: 1;
+  --ij-mkt-numeral-tracking: -0.03em;
+  --ij-mkt-wordmark-size: clamp(4.75rem, 0.5028rem + 18.1215vw, 15rem);
+  --ij-mkt-wordmark-leading: 0.9;
+  --ij-mkt-wordmark-tracking: -0.03em;
+  --ij-mkt-space-gutter: clamp(1.25rem, 0.1105rem + 4.8619vw, 4rem);
+  --ij-mkt-space-stack: clamp(1.25rem, 0.9392rem + 1.326vw, 2rem);
+  --ij-mkt-space-block: clamp(3rem, 1.9641rem + 4.4199vw, 5.5rem);
+  --ij-mkt-space-section: clamp(5.5rem, 3.4282rem + 8.8398vw, 10.5rem);
+  --ij-mkt-width-content: 1100px;
+  --ij-mkt-width-text: 640px;
+  --ij-mkt-width-narrow: 760px;
 
   /* Focus ring */
   --ij-focus-width: 2px;
@@ -97,8 +133,8 @@
 
   /* Mode colors (light default) */
   --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
-  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only — no text colour clears AA */
-  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only, no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only, no text colour clears AA */
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -126,7 +162,7 @@
   :root {
     --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
     --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
-    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only — no text colour clears AA */
+    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
     --ij-color-primary: #D0FF00;
     --ij-color-on-primary: #000000;
     --ij-color-primary-hover: #B8E000;
@@ -154,8 +190,8 @@
 /* Explicit class overrides for manual mode switching */
 .light {
   --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
-  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only — no text colour clears AA */
-  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only, no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only, no text colour clears AA */
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -182,7 +218,7 @@
 .dark {
   --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
   --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
-  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only — no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
   --ij-color-primary: #D0FF00;
   --ij-color-on-primary: #000000;
   --ij-color-primary-hover: #B8E000;

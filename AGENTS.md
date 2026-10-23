@@ -162,11 +162,11 @@ discovered the three guides but never crawled them, so no more content pages unt
 indexed. The owner requests them in Search Console; the sitemap's `lastmod` is now true (#70).
 
 **Site:** #67 (redesign on the design system's kit, one look with the Mac site; the readout
-cleared it to deploy whenever it's ready) · #66 (the design system's store button) · #70 (two
-points left: the Google Fonts request, which rides #61, and the guides' crawl).
+cleared it to deploy whenever it's ready) · #66 (the design system's store button). The site
+makes no third-party font request any more (#70, #61): see *Design system and fonts* below.
 
-**Open technical:** #60 and #61 (adopt the design system's `.ijFont` and Outfit headings; worth
-doing together, now that 1.5 has shipped and there is a baseline), #65 (supply-chain hardening),
+**Open technical:** #60 (adopt the design system's `.ijFont` in the app, now that 1.5 has
+shipped and there is a baseline), #65 (supply-chain hardening),
 #68 (VoiceOver: the listing declares it and nobody has verified it), #62 (iPhone Duo, deadline
 April 2027).
 
@@ -184,6 +184,16 @@ touches it, or by hand (Pages source: GitHub Actions, since #70; it was the lega
 before). There is no Jekyll step, so files in `docs/` are served as they are. The deploy writes
 each sitemap `<lastmod>` from the last commit to that page (`tools/date_sitemap.py`): never
 hand-write one, and a sitemap URL without a file fails the deploy.
+
+**Design system and fonts:** the site serves the design system from its own origin, one release
+copied into `docs/assets/iamjarl-design@vX.Y.Z/`, never from jsDelivr or Google Fonts. To move to
+a new release, run the design system's own script from that tag, `dist/vendor.mjs`:
+`node vendor.mjs vX.Y.Z --root docs`. It copies only what the pages load, checks each file
+against the tag's hashes, repoints every page and removes the old copy; `--check` changes nothing.
+Headings and the wordmark use the identity's display face, Bricolage Grotesque, from that copy
+(iamjarl-design 1.32.0 replaced Outfit for both TrimrPix sites). Body copy is the system UI face,
+`--ij-font-ui`. The identity sheet (`dist/identity/trimrpix-ios.css`) is not loaded yet: it turns
+the site light only, so it comes with the redesign (#67).
 
 ### Site structure
 | File | Purpose |

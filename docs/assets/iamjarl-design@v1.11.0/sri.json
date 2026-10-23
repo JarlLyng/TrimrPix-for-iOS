@@ -1,9 +1,0 @@
-{
-  "version": "1.11.0",
-  "algorithm": "sha384",
-  "files": {
-    "dist/css/tokens.css": "sha384-tRpvcOTDD7ybqs2bDjvmA5z6EqQwOXNPf9QWNaKq4HXLfjkkQpzdZ14sDLffoHTN",
-    "dist/css/tokens.shadow.css": "sha384-NBOQqbWxAsZrO0WEcMLs+DXeaKUsbqMYPhsnbLTytt0Mls6VFnkseO3zcCAskrkB",
-    "dist/components/ij-footer.js": "sha384-aTSJ9Z75tCUyCsmDazVC1dLzmCAUYPh+lSH9Y1fIkp8e1FJ0jX7XV8y4zgFLPYub"
-  }
-}
