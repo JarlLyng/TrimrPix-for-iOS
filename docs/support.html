@@ -43,11 +43,10 @@
         ]
     }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/iamjarl-design@v1.11.0/dist/css/tokens.css"
-          integrity="sha384-tRpvcOTDD7ybqs2bDjvmA5z6EqQwOXNPf9QWNaKq4HXLfjkkQpzdZ14sDLffoHTN">
+    <link rel="stylesheet" href="/assets/iamjarl-design@v1.35.1/dist/css/tokens.css"
+          integrity="sha384-dwNVnicsf+dtw01r5p08OIz0PAoO6RGpCdqZ4uOMnjy52ZvPD8H6/XoSie5rGYTe">
+    <link rel="stylesheet" href="/assets/iamjarl-design@v1.35.1/dist/fonts/bricolage-grotesque.css"
+          integrity="sha384-Vg5EX9lkY7e8z/X77Jg7W0QaO3I3Iy4nnmJPaooQRi2yrnR0Kok10GyXGdt9rFAk">
     <!-- Umami: privacy-friendly, cookieless analytics (no personal data, no cookies) -->
     <script defer src="https://umami-iamjarl.vercel.app/script.js" data-website-id="9fb3149f-01da-4ce8-ae94-2da5b59fe3e8"></script>
     <style>
@@ -61,6 +60,8 @@
             --text-secondary: var(--ij-color-text-secondary, #555555);
             --text-tertiary:  color-mix(in srgb, var(--ij-color-text-primary, #000) 55%, transparent);
             --border:         var(--ij-color-border-subtle, #e5e5e5);
+            --font-ui:        var(--ij-font-ui, system-ui, -apple-system, "Segoe UI", sans-serif);
+            --font-display:   var(--ij-font-display, "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif);
             --radius: 16px;
             --radius-sm: 10px;
             --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
@@ -70,12 +71,14 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--font-ui);
             background: var(--bg);
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
+
+        h1, h2, h3, .logo { font-family: var(--font-display); }
 
         .container {
             max-width: 640px;
@@ -283,8 +286,8 @@
         <a href="https://trimrpix.iamjarl.com/support" class="section-link">Go to Mac support</a>
     </div>
 
-<script type="module" src="/assets/iamjarl-design@v1.11.0/dist/components/ij-footer.js"
-        integrity="sha384-aTSJ9Z75tCUyCsmDazVC1dLzmCAUYPh+lSH9Y1fIkp8e1FJ0jX7XV8y4zgFLPYub"></script>
+<script type="module" src="/assets/iamjarl-design@v1.35.1/dist/components/ij-footer.js"
+        integrity="sha384-i37426tUYyrzNktVPZXGI26zfSccQnLf7v7bj8+w9GMsCiimLXduUK//vx30mU/g"></script>
 <ij-footer app="trimrpix-ios" tagline="Compress photos on iPhone. In place, no duplicates.">
     <a slot="links" href="./">Home</a>
     <a slot="links" href="./#faq">FAQ</a>
