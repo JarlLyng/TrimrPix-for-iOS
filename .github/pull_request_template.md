@@ -9,4 +9,4 @@
 - [ ] No hardcoded colors/spacing/type — uses `iamjarl-design` tokens (if applicable)
 - [ ] No new tracking, accounts, subscriptions, or off-device data (product DNA)
 - [ ] Docs / CHANGELOG updated if behavior changed
-- [ ] No competitive-sensitive strategy added to this public repo (that goes in the private hub)
+- [ ] No competitive-sensitive strategy added to this public repo

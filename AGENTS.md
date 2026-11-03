@@ -75,7 +75,7 @@ iOS app that compresses photos from the user's Photos library **in-place** (orig
 
 ## Architecture at a glance
 
-MVVM, single ViewModel, step-based navigation. Details: [docs/architecture.md](docs/architecture.md).
+MVVM, single ViewModel, step-based navigation. Details: [specs/architecture.md](specs/architecture.md).
 
 ```
 Views (SwiftUI)  →  ImageOptimizationViewModel (@Observable, @MainActor)  →  CompressionService (nonisolated, Sendable)

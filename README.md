@@ -65,8 +65,8 @@ Requirements: iOS 17.0 or later on iPhone or iPad (a universal app), with full o
 **Documentation:**
 
 - [`AGENTS.md`](AGENTS.md): project context for developers and AI assistants.
-- [`docs/spec.md`](docs/spec.md): the product specification.
-- [`docs/architecture.md`](docs/architecture.md): the technical architecture.
+- [`specs/spec.md`](specs/spec.md): the product specification.
+- [`specs/architecture.md`](specs/architecture.md): the technical architecture.
 
 ### Contributing
 
