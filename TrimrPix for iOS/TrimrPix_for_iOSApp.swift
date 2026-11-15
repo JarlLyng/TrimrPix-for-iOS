@@ -149,6 +149,23 @@ struct TrimrPix_for_iOSApp: App {
             event.context = context
         }
 
+        // The bundle path in every frame and debug image carries a container
+        // UUID that iOS reassigns on each install and update, so it is a
+        // per-install ID hiding inside something that looks like a file path.
+        for exception in event.exceptions ?? [] {
+            for frame in exception.stacktrace?.frames ?? [] {
+                frame.package = DiagnosticsRedaction.redactContainerPaths(frame.package)
+            }
+        }
+        for thread in event.threads ?? [] {
+            for frame in thread.stacktrace?.frames ?? [] {
+                frame.package = DiagnosticsRedaction.redactContainerPaths(frame.package)
+            }
+        }
+        for image in event.debugMeta ?? [] {
+            image.codeFile = DiagnosticsRedaction.redactContainerPaths(image.codeFile)
+        }
+
         if event.user == nil {
             event.user = User(userId: anonymousUserID)
         } else if event.user?.userId != anonymousUserID {

@@ -257,15 +257,19 @@
     <div class="policy-section">
         <h2>Data collection</h2>
         <p>TrimrPix does not collect personal data. The app does not use analytics, advertising frameworks, or user tracking of any kind.</p>
-        <p>The only data transmitted from the app is anonymous crash reports via Sentry, which include:</p>
+        <p>The only data transmitted from the app is anonymous diagnostics via Sentry, which include:</p>
         <ul>
             <li>Crash stack traces (technical error information)</li>
+            <li>Performance measurements such as launch time and whether the app froze</li>
+            <li>Other diagnostics Apple reports about the app, such as hangs, energy use and disk activity (via MetricKit)</li>
             <li>Device type and iOS version</li>
             <li>App version</li>
         </ul>
+        <p>In App Store terms these are Crash Data, Performance Data and Other Diagnostic Data, all of them not linked to you and never used for tracking.</p>
         <p>Crash reports do not contain photos, personal identifiers, Apple ID, email addresses, or any information that can be linked to your identity.</p>
         <p>That includes identifiers you never see. Crash reporting SDKs normally attach a random ID that stays the same for as long as the app is installed, which would let separate reports be recognised as coming from the same phone. TrimrPix removes them: every report is sent as the same shared user, <code>anonymous</code>, with no installation ID, no device ID and no hash of your device's identifier. Session tracking is switched off for the same reason, because it cannot be sent without such an ID.</p>
-        <p>Nothing in a crash report identifies a photo either. Reports say what went wrong and how many photos a failure affected, never which ones.</p>
+        <p>That also covers identifiers buried in technical detail rather than stated as fields. A crash report lists file paths, and on iOS an app's own path contains a code that changes every time the app is installed or updated. TrimrPix replaces that code before the report is sent.</p>
+        <p>Nothing in a report identifies a photo either. Reports say what went wrong and how many photos a failure affected, never which ones.</p>
     </div>
 
     <div class="policy-section">
