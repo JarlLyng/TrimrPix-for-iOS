@@ -730,6 +730,14 @@
         "ja" : { "stringUnit" : { "state" : "translated", "value" : "削除されます" } }
       }
     },
+    "You chose not to replace these photos, so they were left as they are." : {
+      "localizations" : {
+        "da" : { "stringUnit" : { "state" : "translated", "value" : "Du valgte ikke at erstatte disse billeder, så de er ikke blevet ændret." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du hast dich dagegen entschieden, diese Fotos zu ersetzen, daher wurden sie nicht verändert." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous avez choisi de ne pas remplacer ces photos, elles n'ont donc pas été modifiées." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "これらの写真を置き換えないことを選択したため、変更していません。" } }
+      }
+    },
     "You've saved %@ with TrimrPix so far." : {
       "localizations" : {
         "da" : { "stringUnit" : { "state" : "translated", "value" : "Du har indtil videre sparet %@ med TrimrPix." } },

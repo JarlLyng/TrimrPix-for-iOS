@@ -511,8 +511,15 @@ final class ImageOptimizationViewModel {
                 } catch {
                     if !Task.isCancelled {
                         let trimrError = error as? TrimrPixError ?? .unknown(underlyingError: error)
-                        images[i].error = trimrError
-                        Self.reportPhotoError(trimrError, assetIdentifier: images[i].assetIdentifier)
+                        if Self.isUserCancellation(trimrError) {
+                            // The in-place replacement can hit the same
+                            // confirmation. A decline is a choice, not a
+                            // failure.
+                            images[i].skipReason = .userCancelled
+                        } else {
+                            images[i].error = trimrError
+                            Self.reportPhotoError(trimrError)
+                        }
                     }
                 }
 
@@ -577,8 +584,10 @@ final class ImageOptimizationViewModel {
         userFormat: OutputFormat,
         metadataOptions: MetadataStrippingOptions
     ) async throws -> ReplaceOutcome {
+        // The photo's local identifier used to be here. Breadcrumbs ride along
+        // with every event, so it left the device on each report, which is the
+        // user's own data (#91). The sequence reads just as well without it.
         Self.breadcrumb("replace.start", data: [
-            "asset": assetIdentifier,
             "originalBytes": originalData.count,
             "userFormat": "\(userFormat)",
             "mode": "\(mode)"
@@ -862,13 +871,23 @@ final class ImageOptimizationViewModel {
                 "count": fallbacks.count
             ])
 
-            // User declined the deletion confirmation, or Photos failed to
-            // commit for some other reason. Mark everything as errored so the
-            // user sees what didn't work rather than silent loss.
-            let fallbackError = TrimrPixError.assetReplaceFailed(underlyingError: error)
-            for fallback in fallbacks {
-                images[fallback.imageIndex].error = fallbackError
-                Self.reportPhotoError(fallbackError, assetIdentifier: images[fallback.imageIndex].assetIdentifier)
+            if Self.isUserCancellation(error) {
+                // The user declined the deletion confirmation. Nothing was
+                // replaced and nothing is wrong, so these are skipped, not
+                // failed, and nothing goes to Sentry.
+                for fallback in fallbacks {
+                    images[fallback.imageIndex].skipReason = .userCancelled
+                }
+            } else {
+                // Photos failed to commit. Mark everything as errored so the
+                // user sees what didn't work rather than silent loss. The
+                // transaction is atomic, so this is one failure covering the
+                // whole batch: report it once, not once per photo.
+                let fallbackError = TrimrPixError.assetReplaceFailed(underlyingError: error)
+                for fallback in fallbacks {
+                    images[fallback.imageIndex].error = fallbackError
+                }
+                Self.reportPhotoError(fallbackError, photoCount: fallbacks.count)
             }
         }
 
@@ -923,28 +942,56 @@ final class ImageOptimizationViewModel {
         SentrySDK.addBreadcrumb(crumb)
     }
 
-    private static func reportPhotoError(_ error: TrimrPixError, assetIdentifier: String) {
-        // Build an NSError with the underlying cause so Sentry groups sensibly
-        // and we keep full domain/code info from the Photos framework.
-        let underlying: Error? = {
-            switch error {
-            case .assetReplaceFailed(let u), .compressionFailed(_, let u),
-                 .imageLoadFailed(let u), .unknown(let u):
-                return u
-            default:
-                return nil
-            }
-        }()
+    /// The underlying cause, if this error wraps one.
+    private static func underlyingError(of error: TrimrPixError) -> Error? {
+        switch error {
+        case .assetReplaceFailed(let u), .compressionFailed(_, let u),
+             .imageLoadFailed(let u), .unknown(let u):
+            return u
+        default:
+            return nil
+        }
+    }
 
+    /// True when Photos refused because the user declined, not because
+    /// anything went wrong.
+    ///
+    /// Tapping "Don't Allow" on the deletion sheet fails the whole
+    /// `performChanges` with `PHPhotosError.userCancelled` (3072). The app used
+    /// to treat that as a replacement failure, so a deliberate choice showed
+    /// the user an error screen and sent Sentry one event per photo in the
+    /// batch — a burst of identical "errors" within a second (#91).
+    private static func isUserCancellation(_ error: Error) -> Bool {
+        var candidates: [Error] = [error]
+        if let trimr = error as? TrimrPixError, let underlying = underlyingError(of: trimr) {
+            candidates.append(underlying)
+        }
+        return candidates.contains { candidate in
+            let nsError = candidate as NSError
+            return nsError.domain == PHPhotosErrorDomain
+                && nsError.code == PHPhotosError.userCancelled.rawValue
+        }
+    }
+
+    /// Report a photo failure to Sentry.
+    ///
+    /// `photoCount` is how many photos the failure covers, so a failed batch is
+    /// one event rather than one per photo. Nothing here identifies the photo or
+    /// the library: the asset identifier used to travel in this context, which
+    /// is the user's own data and breaks the portfolio's privacy rule (#91).
+    private static func reportPhotoError(_ error: TrimrPixError, photoCount: Int = 1) {
+        // Report the underlying cause where there is one, so Sentry groups
+        // sensibly and keeps the Photos framework's domain and code.
+        let underlying = underlyingError(of: error)
         let reportable = underlying ?? error
         SentrySDK.capture(error: reportable) { scope in
             scope.setTag(value: "compression", key: "feature")
             scope.setTag(value: "\(error)", key: "trimrpix_error")
             scope.setContext(value: [
-                "asset_identifier": assetIdentifier,
                 "trimrpix_error_case": "\(error)",
                 "localized": error.localizedDescription,
-                "underlying": underlying.map { "\($0)" } ?? "nil"
+                "underlying": underlying.map { "\($0)" } ?? "nil",
+                "photo_count": photoCount
             ], key: "photo_compression")
         }
     }

@@ -87,6 +87,18 @@ The user chooses which metadata categories are **kept** (toggle ON = keep, OFF =
 - Memory is released as the batch proceeds
 - iCloud photos are supported (downloaded automatically when needed)
 
+## Telemetry
+
+The app sends anonymous crash and performance diagnostics through Sentry, and nothing else. There is no analytics SDK, no advertising framework and no usage tracking.
+
+Anonymous is a recipe rather than the SDK's default (#90). Left alone, sentry-cocoa attaches a random per-installation ID as `user.id` and a hash of the vendor identifier as `contexts.app.device_app_hash`, both stable for the life of the install. The app therefore sets one shared user, `anonymous`, before anything can be sent, and strips those contexts in `beforeSend`, which in sentry-cocoa also covers transactions.
+
+Session tracking is **off**. A session envelope always carries `did`, which `SentryHub` fills from `SentryInstallation` without consulting the user, and sessions bypass `beforeSend` entirely, so the ID cannot be removed while sessions are on. Crash-free rates come from Xcode Organizer instead. This is worth re-checking on an SDK upgrade.
+
+The environment is `debug`, `testflight` or `production`, so our own test runs are not read as real users' crashes. A failure reports the Photos framework's domain and code, how many photos it affected, and nothing that identifies a photo or the library (#91).
+
+A user declining Photos' confirmation is not reported at all: it is a choice, and it is recorded as a skip.
+
 ## Error handling
 
 - Missing photo access → alert with "Open Settings" (blocks compression)

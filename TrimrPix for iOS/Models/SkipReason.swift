@@ -21,6 +21,11 @@ nonisolated enum SkipReason: Hashable, Sendable {
     /// The compressed photo came out no smaller than the one in the library,
     /// so writing it would save nothing or make the photo bigger.
     case wouldNotShrink
+    /// The user declined Photos' confirmation, so nothing was replaced. This
+    /// is a choice, not a failure: Photos reports it as `userCancelled`
+    /// (3072), and the app used to mark every photo in the batch as an error
+    /// and report each one to Sentry (#91).
+    case userCancelled
 
     /// Localized explanation for the result screen, shown once per reason.
     var message: String {
@@ -31,6 +36,8 @@ nonisolated enum SkipReason: Hashable, Sendable {
             return String(localized: "Photos already under the target size were left as they are.")
         case .wouldNotShrink:
             return String(localized: "Photos that wouldn't get any smaller were left as they are.")
+        case .userCancelled:
+            return String(localized: "You chose not to replace these photos, so they were left as they are.")
         }
     }
 }

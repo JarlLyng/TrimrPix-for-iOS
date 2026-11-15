@@ -45,7 +45,7 @@ The developer half: what's in the app, how to build and run it, how to contribut
 - **Savings estimate:** the expected saving, as a percentage and a size, before you confirm.
 - **iCloud photos:** downloaded, compressed and saved back.
 - **Localized:** English, Danish, German, French and Japanese.
-- **Private:** no account, no server and no ads. Sentry crash reports are anonymous and carry no photos.
+- **Private:** no account, no server and no ads. Sentry crash reports are anonymous for real: one shared user, `anonymous`, and no installation ID, device ID or vendor-ID hash, which is also why session tracking is off. Nothing identifies a photo.
 
 Requirements: iOS 17.0 or later on iPhone or iPad (a universal app), with full or limited access to the Photos library.
 

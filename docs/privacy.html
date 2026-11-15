@@ -264,6 +264,8 @@
             <li>App version</li>
         </ul>
         <p>Crash reports do not contain photos, personal identifiers, Apple ID, email addresses, or any information that can be linked to your identity.</p>
+        <p>That includes identifiers you never see. Crash reporting SDKs normally attach a random ID that stays the same for as long as the app is installed, which would let separate reports be recognised as coming from the same phone. TrimrPix removes them: every report is sent as the same shared user, <code>anonymous</code>, with no installation ID, no device ID and no hash of your device's identifier. Session tracking is switched off for the same reason, because it cannot be sent without such an ID.</p>
+        <p>Nothing in a crash report identifies a photo either. Reports say what went wrong and how many photos a failure affected, never which ones.</p>
     </div>
 
     <div class="policy-section">
