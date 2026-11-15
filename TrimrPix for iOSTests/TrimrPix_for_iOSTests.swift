@@ -262,7 +262,12 @@ private func uniqueColorCount(of image: CGImage) -> Int {
     }
 
     @Test func eachSkipReasonHasItsOwnMessage() {
-        let reasons: [SkipReason] = [.formatNotWritable(.webp), .alreadyUnderTarget, .wouldNotShrink]
+        // Hardcoded rather than derived, so adding a case means adding it here
+        // too. SkipReason is not CaseIterable: formatNotWritable carries a
+        // format, so there is no finite list to enumerate.
+        let reasons: [SkipReason] = [
+            .formatNotWritable(.webp), .alreadyUnderTarget, .wouldNotShrink, .userCancelled
+        ]
         let messages = reasons.map(\.message)
         #expect(messages.allSatisfy { !$0.isEmpty })
         #expect(Set(messages).count == reasons.count)
