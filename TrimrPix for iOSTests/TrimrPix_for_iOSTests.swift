@@ -262,7 +262,12 @@ private func uniqueColorCount(of image: CGImage) -> Int {
     }
 
     @Test func eachSkipReasonHasItsOwnMessage() {
-        let reasons: [SkipReason] = [.formatNotWritable(.webp), .alreadyUnderTarget, .wouldNotShrink]
+        // Hardcoded rather than derived, so adding a case means adding it here
+        // too. SkipReason is not CaseIterable: formatNotWritable carries a
+        // format, so there is no finite list to enumerate.
+        let reasons: [SkipReason] = [
+            .formatNotWritable(.webp), .alreadyUnderTarget, .wouldNotShrink, .userCancelled
+        ]
         let messages = reasons.map(\.message)
         #expect(messages.allSatisfy { !$0.isEmpty })
         #expect(Set(messages).count == reasons.count)
@@ -272,6 +277,58 @@ private func uniqueColorCount(of image: CGImage) -> Int {
         let service = CompressionService()
         #expect(service.formatSkipReason(for: makeImageData(width: 64, height: 64, utType: .jpeg)) == nil)
         #expect(service.formatSkipReason(for: makeImageData(width: 64, height: 64, utType: .png)) == nil)
+    }
+}
+
+// MARK: - DiagnosticsRedaction
+
+@Suite struct DiagnosticsRedactionTests {
+
+    @Test func redactsTheBundleContainerUUID() {
+        let path = "/var/containers/Bundle/Application/3F2A9C41-55B2-4E0A-9A77-1C0D9E6B2A10/TrimrPix for iOS.app/TrimrPix for iOS"
+        let redacted = DiagnosticsRedaction.redactContainerPaths(path)
+        #expect(!redacted.contains("3F2A9C41-55B2-4E0A-9A77-1C0D9E6B2A10"))
+        #expect(redacted.contains(DiagnosticsRedaction.redactedUUID))
+        // The rest of the path has to survive, or frames stop grouping.
+        #expect(redacted.hasSuffix("/TrimrPix for iOS.app/TrimrPix for iOS"))
+        #expect(redacted.hasPrefix("/var/containers/Bundle/Application/"))
+    }
+
+    @Test func redactsTheDataContainerUUID() {
+        let path = "/var/mobile/Containers/Data/Application/9B1E77C0-0000-4A11-8E3D-ABCDEF012345/Documents/x.log"
+        let redacted = DiagnosticsRedaction.redactContainerPaths(path)
+        #expect(!redacted.contains("9B1E77C0-0000-4A11-8E3D-ABCDEF012345"))
+        #expect(redacted.contains(DiagnosticsRedaction.redactedUUID))
+        #expect(redacted.hasSuffix("/Documents/x.log"))
+    }
+
+    @Test func redactsEveryContainerUUIDInOnePath() {
+        let path = "/var/containers/Bundle/Application/3F2A9C41-55B2-4E0A-9A77-1C0D9E6B2A10/a"
+            + ":/var/mobile/Containers/Data/Application/9B1E77C0-0000-4A11-8E3D-ABCDEF012345/b"
+        let redacted = DiagnosticsRedaction.redactContainerPaths(path)
+        #expect(!redacted.lowercased().contains("3f2a9c41"))
+        #expect(!redacted.lowercased().contains("9b1e77c0"))
+    }
+
+    @Test func leavesSystemPathsAlone() {
+        // The common case: most frames are system frames with no UUID at all.
+        for path in ["/usr/lib/libSystem.B.dylib",
+                     "/System/Library/Frameworks/UIKit.framework/UIKit",
+                     ""] {
+            #expect(DiagnosticsRedaction.redactContainerPaths(path) == path)
+        }
+    }
+
+    @Test func leavesAUUIDThatIsNotAContainerAlone() {
+        // Only a UUID in a container position is a per-install ID. A debug
+        // image's own build UUID is not, and is needed to symbolicate.
+        let path = "/some/path/3F2A9C41-55B2-4E0A-9A77-1C0D9E6B2A10/thing"
+        #expect(DiagnosticsRedaction.redactContainerPaths(path) == path)
+    }
+
+    @Test func passesNilThrough() {
+        let none: String? = nil
+        #expect(DiagnosticsRedaction.redactContainerPaths(none) == nil)
     }
 }
 
