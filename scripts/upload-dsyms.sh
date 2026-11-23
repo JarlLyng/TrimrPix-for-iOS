@@ -15,6 +15,14 @@
 #
 # The auth token is read from $SENTRY_AUTH_TOKEN, or from the gitignored
 # Sentry.xcconfig in the repo root. It is never printed and never committed.
+#
+# Region: an org auth token carries its own Sentry URL, and sentry-cli follows
+# that rather than a configured one. This project ingests in the EU region
+# (ingest.de.sentry.io), and org tokens from this organisation have uploaded to
+# the EU org with no SENTRY_URL set, so none is set here. If an upload fails, or
+# it reports success but the symbols never show up, try this before anything else:
+#
+#   SENTRY_URL=https://de.sentry.io scripts/upload-dsyms.sh <path>
 set -e
 
 ORG=iamjarl
@@ -28,12 +36,18 @@ fi
 
 TOKEN="$SENTRY_AUTH_TOKEN"
 if [ -z "$TOKEN" ] && [ -f "Sentry.xcconfig" ]; then
-    TOKEN=$(grep -E '^[[:space:]]*SENTRY_AUTH_TOKEN' Sentry.xcconfig | head -1 | sed 's/.*=[[:space:]]*//')
+    # Strip up to the FIRST '=' only. '.*=' is greedy and would strip to the last
+    # one, and an org auth token contains '=' characters, so it would be truncated
+    # into something that fails with 401.
+    TOKEN=$(grep -E '^[[:space:]]*SENTRY_AUTH_TOKEN' Sentry.xcconfig | head -1 | sed 's/^[^=]*=[[:space:]]*//')
 fi
 if [ -z "$TOKEN" ]; then
     echo "No token found. Set SENTRY_AUTH_TOKEN, or add it to Sentry.xcconfig."
     exit 1
 fi
 
-sentry-cli --auth-token "$TOKEN" debug-files upload \
+# Passed through the environment, which sentry-cli reads natively, rather than as
+# --auth-token: an argument is visible in the process list to every other process
+# on the machine for as long as the upload runs, an environment variable is not.
+SENTRY_AUTH_TOKEN="$TOKEN" sentry-cli debug-files upload \
     --org "$ORG" --project "$PROJECT" --include-sources "$INPUT"
